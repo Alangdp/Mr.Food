@@ -1,0 +1,26 @@
+"filename", "language", "TypeScript", "JSON with Comments", "JavaScript", "JSON", "comment", "blank", "total"
+"c:\Users\gabri\Desktop\Ifood\.eslintrc.json", "JSON with Comments", 0, 31, 0, 0, 0, 0, 31
+"c:\Users\gabri\Desktop\Ifood\.prettierrc.json", "JSON", 0, 0, 0, 6, 0, 0, 6
+"c:\Users\gabri\Desktop\Ifood\config\config.json", "JSON", 0, 0, 0, 23, 0, 0, 23
+"c:\Users\gabri\Desktop\Ifood\package.json", "JSON", 0, 0, 0, 36, 0, 1, 37
+"c:\Users\gabri\Desktop\Ifood\src\app.ts", "TypeScript", 27, 0, 0, 0, 1, 9, 37
+"c:\Users\gabri\Desktop\Ifood\src\config\auth.ts", "TypeScript", 6, 0, 0, 0, 0, 3, 9
+"c:\Users\gabri\Desktop\Ifood\src\config\database.ts", "TypeScript", 18, 0, 0, 0, 0, 4, 22
+"c:\Users\gabri\Desktop\Ifood\src\controller\client.controller.ts", "TypeScript", 44, 0, 0, 0, 0, 6, 50
+"c:\Users\gabri\Desktop\Ifood\src\controller\company.controller.ts", "TypeScript", 59, 0, 0, 0, 0, 7, 66
+"c:\Users\gabri\Desktop\Ifood\src\controller\user.controller.ts", "TypeScript", 51, 0, 0, 0, 0, 8, 59
+"c:\Users\gabri\Desktop\Ifood\src\database\index.ts", "TypeScript", 3, 0, 0, 0, 0, 2, 5
+"c:\Users\gabri\Desktop\Ifood\src\database\migrations\20240531170557-Users.cjs", "JavaScript", 0, 0, 99, 0, 7, 11, 117
+"c:\Users\gabri\Desktop\Ifood\src\database\migrations\20240531182400-Company.cjs", "JavaScript", 0, 0, 91, 0, 1, 3, 95
+"c:\Users\gabri\Desktop\Ifood\src\middleware\company.middleware.ts", "TypeScript", 24, 0, 0, 0, 0, 7, 31
+"c:\Users\gabri\Desktop\Ifood\src\models\Client.ts", "TypeScript", 47, 0, 0, 0, 4, 3, 54
+"c:\Users\gabri\Desktop\Ifood\src\models\Company.ts", "TypeScript", 198, 0, 0, 0, 0, 5, 203
+"c:\Users\gabri\Desktop\Ifood\src\models\User.ts", "TypeScript", 117, 0, 0, 0, 0, 13, 130
+"c:\Users\gabri\Desktop\Ifood\src\router\client.router.ts", "TypeScript", 7, 0, 0, 0, 0, 4, 11
+"c:\Users\gabri\Desktop\Ifood\src\router\company.router.ts", "TypeScript", 8, 0, 0, 0, 0, 4, 12
+"c:\Users\gabri\Desktop\Ifood\src\router\user.router.ts", "TypeScript", 9, 0, 0, 0, 0, 4, 13
+"c:\Users\gabri\Desktop\Ifood\src\server.ts", "TypeScript", 8, 0, 0, 0, 0, 3, 11
+"c:\Users\gabri\Desktop\Ifood\src\utils\responses.ts", "TypeScript", 35, 0, 0, 0, 23, 10, 68
+"c:\Users\gabri\Desktop\Ifood\tsconfig.json", "JSON with Comments", 0, 33, 0, 0, 0, 0, 33
+"c:\Users\gabri\Desktop\Ifood\types\responses.type.ts", "TypeScript", 9, 0, 0, 0, 0, 2, 11
+"Total", "-", 670, 64, 190, 65, 36, 109, 1134
