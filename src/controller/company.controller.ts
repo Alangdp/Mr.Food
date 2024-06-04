@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { errorResponse, response } from "../utils/responses.js";
 import Company from "../models/Company.js";
-import { createToken } from "../middleware/company.middleware.js";
+import { createToken } from "../utils/token.js";
 
 const store: RequestHandler = async (req, res) => {
   try {
@@ -42,7 +42,7 @@ const login: RequestHandler = async (req, res) => {
     if (!company) return response(res, {errors: [{message: "Invalid Email or Password"}], status: 404});
     if(!company.validatePassword(password)) return response(res, {errors: [{message: "Invalid Email or Password"}], status: 404});
 
-    const token = createToken(company.dataValues.id);
+    const token = createToken(company.dataValues.id, process.env.SECRET as string );
     return response(res, {data: token, status: 200});
   } catch (error) {
     return errorResponse(res, error);

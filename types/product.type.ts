@@ -10,4 +10,5 @@ type Extra = {
     minQuantity: number;
   };
 }
+
 export { Extra, ExtraOption };

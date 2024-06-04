@@ -1,8 +1,9 @@
 import { Model, DataTypes } from 'sequelize';
 import database from '../database/index.js';
 import { Extra } from '../../types/product.type.js';
+import { ProductProps } from "../../interfaces/product.interface.js";
 
-export default class Product extends Model {
+export default class Product extends Model implements ProductProps {
   declare id: number;
   declare name: string;
   declare companyId: number;
@@ -12,6 +13,8 @@ export default class Product extends Model {
   declare discountPercent: number;
   declare active: boolean;
   declare extras: Extra;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 
   static async findByDescription(description: string) {
     return await this.findOne({ where: { description } });

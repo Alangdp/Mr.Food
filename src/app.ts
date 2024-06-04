@@ -9,6 +9,8 @@ import ClientRouter from "./router/client.router.js";
 import CompanyRouter from "./router/company.router.js";
 import CategoryRouter from "./router/category.router.js";
 import ProductRouter from "./router/product.router.js";
+import OrderRouter from "./router/order.router.js";
+
 
 
 class App {
@@ -30,6 +32,7 @@ class App {
     this.app.use("/companies", CompanyRouter);
     this.app.use("/categories", CategoryRouter);
     this.app.use("/products", ProductRouter);
+    this.app.use("/orders", OrderRouter);
   }
 
   configure() {

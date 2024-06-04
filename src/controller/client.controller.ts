@@ -1,6 +1,10 @@
 import { RequestHandler } from "express";
 import { errorResponse, response } from "../utils/responses.js";
 import Client from "../models/Client.js";
+import { createToken } from "../utils/token.js";
+import { configDotenv } from "dotenv";
+
+configDotenv();
 
 const store: RequestHandler = async (req, res) => {
   try {
@@ -40,7 +44,8 @@ const login: RequestHandler = async (req, res) => {
     const { phone } = req.body;
     const client = await Client.findByPhone(phone);
     if (!client) return response(res, {errors: [{message: "Invalid Phone"}], status: 404});
-    return response(res, {data: client, status: 200});
+    const token = createToken(client.dataValues.id, process.env.SECRET_CLIENT as string);
+    return response(res, {data: token, status: 200});
   } catch (error) {
     return errorResponse(res, error);
   }
