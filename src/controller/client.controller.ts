@@ -8,7 +8,7 @@ configDotenv();
 
 const store: RequestHandler = async (req, res) => {
   try {
-    const requiredFields = ["phone", "name"];
+    const requiredFields = ["phone", "name", "password"];
     const missingFields = requiredFields.filter((field) => !req.body[field]);
     if (missingFields.length) {
       return response(res, {errors: missingFields.map((field) => ({message: `${field} is required`})), status: 400});
@@ -17,6 +17,7 @@ const store: RequestHandler = async (req, res) => {
     if(clientDB) return response(res, {errors: [{message: "Phone number already exists"}], status: 400});
     const client = await Client.create({
       name: req.body.name,
+      password: req.body.password,
       phoneNumber: req.body.phone,
     });
     return response(res, {data: client, status: 201});
@@ -44,6 +45,7 @@ const login: RequestHandler = async (req, res) => {
     const { phone } = req.body;
     const client = await Client.findByPhone(phone);
     if (!client) return response(res, {errors: [{message: "Invalid Phone"}], status: 404});
+    if (!await client.login(req.body.password)) return response(res, {errors: [{message: "Invalid Password"}], status: 400});
     const token = createToken(client.dataValues.id, process.env.SECRET_CLIENT as string);
     return response(res, {data: token, status: 200});
   } catch (error) {
