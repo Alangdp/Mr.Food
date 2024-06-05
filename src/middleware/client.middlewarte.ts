@@ -11,7 +11,7 @@ const ClientLoginMiddleware: RequestHandler = async (req, res, next) => {
     const token: string | undefined = req.headers.authorization;
     if (!token) return errorResponse(res, { message: 'Token not provided' });
     const { id } = jwt.verify(token, SECRET) as JwtPayload;
-    req.body.clientId = id as number;
+    req.body.clientId = id as string;
     next();
   } catch (error) {
     return errorResponse(res, error);
