@@ -1,10 +1,12 @@
 import { DataTypes, Model } from "sequelize";
 import database from "../database/index.js";
 import { ProductProps } from "../../interfaces/product.interface.js";
+import { randomUUID } from "crypto";
 
 export default class Order extends Model {
-  declare id: number;
+  declare id: string;
   declare clientId: number;
+  declare companyId: number;
   declare itens: ProductProps[];
   declare status: string;
   declare total: number;
@@ -15,12 +17,16 @@ export default class Order extends Model {
 
 Order.init({
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
     primaryKey: true,
-    autoIncrement: true,
     allowNull: false,
+    defaultValue: randomUUID(),
   },
   clientId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  companyId: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },

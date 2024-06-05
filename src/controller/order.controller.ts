@@ -3,7 +3,6 @@ import { errorResponse, response } from '../utils/responses.js';
 import { configDotenv } from 'dotenv';
 import Product from '../models/Product.js';
 import Order from '../models/Order.js';
-import { ProductProps } from '../../interfaces/product.interface.js';
 import { validRequiredFields } from '../utils/validBody.js';
 
 configDotenv();
@@ -14,7 +13,7 @@ const store: RequestHandler = async (req, res) => {
     const itens: number[] = req.body.itens;
     // TODO - Add Address
     const openOrder = (await Order.findAll({ where: { clientId } })).filter(
-      order => order.status !== 'CANCELED',
+      order => order.status !== 'CANCELED' && order.status !== 'DELIVERED',
     );
     if (openOrder.length)
       return response(res, {
@@ -52,9 +51,10 @@ const store: RequestHandler = async (req, res) => {
         (Number(product.price) * Number(product.discountPercent)) / 100,
       0,
     );
+    console.log(products[0].companyId);
     const order = await Order.create({
       clientId,
-      companyId: products[0].companyId,
+      companyId: 1,
       itens: products.map(product => {
         const {
           id,
@@ -72,8 +72,68 @@ const store: RequestHandler = async (req, res) => {
     });
     return response(res, { data: order, status: 201 });
   } catch (error) {
+    console.log(error);
     return errorResponse(res, error);
   }
 };
 
-export { store };
+const changeStatus: RequestHandler = async (req, res) => {
+  const permitedStatus = {
+    1: 'PENDING',
+    2: 'PREPARING',
+    3: 'READY',
+    4: 'DELIVERED',
+    5: 'CANCELED',
+  };
+
+  try {
+    const { orderId, status, id: companyId } = req.body;
+    const missingFields = validRequiredFields(['orderId', 'status'], req.body);
+    if (missingFields.length)
+      return response(res, {
+        errors: missingFields.map(field => ({
+          message: `${field} is required`,
+        })),
+        status: 400,
+      });
+    if (
+      typeof status !== 'number' ||
+      !permitedStatus[status as keyof typeof permitedStatus]
+    ) {
+      return response(res, {
+        errors: [{ message: 'Invalid status Code' }],
+        status: 400,
+      });
+    }
+    const order = await Order.findByPk(orderId);
+    if (!order) {
+      return response(res, {
+        errors: [{ message: 'Order not found' }],
+        status: 404,
+      });
+    }
+    if (order.status === 'CANCELED') {
+      return response(res, {
+        errors: [{ message: 'Order already canceled' }],
+        status: 400,
+      });
+    }
+    if (order.companyId !== companyId) {
+      return response(res, {
+        errors: [
+          { message: 'You are not allowed to change this order status' },
+        ],
+        status: 403,
+      });
+    }
+    order.update({
+      status: permitedStatus[status as keyof typeof permitedStatus],
+    });
+    await order.save();
+    return response(res, { data: order, status: 200 });
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+export { store, changeStatus };

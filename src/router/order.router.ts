@@ -1,9 +1,11 @@
 import express from "express";
-import { store } from "../controller/order.controller.js";
+import { store, changeStatus } from "../controller/order.controller.js";
 import { ClientLoginMiddleware } from "../middleware/client.middlewarte.js";
+import { CompanyLoginMiddleware } from "../middleware/company.middleware.js";
 
 const router = express.Router();
 
 router.post("/", ClientLoginMiddleware, store);
+router.post("/status", CompanyLoginMiddleware, changeStatus);
 
 export default router;
