@@ -1,3 +1,5 @@
+const { warn } = require("console");
+
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
@@ -14,5 +16,8 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    '@typescript-eslint/no-unused-vars': [
+      'warn'
+    ]
   },
 }

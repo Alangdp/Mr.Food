@@ -1,51 +1,147 @@
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { StepProps } from '@/types/StepProps'
-import { useState } from 'react'
+import { RegisterStepProps } from '@/types/RegisterProps'
+import { formatCNPJ } from '@/utils/Formater'
+import { AnimatePresence, motion } from 'framer-motion'
 
-// const requiredFields1 = ['Nome', 'CNPJ', 'Email', 'Telefone', 'Senha']
-// const requiredFields1 = ['CEP', 'Rua', 'Número', 'Bairro', 'Cidade', 'Estado']
-// const requiredFields2 = ['Pedido Minimo', 'Metodos de pagamento', 'endereço']
-
-export default function CompanyRegisterStep1({ onNext, onChange }: StepProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    cnpj: '',
-    email: '',
-    phone: '',
-    password: '',
-  })
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-    onChange?.({ [name]: value })
-  }
-
-  console.log(formData)
-
+export default function RegisterStep1({ form }: RegisterStepProps) {
   return (
-    <div className="">
-      {['name', 'cnpj', 'email', 'phone', 'password'].map(field => (
-        <div className="mt-2 p-2" key={field}>
-          <label htmlFor={field}></label>
-          <Input
-            onChange={handleChange}
-            name={field.toLowerCase()}
-            type="text"
-            placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-            className="w-full h-10 border border-gray-300 rounded-md"
-          />
-        </div>
-      ))}
+    <AnimatePresence>
+      <motion.span
+        style={{ display: 'inline-block' }}
+        initial={{ x: '100px', opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1.5 }}
+      >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="mt-4">
+              <FormLabel className="pl-1">Nome</FormLabel>
+              <FormControl>
+                <Input
+                  className="bg-zinc-500 text-white w-[300px]"
+                  placeholder="Hamburgueria do Zé"
+                  {...field}
+                />
+              </FormControl>
+              <div className="flex items-center gap-2">
+                <FormDescription className="pl-1">
+                  Nome da empresa
+                </FormDescription>
+                <FormMessage className="pl-1" />
+              </div>
+            </FormItem>
+          )}
+        />
 
-      <div className="mt-2 p-2">
-        <button
-          onClick={onNext}
-          className="w-full h-10 bg-secondary text-white rounded-md"
-        >
-          Próximo
-        </button>
-      </div>
-    </div>
+        <FormField
+          control={form.control}
+          name="cnpj"
+          render={({ field: { onChange, ...props } }) => (
+            <FormItem className="mt-4">
+              <FormLabel className="pl-1">CNPJ</FormLabel>
+              <FormControl>
+                <Input
+                  className="bg-zinc-500 text-white w-[300px]"
+                  placeholder="00.000.000/0000-00"
+                  onChange={e => {
+                    const { value } = e.target
+                    e.target.value = formatCNPJ(value)
+                    onChange(e)
+                  }}
+                  {...props}
+                  maxLength={18}
+                />
+              </FormControl>
+              <div className="flex items-center gap-2">
+                <FormDescription className="pl-1">
+                  CNPJ da empresa
+                </FormDescription>
+                <FormMessage className="pl-1" />
+              </div>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem className="mt-4">
+              <FormLabel className="pl-1">Email</FormLabel>
+              <FormControl>
+                <Input
+                  className="bg-zinc-500 text-white w-[300px]"
+                  placeholder="email@email.com"
+                  {...field}
+                />
+              </FormControl>
+              <div className="flex items-center gap-2">
+                <FormDescription className="pl-1">
+                  Email da empresa
+                </FormDescription>
+                <FormMessage className="pl-1" />
+              </div>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem className="mt-4">
+              <FormLabel className="pl-1">Telefone</FormLabel>
+              <FormControl>
+                <Input
+                  className="bg-zinc-500 text-white w-[300px]"
+                  placeholder="11999999999"
+                  {...field}
+                  maxLength={11}
+                />
+              </FormControl>
+              <div className="flex items-center gap-2">
+                <FormDescription className="pl-1">
+                  Telefone da empresa
+                </FormDescription>
+                <FormMessage className="pl-1" />
+              </div>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem className="mt-4">
+              <FormLabel className="pl-1">Senha</FormLabel>
+              <FormControl>
+                <Input
+                  className="bg-zinc-500 text-white w-[300px]"
+                  type="password"
+                  {...field}
+                />
+              </FormControl>
+              <div className="flex items-center gap-2">
+                <FormDescription className="pl-1">
+                  Senha da empresa
+                </FormDescription>
+                <FormMessage className="pl-1" />
+              </div>
+            </FormItem>
+          )}
+        />
+      </motion.span>
+    </AnimatePresence>
   )
 }

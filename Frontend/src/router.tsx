@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom"
 import Home from "./components/home/home"
-import RegisterCompany from "./components/company/register/register";
+import CompanyRegister from "./components/company/register/register";
 
 const router = createBrowserRouter([
   {
@@ -9,7 +9,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/company/register",
-    element: <RegisterCompany />
+    element: <CompanyRegister />
   },
   {
     path: "*",
