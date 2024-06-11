@@ -1,8 +1,11 @@
 import { IconJarLogoIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { useNavigate } from "react-router-dom";
 
 export default function NavBar() {
+  const navigate = useNavigate();
+
   return(
     <nav className="inset-x-0 top-0 z-50 bg-white shadow-sm drop-shadow dark:bg-gray-950/90">
       <div className="w-full max-w-7xl mx-auto px-4">
@@ -34,10 +37,8 @@ export default function NavBar() {
           <Input Icon={MagnifyingGlassIcon} className='w-1/3 hidden md:flex' placeholder='Busque por item ou loja'/>
 
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm">
-              Criar Conta
-            </Button>
-            <Button variant={'destructive'} className='bg-red-600' size="sm">Entrar</Button>
+            <Button variant="outline" size="sm" onClick={() => navigate("/company/register")}>Criar Conta</Button>
+            <Button variant={'destructive'} className='bg-red-600' size="sm" onClick={() => navigate("/company/login")}>Entrar</Button>
           </div>
         </div>
       </div>

@@ -3,6 +3,19 @@ import { errorResponse, response } from "../utils/responses.js";
 import Company from "../models/Company.js";
 import { createToken } from "../utils/token.js";
 
+
+const index: RequestHandler = async (req, res) => {
+  try {
+    const { id: companyId } = req.body;
+    if(!companyId) return response(res, {errors: [{message: "Company not found"}], status: 404});
+    const companies = await Company.findByPk(companyId);
+    return response(res, {data: companies, status: 200});
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+
+};
+
 const store: RequestHandler = async (req, res) => {
   try {
     const requiredFields = [
@@ -16,12 +29,17 @@ const store: RequestHandler = async (req, res) => {
       'deliveryOptions',
       'password'
     ];
+
     const missingFields = requiredFields.filter((field) => !req.body[field]);
     if (missingFields.length) {
       return response(res, {errors: missingFields.map((field) => ({message: `${field} is required`})), status: 400});
     }
+
+    req.body.cnpj = req.body.cnpj.replace(/[^\d]+/g,'');
+
     const company = await Company.create(req.body);
-    return response(res, {data: company, status: 201});
+    const token = createToken(company.dataValues.id, process.env.SECRET as string );
+    return response(res, {data: token, status: 200});
   } catch (error) {
     return errorResponse(res, error);
   }
@@ -63,4 +81,4 @@ const update: RequestHandler = async (req, res) => {
   }
 };
 
-export { store, login, update };
+export { store, login, update, index };

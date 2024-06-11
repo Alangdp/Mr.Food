@@ -7,7 +7,13 @@ import './index.css'
 import router from './router'
 
 import { RouterProvider } from 'react-router-dom'
+import { Toaster } from './components/ui/toaster'
+import AuthProvider from './context/AuthContext'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <RouterProvider router={router} />
+  <AuthProvider>
+    <Toaster />
+    <RouterProvider router={router} />
+  </AuthProvider>
+
 )

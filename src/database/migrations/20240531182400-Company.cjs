@@ -55,13 +55,8 @@ module.exports = {
         }
       },
       deliveryOptions: {
-        type: Sequelize.JSONB,
+        type: Sequelize.ARRAY(Sequelize.STRING),
         allowNull: false,
-        defaultValue: {
-          available: false,
-          fee: 0,
-          minOrderAmount: 0
-        }
       },
       website: {
         type: Sequelize.STRING,

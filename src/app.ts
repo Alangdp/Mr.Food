@@ -1,5 +1,6 @@
 import { Application } from "express";
 import express from "express";
+import cors from "cors";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import database from "./database/index.js";
@@ -38,6 +39,7 @@ class App {
   configure() {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended:true }));
+    this.app.use(cors());
   }
 }
 

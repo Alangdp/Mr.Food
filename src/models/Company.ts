@@ -117,24 +117,18 @@ Company.init(
       }
     },
     deliveryOptions: {
-      type: DataTypes.JSONB,
+      type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
-      defaultValue: {
-        available: false,
-        fee: 0,
-        minOrderAmount: 0
-      },
       validate: {
-        isValidDeliveryOptions( value: { available: boolean, fee: number, minOrderAmount: number } | undefined) {
-          if (typeof value?.available !== 'boolean') {
-            throw new Error('Delivery availability must be a boolean');
+        isArrayOfStrings(value: string[] | undefined) {
+          if (!Array.isArray(value)) {
+            throw new Error('Delivery options must be an array');
           }
-          if (typeof value.fee !== 'number' || value.fee < 0) {
-            throw new Error('Delivery fee must be a non-negative number');
-          }
-          if (typeof value.minOrderAmount !== 'number' || value.minOrderAmount < 0) {
-            throw new Error('Minimum order amount must be a non-negative number');
-          }
+          value.forEach(option => {
+            if (typeof option !== 'string') {
+              throw new Error('Delivery options must be an array of strings');
+            }
+          });
         }
       }
     },

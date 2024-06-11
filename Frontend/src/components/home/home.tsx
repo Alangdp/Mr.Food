@@ -8,7 +8,6 @@ export default function Home() {
   return (
     <div className="">
       <div className="flex flex-col flex-1 divide-y divide-y-">
-        <NavBar />
         <div className="h-16 w-full bg-green-600 text-white flex">
           <div className="m-auto px-4 flex items-center gap-4">
             <img src={tagDiscount} className="w-8 h-full" alt="" />
