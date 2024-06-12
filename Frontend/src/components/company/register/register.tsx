@@ -93,11 +93,11 @@ export default function CompanyRegister() {
     }
   }
   return (
-    <div className="h-screen w-screen relative overflow-hidden">
+    <div className="h-screen w-relative overflow-hidden">
       <div className="bg-red-100 opacity-60 w-[1300px] h-[1300px] absolute rounded-full -top-48 -left-48 -z-10"></div>
-      <div className="w-4/5 h-full mx-auto flex">
-        <div className="flex-[0.5]"></div>
-        <div className="flex-[0.5] p-4 bg-white w-fit h-fit rounded-lg mt-14 shadow-lg drop-shadow">
+      <div className="h-full mx-auto flex">
+        <div className="flex-[0.5] hidden sm:block"></div>
+        <div className="flex-[0.5] bg-white h-fit rounded-lg mt-14 shadow-lg drop-shadow">
           <div className="mx-auto mt-4 w-2/3 text-secondary">
             <h3 className='text-3xl font-medium text-center'>Falta pouco para você vender conosco!</h3>
           </div>
@@ -107,7 +107,7 @@ export default function CompanyRegister() {
               {step === 2 && <RegisterStep2 form={form} />}
               {step === 3 && <RegisterStep3 form={form} />}
 
-              <div className="flex items-center justify-around gap-4">
+              <div className="flex items-center justify-around gap-4 p-4">
                 {step !== 1 && <Button onClick={() => setStep(step - 1)}>Anterior</Button> }
                 <Button onClick={nextStep}>Próximo</Button>
               </div>

@@ -1,4 +1,3 @@
-import NavBar from '../navigators/navbar'
 import Footer from '../footer/footer'
 
 import tagDiscount from  '../../assets/svg/tag-discount.svg'

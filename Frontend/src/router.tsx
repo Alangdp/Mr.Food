@@ -1,19 +1,12 @@
-import { createBrowserRouter, useLocation, useNavigate } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 import Home from './components/home/home'
 import CompanyRegister from './components/company/register/register'
-import { validateToken } from './utils/Getter'
-import { useEffect } from 'react'
-import { useToast } from './components/ui/use-toast'
 import CompanyLogin from './components/company/login/login'
-import { AnimatePresence, motion } from 'framer-motion'
 import NavBar from './components/navigators/navbar'
-import { useAuth } from './context/AuthContext'
 import PrivateCompany from './components/router/PrivateCompany'
 import MotionWrapper from './components/router/MotionWrapper'
-
-interface ChildrenProps {
-  children: JSX.Element
-}
+import SideBar from './components/navigators/sidebar'
+import DashboardHome from './components/companyDashboard/home'
 
 const router = createBrowserRouter([
   {
@@ -50,6 +43,20 @@ const router = createBrowserRouter([
         </MotionWrapper>
       </>
     ),
+  },
+  {
+    path: '/company/dashboard',
+    element: (
+      <PrivateCompany>
+        <div>
+          <NavBar />
+          <SideBar />
+          <MotionWrapper>
+            <DashboardHome />
+          </MotionWrapper>
+        </div>
+      </PrivateCompany>
+    )
   },
   {
     path: '*',

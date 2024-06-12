@@ -3,6 +3,7 @@ import { validateToken } from "@/utils/Getter"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../ui/use-toast"
+import { stat } from "fs"
 
 interface ChildrenProps {
   children: JSX.Element
@@ -14,19 +15,8 @@ export default function PrivateCompany({ children }: ChildrenProps) {
   const { toast } = useToast()
 
   useEffect(() => {
-    async function validate() {
-      if (!companyToken) {
-        toast({
-          title: 'Token inválido',
-        })
-
-        logoutCompany()
-        navigate('/company/register')
-        return
-      }
-
-      const status = await validateToken(companyToken)
-
+    async function validate(token: string) {
+      const status = await validateToken(token)
       if (!status) {
         logoutCompany()
         toast({
@@ -38,7 +28,7 @@ export default function PrivateCompany({ children }: ChildrenProps) {
       }
     }
 
-    validate()
+    validate(companyToken || "")
   }, [companyToken])
 
   return <>{children}</>

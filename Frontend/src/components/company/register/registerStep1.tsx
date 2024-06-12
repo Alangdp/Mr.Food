@@ -21,7 +21,7 @@ export default function RegisterStep1({ form }: RegisterStepProps) {
         transition={{ duration: 1.5 }}
         className="flex flex-col items-center"
       >
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
           <FormField
             control={form.control}
             name="name"
@@ -66,7 +66,7 @@ export default function RegisterStep1({ form }: RegisterStepProps) {
                     maxLength={18}
                   />
                 </FormControl>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 pl-6">
                   {!form.getFieldState('cnpj').error && (
                     <FormDescription className="pl-1">
                       CNPJ da empresa
@@ -79,7 +79,7 @@ export default function RegisterStep1({ form }: RegisterStepProps) {
           />
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
           <FormField
             control={form.control}
             name="email"

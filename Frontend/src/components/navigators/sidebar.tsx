@@ -1,34 +1,61 @@
 import { cn } from '@/lib/utils'
 import { HamburgerMenuIcon, IconJarLogoIcon } from '@radix-ui/react-icons'
+import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 export default function SideBar() {
+  const location = useLocation();
+  const lastPath = location.pathname.split('/')[location.pathname.split('/').length - 1]
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className={cn("fixed flex flex-col top-0 left-0 w-64 bg-white h-full border-r shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]", isOpen ? "" : "w-16")}>
+    <motion.div
+      className={cn(
+        'fixed top-0 z-50 flex flex-col left-0 w-64 bg-white h-screen border-r shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]',
+        isOpen ? '' : 'w-16',
+      )}
+      initial={{ x: '100%' }}
+      animate={{ x: !isOpen ? 0 : '0%' }}
+      transition={{ type: 'spring', stiffness: 300 }}
+      style={{
+        width: isOpen ? '16rem' : '4rem',
+        transition: 'width 0.3s ease',
+      }}
+    >
       <a
-        className="flex items-center justify-center h-14 border-b gap-2 relative w-full mx-auto"
+        className="flex items-center justify-center h-14 gap-2 relative w-full mx-auto border-0"
         href="#"
       >
-
-        <IconJarLogoIcon className="w-8 h-8 text-red-600" onClick={() => setIsOpen(!isOpen)}/>
-        { isOpen && <h4 className='text-lg font-medium text-red-600'>Mr.Food</h4>}
-        { isOpen && <HamburgerMenuIcon className="w-6 h-6 text-gray-500 absolute right-4" onClick={() => setIsOpen(!isOpen)}/>}
+        <IconJarLogoIcon
+          className="w-8 h-8 text-red-600"
+          onClick={() => setIsOpen(!isOpen)}
+        />
+        {isOpen && (
+          <h4 className="text-lg font-medium text-red-600">Mr.Food</h4>
+        )}
+        {isOpen && (
+          <HamburgerMenuIcon
+            className="w-6 h-6 text-gray-500 absolute right-4"
+            onClick={() => setIsOpen(!isOpen)}
+          />
+        )}
       </a>
       <div className="overflow-y-auto overflow-x-hidden flex-grow">
         <ul className="flex flex-col py-4 space-y-1">
           <li className="px-5">
             <div className="flex flex-row items-center h-8">
-              { isOpen && <div className="text-sm font-light tracking-wide text-gray-500">
-                Menu
-              </div>}
+              {isOpen && (
+                <div className="text-sm font-light tracking-wide text-gray-500">
+                  Menu
+                </div>
+              )}
             </div>
           </li>
           <li>
             <a
-              href="#"
-              className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-indigo-500 pr-6"
+              href="/company/dashboard/home"
+              className={cn("relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-indigo-500 pr-6", lastPath === "dashboard" || lastPath === "home" ? "bg-gray-50 text-gray-800 border-l-4 border-indigo-500" : "")}
             >
               <span className="inline-flex justify-center items-center ml-4">
                 <svg
@@ -135,9 +162,11 @@ export default function SideBar() {
           </li>
           <li className="px-5">
             <div className="flex flex-row items-center h-8">
-              { isOpen && <div className="text-sm font-light tracking-wide text-gray-500">
-                Tasks
-              </div>}
+              {isOpen && (
+                <div className="text-sm font-light tracking-wide text-gray-500">
+                  Tasks
+                </div>
+              )}
             </div>
           </li>
           <li>
@@ -197,9 +226,11 @@ export default function SideBar() {
           </li>
           <li className="px-5">
             <div className="flex flex-row items-center h-8">
-              {isOpen && <div className="text-sm font-light tracking-wide text-gray-500">
-                Settings
-              </div>}
+              {isOpen && (
+                <div className="text-sm font-light tracking-wide text-gray-500">
+                  Settings
+                </div>
+              )}
             </div>
           </li>
           <li>
@@ -288,6 +319,6 @@ export default function SideBar() {
           </li>
         </ul>
       </div>
-    </div>
+    </motion.div>
   )
 }

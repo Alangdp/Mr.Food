@@ -121,7 +121,7 @@ export default function CompanyLogin() {
                 )}
               />
 
-              <Button type='submit'> submit </Button>
+              <Button type='submit'>Entrar</Button>
             </form>
           </Form>
         </div>
