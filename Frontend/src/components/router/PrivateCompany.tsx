@@ -17,6 +17,7 @@ export default function PrivateCompany({ children }: ChildrenProps) {
   useEffect(() => {
     async function validate(token: string) {
       const status = await validateToken(token)
+
       if (!status) {
         logoutCompany()
         toast({

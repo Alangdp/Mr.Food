@@ -20,15 +20,19 @@ export async function registerCompanyPost(data: CompanyProps) {
 }
 
 export async function validateToken(token: string) {
-  const response = await axios.get(`${API_URL}/companies`, {
-    headers: {
-      Authorization: `${token}`
-    }
-  });
+  try {
+    const response = await axios.get(`${API_URL}/companies`, {
+      headers: {
+        Authorization: `${token}`
+      }
+    });
 
-  console.log(response.status )
-  if(response.status !== 200) return false;
-  return true;
+    console.log(response.status )
+    if(response.status !== 200) return false;
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 export async function loginCompanyPost(data: { email: string; password: string }) {
