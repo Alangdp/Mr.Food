@@ -93,7 +93,7 @@ export default function CompanyRegister() {
     }
   }
   return (
-    <div className="h-screen w-relative overflow-hidden">
+    <div className="h-screen w-relative overflow-hidden pr-12">
       <div className="bg-red-100 opacity-60 w-[1300px] h-[1300px] absolute rounded-full -top-48 -left-48 -z-10"></div>
       <div className="h-full mx-auto flex">
         <div className="flex-[0.5] hidden sm:block"></div>

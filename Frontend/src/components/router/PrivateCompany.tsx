@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../ui/use-toast"
 import { stat } from "fs"
+import { PersonIcon } from "@radix-ui/react-icons"
 
 interface ChildrenProps {
   children: JSX.Element
@@ -18,13 +19,16 @@ export default function PrivateCompany({ children }: ChildrenProps) {
     async function validate(token: string) {
       const status = await validateToken(token)
 
+      console.log(token)
+
       if (!status) {
         logoutCompany()
         toast({
-          title: 'Token inválido',
+          title: 'Token inválido ou expirado',
           variant: 'destructive',
+          duration: 2500,
         })
-        navigate('/company/register')
+        navigate('/company/login')
         return
       }
     }

@@ -3,8 +3,11 @@ import { HamburgerMenuIcon, IconJarLogoIcon } from '@radix-ui/react-icons'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import CompanyLogin from '../company/login/login'
+import { useAuth } from '@/context/AuthContext'
 
 export default function SideBar() {
+  const { logoutCompany } = useAuth()
   const location = useLocation();
   const lastPath = location.pathname.split('/')[location.pathname.split('/').length - 1]
   const [isOpen, setIsOpen] = useState(false)
@@ -54,8 +57,8 @@ export default function SideBar() {
           </li>
           <li>
             <a
-              href="/company/dashboard/home"
-              className={cn("relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6", lastPath === "dashboard" || lastPath === "home" ? "bg-gray-50 text-gray-800 border-l-4 border-red-500" : "")}
+              href="/company/dashboard"
+              className={cn("relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6", lastPath === "dashboard" || lastPath === "home" ? "bg-gray-50 text-gray-800 border-l-4 border-red-500 pointer-events-none" : "")}
             >
               <span className="inline-flex justify-center items-center ml-4">
                 <svg
@@ -80,8 +83,8 @@ export default function SideBar() {
           </li>
           <li>
             <a
-              href="#"
-              className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6"
+              href="/company/dashboard/orders"
+              className={cn("relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6", lastPath === "orders" ? "bg-gray-50 text-gray-800 border-l-4 border-red-500 pointer-events-none" : "")}
             >
               <span className="inline-flex justify-center items-center ml-4">
                 <svg
@@ -293,6 +296,7 @@ export default function SideBar() {
           </li>
           <li>
             <a
+              onClick={logoutCompany}
               href="#"
               className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6"
             >

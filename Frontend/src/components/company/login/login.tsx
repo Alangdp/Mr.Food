@@ -50,7 +50,7 @@ export default function CompanyLogin() {
     toast({
       title: "Logado com sucesso",
     });
-    navigate('/company/register')
+    navigate('/company/dashboard')
   }
 
   return (
@@ -107,6 +107,7 @@ export default function CompanyLogin() {
                         className="shadow drop-shadow-lg text-secondary w-[350px]"
                         placeholder="*********"
                         {...field}
+                        type='password'
                       />
                     </FormControl>
                     <div className="flex items-center gap-2">

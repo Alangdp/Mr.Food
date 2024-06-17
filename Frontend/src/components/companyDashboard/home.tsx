@@ -1,5 +1,9 @@
 import { useState } from 'react'
 import OrderItem from './itens/orderItem'
+import NavBar from '../navigators/navbar';
+import SideBar from '../navigators/sidebar';
+import MotionWrapper from '../router/MotionWrapper';
+import PrivateCompany from '../router/PrivateCompany';
 
 export default function DashboardHome() {
   const [selected, setSelected] = useState()
@@ -32,8 +36,8 @@ export default function DashboardHome() {
             <div className="cards flex items-center relative gap-4 h-[92px]">
               <div className="item shadow-df drop-shadow w-80 flex flex-col gap-2 p-2 py-4 relative">
                 <div className="grid grid-cols-2 gap-2 gap-x-6s">
-                  <h4 className="">Pedidos de hoje</h4>
-                  <h4 className="">Ticket médio hoje</h4>
+                  <h4 className="text-center">Pedidos de hoje</h4>
+                  <h4 className="text-center">Ticket médio hoje</h4>
                   <div className="flex items-end gap-2">
                     <p className="text-xl font-bold">12</p>
                     <h4 className="text-sm font-light">Pedidos</h4>
@@ -63,7 +67,7 @@ export default function DashboardHome() {
               </div>
 
               <div className="p-2 px-5 shadow-df h-[92px]">
-                <p className="text-secondary/80">
+                <p className="text-secondary/80 text-center">
                   Ticket médio do mês passado{' '}
                 </p>
                 <p className="text-secondary/80">R$ 6000,00</p>
@@ -100,11 +104,13 @@ export default function DashboardHome() {
               <div className="flex items-center justify gap-16 h-28 pt-4">
                 <div className="flex flex-col gap-2 h-full">
                   <h4 className="text-sm text-secondary">Vendas</h4>
-                  <div className="flex items-center gap-2">
-                    <p className="text-2xl font-medium">R$ 10</p>
-                    <p className="text-sm text-green-700">+ 20%</p>
-                  </div>
-                  <p>R$ 12000</p>
+                  <span>
+                    <div className="flex items-center gap-2">
+                      <p className="text-2xl font-medium">R$ 10</p>
+                      <p className="text-sm text-green-700">+ 20%</p>
+                    </div>
+                    <p>R$ 12000</p>
+                  </span>
                 </div>
 
                 <div className="flex flex-col gap-2 h-full">
@@ -124,10 +130,10 @@ export default function DashboardHome() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 w-full pt-4">
-                <div className="">
+              <div className="grid grid-cols-3 w-full pt-4 bord p-2 divide-x">
+                <div className="col-span-1">
                   <span className="flex items-end gap-1">
-                    <h3 className="font-bold text-xl">VENDAS</h3>
+                    <h3 className="font-bold text-xl">Vendas</h3>
                     <p className="text-sm">Últimos 14 dias</p>
                   </span>
                   <div className="flex items-center gap-16 h-28 pt-4">
@@ -150,7 +156,7 @@ export default function DashboardHome() {
                     </div>
                   </div>
                 </div>
-                <div className="">
+                <div className="px-2 col-span-2">
                   <span className="flex items-end gap-1">
                     <h3 className="font-bold text-xl">Operação</h3>
                     <p className="text-sm">Últimos 7 dias</p>
@@ -199,4 +205,18 @@ export default function DashboardHome() {
       </div>
     </div>
   )
+}
+
+export function DashboardHomeRouter() {
+  return (
+    <PrivateCompany>
+      <div>
+        <NavBar />
+        <SideBar />
+        <MotionWrapper>
+          <DashboardHome />
+        </MotionWrapper>
+      </div>
+    </PrivateCompany>
+  );
 }

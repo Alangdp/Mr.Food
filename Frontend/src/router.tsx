@@ -6,20 +6,19 @@ import NavBar from './components/navigators/navbar'
 import PrivateCompany from './components/router/PrivateCompany'
 import MotionWrapper from './components/router/MotionWrapper'
 import SideBar from './components/navigators/sidebar'
-import DashboardHome from './components/companyDashboard/home'
+import { DashboardHomeRouter } from './components/companyDashboard/home'
+import { OrderPageRoute } from './components/companyDashboard/orders/orderPage'
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <PrivateCompany>
-        <>
-          <NavBar />
-          <MotionWrapper>
-            <Home />
-          </MotionWrapper>
-        </>
-      </PrivateCompany>
+      <>
+        <NavBar />
+        <MotionWrapper>
+          <Home />
+        </MotionWrapper>
+      </>
     ),
   },
   {
@@ -46,17 +45,32 @@ const router = createBrowserRouter([
   },
   {
     path: '/company/dashboard',
-    element: (
-      <PrivateCompany>
-        <div>
-          <NavBar />
-          <SideBar />
-          <MotionWrapper>
-            <DashboardHome />
-          </MotionWrapper>
-        </div>
-      </PrivateCompany>
-    )
+    children: [
+      {
+        path: '',
+        element: (
+          <PrivateCompany>
+            <DashboardHomeRouter />
+          </PrivateCompany>
+        ),
+      },
+      {
+        path: 'home',
+        element: (
+          <PrivateCompany>
+            <DashboardHomeRouter />
+          </PrivateCompany>
+        ),
+      },
+      {
+        path: 'orders',
+        element: (
+          <PrivateCompany>
+            <OrderPageRoute />
+          </PrivateCompany>
+        ),
+      },
+    ],
   },
   {
     path: '*',

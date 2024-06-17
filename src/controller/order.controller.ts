@@ -4,13 +4,26 @@ import { configDotenv } from 'dotenv';
 import Product from '../models/Product.js';
 import Order from '../models/Order.js';
 import { validRequiredFields } from '../utils/validBody.js';
+import { where } from 'sequelize';
+import { randomUUID } from 'crypto';
 
 configDotenv();
+
+const index: RequestHandler = async(req, res) => {
+  try {
+    const { id } = req.body;
+    const orders = await Order.findAll({where: { companyId: id }});
+    return response(res, {status: 200, data: orders});
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
 
 const store: RequestHandler = async (req, res) => {
   try {
     const { clientId } = req.body;
-    const itens: number[] = req.body.itens;
+    if(!Array.isArray(req.body.items)) throw new Error("Items it must be number Array");
+    const items: number[] = req.body.items;
     // TODO - Add Address
     const openOrder = (await Order.findAll({ where: { clientId } })).filter(
       order => order.status !== 'CANCELED' && order.status !== 'DELIVERED',
@@ -20,16 +33,16 @@ const store: RequestHandler = async (req, res) => {
         errors: [{ message: 'You already have an open order' }],
         status: 400,
       });
-    const missingFields = validRequiredFields(['clientId', 'itens'], req.body);
+    const missingFields = validRequiredFields(['clientId', 'items'], req.body);
     if (missingFields.length)
       return response(res, {
         errors: missingFields.map(field => ({
           message: `${field} is required`,
         })),
         status: 400,
-      });
-    const products = await Product.findAll({ where: { id: itens } });
-    if (products.length !== itens.length)
+    });
+    const products = await Product.findAll({ where: { id: items } });
+    if (items.length === 0 || (products.length !== items.length))
       return response(res, {
         errors: [{ message: 'Some product was not found' }],
         status: 400,
@@ -45,17 +58,15 @@ const store: RequestHandler = async (req, res) => {
         });
     });
     const total = products.reduce(
-      (acc, product) =>
-        acc +
-        Number(product.price) -
-        (Number(product.price) * Number(product.discountPercent)) / 100,
+      (acc, product) =>acc + (Number(product.price) - (Number(product.price) * Number(product.discountPercent)) / 100) * (product.quantity || 1),
       0,
     );
     console.log(products[0].companyId);
     const order = await Order.create({
+      id: randomUUID(),
       clientId,
       companyId: 1,
-      itens: products.map(product => {
+      items: products.map(product => {
         const {
           id,
           createdAt,
@@ -136,4 +147,4 @@ const changeStatus: RequestHandler = async (req, res) => {
   }
 };
 
-export { store, changeStatus };
+export { store, changeStatus, index};

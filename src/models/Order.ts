@@ -7,7 +7,7 @@ export default class Order extends Model {
   declare id: string;
   declare clientId: number;
   declare companyId: number;
-  declare itens: ProductProps[];
+  declare items: ProductProps[];
   declare status: string;
   declare total: number;
   declare observation: string;
@@ -30,9 +30,10 @@ Order.init({
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  itens: {
+  items: {
     type: DataTypes.JSONB,
     allowNull: false,
+    field: "itens"
   },
   status: {
     type: DataTypes.ENUM("PENDING", "PREPARING", "READY", "DELIVERED", "CANCELED"),

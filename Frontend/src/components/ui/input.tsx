@@ -6,10 +6,12 @@ import { IconProps } from '@radix-ui/react-icons/dist/types'
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   Icon?: React.ForwardRefExoticComponent<IconProps & React.RefAttributes<SVGSVGElement>>
+  iconClassName?: string
+  iconAction?: () => void
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, Icon, ...props }, ref) => {
+  ({ className, type, Icon,  iconClassName, iconAction, ...props}, ref) => {
     return (
       <span className={cn('flex items-center gap-1 w-full h-9 rounded-md pr-4 shadow-sm', className)}>
         <input
@@ -20,7 +22,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
-          {Icon && <Icon className='w-6 h-6'/>}
+          {Icon && <Icon className={cn('w-6 h-6', iconClassName, iconAction ? "cursor-pointer" : "")} onClick={iconAction} />}
       </span>
     )
   },

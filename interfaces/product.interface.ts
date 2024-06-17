@@ -9,6 +9,7 @@ type ProductProps = {
   discountPercent: number;
   active: boolean;
   extras: Extra;
+  quantity?: number;
 }
 
 export { ProductProps };

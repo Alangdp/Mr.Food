@@ -63,6 +63,7 @@ const store: RequestHandler = async (req, res) => {
       "name",
       "price",
       "extras",
+      "description"
     ];
     if(!companyId) {
       return response(res, {errors: [{message: "companyId and categoryId are required"}], status: 400});

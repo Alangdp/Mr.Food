@@ -13,6 +13,7 @@ export default class Product extends Model implements ProductProps {
   declare discountPercent: number;
   declare active: boolean;
   declare extras: Extra;
+  quantity?: number | undefined;
   declare createdAt: Date;
   declare updatedAt: Date;
 
