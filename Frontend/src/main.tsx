@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 
 import 'typeface-roboto'
@@ -14,6 +13,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <AuthProvider>
     <Toaster />
     <RouterProvider router={router} />
-  </AuthProvider>
-
+  </AuthProvider>,
 )

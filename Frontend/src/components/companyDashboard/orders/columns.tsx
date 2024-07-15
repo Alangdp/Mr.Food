@@ -89,7 +89,7 @@ export default function OrderColumns() {
                       : 'text-xs text-gray-500'
                   }
                 >
-                  {item.active ? 'Active' : 'Inactive'}
+                  {item.active ? 'Ativo' : 'Encerrado'}
                 </p>
               </div>
             ))}

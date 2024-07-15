@@ -5,9 +5,9 @@ import CompanyLogin from './components/company/login/login'
 import NavBar from './components/navigators/navbar'
 import PrivateCompany from './components/router/PrivateCompany'
 import MotionWrapper from './components/router/MotionWrapper'
-import SideBar from './components/navigators/sidebar'
 import { DashboardHomeRouter } from './components/companyDashboard/home'
 import { OrderPageRoute } from './components/companyDashboard/orders/orderPage'
+import { ProductsAdminPageRoute } from './components/products/products'
 
 const router = createBrowserRouter([
   {
@@ -67,6 +67,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateCompany>
             <OrderPageRoute />
+          </PrivateCompany>
+        ),
+      },
+      {
+        path: 'products',
+        element: (
+          <PrivateCompany>
+            <ProductsAdminPageRoute />
           </PrivateCompany>
         ),
       },

@@ -41,14 +41,12 @@ export default function OrderPage() {
 
 export function OrderPageRoute() {
   return (
-    <PrivateCompany>
-      <div>
-        <NavBar />
-        <SideBar />
-        <MotionWrapper>
-          <OrderPage />
-        </MotionWrapper>
-      </div>
-    </PrivateCompany>
+    <div>
+      <NavBar />
+      <SideBar />
+      <MotionWrapper>
+        <OrderPage />
+      </MotionWrapper>
+    </div>
   )
 }

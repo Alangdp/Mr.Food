@@ -13,17 +13,15 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from '@/components/ui/use-toast'
 import { loginCompanyPost } from '@/utils/Getter'
 import { useAuth } from '@/context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 
 export default function CompanyLogin() {
-  const { toast } = useToast();
-  const { updateCompanyToken, companyToken } = useAuth();
-  const navigate = useNavigate();
-
-  console.log(companyToken);
+  const { toast } = useToast()
+  const { updateCompanyToken, companyToken } = useAuth()
+  const navigate = useNavigate()
 
   const form = useForm<CompanyProps>({
     resolver: zodResolver(formSchemaLogin),
@@ -34,22 +32,22 @@ export default function CompanyLogin() {
   })
 
   const onsubmit = async (data: { email: string; password: string }) => {
-    const token = await loginCompanyPost(data);
+    const token = await loginCompanyPost(data)
 
-    if(Array.isArray(token)) {
-      token.forEach( error => {
+    if (Array.isArray(token)) {
+      token.forEach(error => {
         toast({
           title: error,
-          variant: "destructive",
+          variant: 'destructive',
         })
       })
-      return;
+      return
     }
 
-    updateCompanyToken(token);
+    updateCompanyToken(token)
     toast({
-      title: "Logado com sucesso",
-    });
+      title: 'Logado com sucesso',
+    })
     navigate('/company/dashboard')
   }
 
@@ -107,7 +105,7 @@ export default function CompanyLogin() {
                         className="shadow drop-shadow-lg text-secondary w-[350px]"
                         placeholder="*********"
                         {...field}
-                        type='password'
+                        type="password"
                       />
                     </FormControl>
                     <div className="flex items-center gap-2">
@@ -122,7 +120,7 @@ export default function CompanyLogin() {
                 )}
               />
 
-              <Button type='submit'>Entrar</Button>
+              <Button type="submit">Entrar</Button>
             </form>
           </Form>
         </div>

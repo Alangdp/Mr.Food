@@ -19,7 +19,14 @@ module.exports = {
       },
     },
     extend: {
+      
       textColor: {
+        secondary: '#3f3e3e',
+      },
+      backgroundColor: {
+        secondary: '#3f3e3e',
+      },
+      borderColor: {
         secondary: '#3f3e3e',
       },
       colors: {

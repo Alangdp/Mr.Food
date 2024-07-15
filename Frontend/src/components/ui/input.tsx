@@ -5,15 +5,36 @@ import { IconProps } from '@radix-ui/react-icons/dist/types'
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  Icon?: React.ForwardRefExoticComponent<IconProps & React.RefAttributes<SVGSVGElement>>
+  Icon?: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >
   iconClassName?: string
   iconAction?: () => void
+  reverse?: boolean
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, Icon,  iconClassName, iconAction, ...props}, ref) => {
+  (
+    { className, type, Icon, iconClassName, iconAction, reverse, ...props },
+    ref,
+  ) => {
     return (
-      <span className={cn('flex items-center gap-1 w-full h-9 rounded-md pr-4 shadow-sm', className)}>
+      <span
+        className={cn(
+          'flex items-center gap-1 w-full h-9 rounded-md pr-4 shadow-sm',
+          className,
+        )}
+      >
+        {reverse && Icon && (
+          <Icon
+            className={cn(
+              'w-6 h-6',
+              iconClassName,
+              iconAction ? 'cursor-pointer' : '',
+            )}
+            onClick={iconAction}
+          />
+        )}
         <input
           type={type}
           className={cn(
@@ -22,7 +43,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
-          {Icon && <Icon className={cn('w-6 h-6', iconClassName, iconAction ? "cursor-pointer" : "")} onClick={iconAction} />}
+        {!reverse && Icon && (
+          <Icon
+            className={cn(
+              'w-6 h-6',
+              iconClassName,
+              iconAction ? 'cursor-pointer' : '',
+            )}
+            onClick={iconAction}
+          />
+        )}
       </span>
     )
   },

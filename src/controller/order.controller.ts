@@ -4,16 +4,15 @@ import { configDotenv } from 'dotenv';
 import Product from '../models/Product.js';
 import Order from '../models/Order.js';
 import { validRequiredFields } from '../utils/validBody.js';
-import { where } from 'sequelize';
 import { randomUUID } from 'crypto';
 
 configDotenv();
 
-const index: RequestHandler = async(req, res) => {
+const index: RequestHandler = async (req, res) => {
   try {
     const { id } = req.body;
-    const orders = await Order.findAll({where: { companyId: id }});
-    return response(res, {status: 200, data: orders});
+    const orders = await Order.findAll({ where: { companyId: id } });
+    return response(res, { status: 200, data: orders });
   } catch (error) {
     return errorResponse(res, error);
   }
@@ -22,7 +21,8 @@ const index: RequestHandler = async(req, res) => {
 const store: RequestHandler = async (req, res) => {
   try {
     const { clientId } = req.body;
-    if(!Array.isArray(req.body.items)) throw new Error("Items it must be number Array");
+    if (!Array.isArray(req.body.items))
+      throw new Error('Items it must be number Array');
     const items: number[] = req.body.items;
     // TODO - Add Address
     const openOrder = (await Order.findAll({ where: { clientId } })).filter(
@@ -40,9 +40,9 @@ const store: RequestHandler = async (req, res) => {
           message: `${field} is required`,
         })),
         status: 400,
-    });
+      });
     const products = await Product.findAll({ where: { id: items } });
-    if (items.length === 0 || (products.length !== items.length))
+    if (items.length === 0 || products.length !== items.length)
       return response(res, {
         errors: [{ message: 'Some product was not found' }],
         status: 400,
@@ -58,7 +58,11 @@ const store: RequestHandler = async (req, res) => {
         });
     });
     const total = products.reduce(
-      (acc, product) =>acc + (Number(product.price) - (Number(product.price) * Number(product.discountPercent)) / 100) * (product.quantity || 1),
+      (acc, product) =>
+        acc +
+        (Number(product.price) -
+          (Number(product.price) * Number(product.discountPercent)) / 100) *
+          (product.quantity || 1),
       0,
     );
     console.log(products[0].companyId);
@@ -147,4 +151,4 @@ const changeStatus: RequestHandler = async (req, res) => {
   }
 };
 
-export { store, changeStatus, index};
+export { store, changeStatus, index };

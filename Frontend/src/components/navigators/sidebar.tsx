@@ -2,20 +2,24 @@ import { cn } from '@/lib/utils'
 import { HamburgerMenuIcon, IconJarLogoIcon } from '@radix-ui/react-icons'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import CompanyLogin from '../company/login/login'
 import { useAuth } from '@/context/AuthContext'
+import { useToast } from '../ui/use-toast'
 
 export default function SideBar() {
+  const navigate = useNavigate()
   const { logoutCompany } = useAuth()
-  const location = useLocation();
-  const lastPath = location.pathname.split('/')[location.pathname.split('/').length - 1]
+  const { toast } = useToast()
+  const location = useLocation()
+  const lastPath =
+    location.pathname.split('/')[location.pathname.split('/').length - 1]
   const [isOpen, setIsOpen] = useState(false)
 
   return (
     <motion.div
       className={cn(
-        'fixed top-0 z-50 flex flex-col left-0 w-64 bg-white h-screen border-r shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]',
+        'fixed top-0 z-10 flex flex-col left-0 w-64 bg-white h-screen border-r shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]',
         isOpen ? '' : 'w-16',
       )}
       initial={{ x: '100%' }}
@@ -58,7 +62,12 @@ export default function SideBar() {
           <li>
             <a
               href="/company/dashboard"
-              className={cn("relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6", lastPath === "dashboard" || lastPath === "home" ? "bg-gray-50 text-gray-800 border-l-4 border-red-500 pointer-events-none" : "")}
+              className={cn(
+                'relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6',
+                lastPath === 'dashboard' || lastPath === 'home'
+                  ? 'bg-gray-50 text-gray-800 border-l-4 border-red-500 pointer-events-none'
+                  : '',
+              )}
             >
               <span className="inline-flex justify-center items-center ml-4">
                 <svg
@@ -84,7 +93,12 @@ export default function SideBar() {
           <li>
             <a
               href="/company/dashboard/orders"
-              className={cn("relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6", lastPath === "orders" ? "bg-gray-50 text-gray-800 border-l-4 border-red-500 pointer-events-none" : "")}
+              className={cn(
+                'relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6',
+                lastPath === 'orders'
+                  ? 'bg-gray-50 text-gray-800 border-l-4 border-red-500 pointer-events-none'
+                  : '',
+              )}
             >
               <span className="inline-flex justify-center items-center ml-4">
                 <svg
@@ -110,7 +124,7 @@ export default function SideBar() {
           </li>
           <li>
             <a
-              href="#"
+              href="/company/dashboard/products"
               className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6"
             >
               <span className="inline-flex justify-center items-center ml-4">
@@ -296,7 +310,13 @@ export default function SideBar() {
           </li>
           <li>
             <a
-              onClick={logoutCompany}
+              onClick={() => {
+                navigate('/')
+                toast({
+                  title: 'Deslogado com sucesso',
+                })
+                logoutCompany()
+              }}
               href="#"
               className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6"
             >
