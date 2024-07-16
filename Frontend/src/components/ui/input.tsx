@@ -1,21 +1,31 @@
-import * as React from 'react'
+import * as React from 'react';
 
-import { cn } from '@/lib/utils'
-import { IconProps } from '@radix-ui/react-icons/dist/types'
+import { cn } from '@/lib/utils';
+import { IconProps } from '@radix-ui/react-icons/dist/types';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   Icon?: React.ForwardRefExoticComponent<
     IconProps & React.RefAttributes<SVGSVGElement>
-  >
-  iconClassName?: string
-  iconAction?: () => void
-  reverse?: boolean
+  >;
+  iconClassName?: string;
+  iconAction?: () => void;
+  inputClassName?: string;
+  reverse?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { className, type, Icon, iconClassName, iconAction, reverse, ...props },
+    {
+      className,
+      type,
+      Icon,
+      iconClassName,
+      iconAction,
+      reverse,
+      inputClassName,
+      ...props
+    },
     ref,
   ) => {
     return (
@@ -39,6 +49,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           type={type}
           className={cn(
             'flex w-full bg-transparent outline-none px-3 py-1 border-0 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50',
+            inputClassName,
           )}
           ref={ref}
           {...props}
@@ -54,9 +65,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           />
         )}
       </span>
-    )
+    );
   },
-)
-Input.displayName = 'Input'
+);
+Input.displayName = 'Input';
 
-export { Input }
+export { Input };

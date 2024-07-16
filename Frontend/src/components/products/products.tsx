@@ -6,22 +6,29 @@ import {
   HamburgerMenuIcon,
   MagnifyingGlassIcon,
   PlusIcon,
-} from '@radix-ui/react-icons'
-import NavBar from '../navigators/navbar'
-import SideBar from '../navigators/sidebar'
-import MotionWrapper from '../router/MotionWrapper'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
-import { Switch } from '../ui/switch'
-import { Modal } from '../utils/BgBlackOpacity80'
-import ItemAdminModal from './itemModal'
-import { ReactNode } from 'react'
+} from '@radix-ui/react-icons';
+import NavBar from '../navigators/navbar';
+import SideBar from '../navigators/sidebar';
+import MotionWrapper from '../router/MotionWrapper';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Switch } from '../ui/switch';
+import { Modal } from '../utils/BgBlackOpacity80';
+import ItemAdminModal from './itemModal';
+import { ReactNode, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductsAdminProps {
-  AddItemModalToggle: () => ReactNode
+  AddItemModalToggle: () => ReactNode;
 }
 
 function ProductsAdmin({ AddItemModalToggle }: ProductsAdminProps) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // navigate('/company/dashboard/products');
+  }, []);
+
   return (
     <div className="w-4/5 h-[94vh] border-x drop-shadow mx-auto divide-y">
       <div className="p-4 flex flex-col gap-4">
@@ -152,12 +159,12 @@ function ProductsAdmin({ AddItemModalToggle }: ProductsAdminProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export function ProductsAdminPageRoute() {
   // Repeat this for each modal you want to use i n the page
-  const { ModalLink: ModalLinkAdd, ModalTogle: ModalTogleAdd } = Modal()
+  const { ModalLink: ModalLinkAdd, ModalTogle: ModalTogleAdd } = Modal();
 
   // Button to toggle the modal Add Item
   const itemModalToggleAdd = () => {
@@ -170,19 +177,21 @@ export function ProductsAdminPageRoute() {
           <PlusIcon className="font-bold w-6 h-auto" /> Adicionar Item
         </Button>
       </ModalTogleAdd>
-    )
-  }
+    );
+  };
 
   return (
     <div className="z-50 relative overflow-hidden">
       <MotionWrapper classname="bg-white z-50 relative">
         <>
-          <ModalLinkAdd modalElement={<ItemAdminModal />} />
+          <ModalLinkAdd
+            modalElement={<ItemAdminModal toggleModal={itemModalToggleAdd} />}
+          />
           <NavBar />
           <SideBar />
           <ProductsAdmin AddItemModalToggle={itemModalToggleAdd} />
         </>
       </MotionWrapper>
     </div>
-  )
+  );
 }

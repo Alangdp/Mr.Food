@@ -1,3 +1,3 @@
 export interface BasicModalProps {
-  toggleModal?: () => void
+  toggleModal: () => void;
 }
