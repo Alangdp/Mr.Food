@@ -1,23 +1,23 @@
-import { cn } from '@/lib/utils'
-import { Button } from '../ui/button'
-import { useState, ReactNode, ReactElement } from 'react'
-import React from 'react'
+import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
+import { useState, ReactNode, ReactElement } from 'react';
+import React from 'react';
 
 interface BgBlackOpacity80Props {
-  modalElement?: ReactElement
-  className?: string
-  onCloseModal?: () => void
+  modalElement?: ReactElement;
+  className?: string;
+  onCloseModal?: () => void;
 }
 
 function Modal() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleModal = () => {
-    setIsModalOpen(!isModalOpen)
-  }
+    setIsModalOpen(!isModalOpen);
+  };
 
   function ModalTogle({ children }: { children: ReactNode }) {
-    return <span onClick={toggleModal}>{children}</span>
+    return <span onClick={toggleModal}>{children}</span>;
   }
 
   function ModalLink({ modalElement, className }: BgBlackOpacity80Props) {
@@ -34,10 +34,10 @@ function Modal() {
           </div>
         )}
       </span>
-    )
+    );
   }
 
-  return { ModalLink, ModalTogle }
+  return { ModalLink, ModalTogle, isModalOpen };
 }
 
-export { Modal }
+export { Modal };

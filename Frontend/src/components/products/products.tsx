@@ -16,7 +16,7 @@ import { Switch } from '../ui/switch';
 import { Modal } from '../utils/BgBlackOpacity80';
 import ItemAdminModal from './itemModal';
 import { ReactNode, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 interface ProductsAdminProps {
   AddItemModalToggle: () => ReactNode;
@@ -163,8 +163,17 @@ function ProductsAdmin({ AddItemModalToggle }: ProductsAdminProps) {
 }
 
 export function ProductsAdminPageRoute() {
+  const navigate = useNavigate();
   // Repeat this for each modal you want to use i n the page
-  const { ModalLink: ModalLinkAdd, ModalTogle: ModalTogleAdd } = Modal();
+  const {
+    ModalLink: ModalLinkAdd,
+    ModalTogle: ModalTogleAdd,
+    isModalOpen: modalState,
+  } = Modal();
+
+  useEffect(() => {
+    if (!modalState) navigate('/company/dashboard/products');
+  }, [modalState]);
 
   // Button to toggle the modal Add Item
   const itemModalToggleAdd = () => {

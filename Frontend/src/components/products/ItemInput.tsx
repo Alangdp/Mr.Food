@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Input } from '../ui/input';
 
 interface DetailInputProps {
-  title: string;
+  title?: string;
   isRequired?: boolean;
   isDisabled?: boolean;
   placeholder?: string;

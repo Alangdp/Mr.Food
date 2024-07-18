@@ -11,21 +11,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { useState, ChangeEvent } from 'react';
-import { Textarea } from '@/components/ui/textarea';
 import { Product } from '@/types/Product.type';
-
-const MAX_FILE_SIZE = 5 * 1000000;
-const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
-];
 
 const formSchema = z.object({
   price: z.number().int().positive('O preço deve ser positivo.'),
-  discount: z.number().positive('O desconto deve ser positivo.').optional(),
+  discount: z
+    .number()
+    .int()
+    .min(0, 'O desconto deve ser positivo.')
+    .max(100, 'O desconto deve ser menor que 100.'),
 });
 
 type ProductSchema = z.infer<typeof formSchema>;
@@ -33,9 +27,14 @@ type ProductSchema = z.infer<typeof formSchema>;
 interface ItemDetailsProps {
   product: Product;
   productChange: (props: Partial<Product>) => void;
+  step: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function Price({ product, productChange }: ItemDetailsProps) {
+export default function Price({
+  product,
+  productChange,
+  step,
+}: ItemDetailsProps) {
   const form = useForm<ProductSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,6 +45,7 @@ export default function Price({ product, productChange }: ItemDetailsProps) {
 
   const onSubmit = (data: ProductSchema) => {
     productChange(data);
+    step(2);
   };
 
   return (
@@ -70,23 +70,6 @@ export default function Price({ product, productChange }: ItemDetailsProps) {
                         title="Preço"
                         isRequired
                         placeholder="0.00 R$"
-                        inputProps={field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="discount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <DetailInput
-                        title="Desconto"
-                        placeholder="Descrição"
-                        type="number"
                         inputProps={{
                           ...field,
                           onChange: e => {
@@ -94,12 +77,11 @@ export default function Price({ product, productChange }: ItemDetailsProps) {
                               /[^0-9,.]/g,
                               '',
                             );
-                            form.setValue(
-                              'discount',
-                              Number(
-                                value.replace(',', '.').replace(/^0+/, ''),
-                              ),
+
+                            const numberValue = Number(
+                              value.replace(',', '.').replace(/^0+/, ''),
                             );
+                            form.setValue('price', numberValue);
                           },
                         }}
                       />
@@ -108,6 +90,53 @@ export default function Price({ product, productChange }: ItemDetailsProps) {
                   </FormItem>
                 )}
               />
+              <div className="items-center w-full">
+                <FormField
+                  control={form.control}
+                  name="discount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <DetailInput
+                          title="Desconto"
+                          placeholder="Descrição"
+                          type="text"
+                          inputProps={{
+                            ...field,
+                            onChange: e => {
+                              const value = e.target.value.replace(
+                                /[^0-9,.]/g,
+                                '',
+                              );
+
+                              const numberValue = Number(
+                                value.replace(',', '.').replace(/^0+/, ''),
+                              );
+                              form.setValue(
+                                'discount',
+                                numberValue > 100 ? 100 : numberValue,
+                              );
+                            },
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DetailInput
+                  title="Novo Preço"
+                  placeholder="0.00 R$"
+                  type="number"
+                  isDisabled
+                  inputProps={{
+                    value:
+                      form.getValues('price') -
+                      (form.getValues('price') * form.getValues('discount')) /
+                        100,
+                  }}
+                />
+              </div>
             </div>
           </div>
           <div className="flex w-full justify-end">

@@ -43,11 +43,13 @@ type ProductSchema = z.infer<typeof formSchema>;
 interface ItemDetailsProps {
   product: Product;
   productChange: (props: Partial<Product>) => void;
+  step: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function ItemDetails({
   product,
   productChange,
+  step,
 }: ItemDetailsProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const form = useForm<ProductSchema>({
@@ -74,6 +76,7 @@ export default function ItemDetails({
 
   const onSubmit = (data: ProductSchema) => {
     productChange(data);
+    step(1);
   };
 
   return (

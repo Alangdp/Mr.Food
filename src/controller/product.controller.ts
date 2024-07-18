@@ -6,29 +6,44 @@ import Product from '../models/Product.js';
 
 function isValidExtrasStructure(extras: any) {
   try {
-    if (typeof extras !== 'object' || extras === null) {
+    // Verifica se extras é um objeto e contém a propriedade options
+    if (
+      typeof extras !== 'object' ||
+      extras === null ||
+      !Array.isArray(extras.options)
+    ) {
       return false;
     }
-    for (const extraName in extras) {
-      const extra = extras[extraName];
-      if (!Array.isArray(extra.options)) {
+
+    // Itera sobre cada item em options
+    for (const extraItem of extras.options) {
+      if (typeof extraItem !== 'object' || extraItem === null) {
         return false;
       }
-      if (typeof extra.maxQuantity !== 'number' || isNaN(extra.maxQuantity)) {
+
+      // Valida as propriedades de cada item
+      if (
+        typeof extraItem.name !== 'string' ||
+        extraItem.name.trim() === '' ||
+        typeof extraItem.price !== 'number' ||
+        isNaN(extraItem.price) ||
+        extraItem.price < 0 ||
+        typeof extraItem.maxQuantity !== 'number' ||
+        isNaN(extraItem.maxQuantity) ||
+        extraItem.maxQuantity < 1 ||
+        typeof extraItem.minQuantity !== 'number' ||
+        isNaN(extraItem.minQuantity) ||
+        extraItem.minQuantity < 0 ||
+        typeof extraItem.categoryId !== 'string' ||
+        extraItem.categoryId.trim() === ''
+      ) {
         return false;
-      }
-      for (const option of extra.options) {
-        if (
-          typeof option.name !== 'string' ||
-          typeof option.price !== 'number' ||
-          isNaN(option.price)
-        ) {
-          return false;
-        }
       }
     }
+
     return true;
   } catch (error) {
+    console.error('Erro durante a validação:', error);
     return false;
   }
 }
