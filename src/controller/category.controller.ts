@@ -4,12 +4,13 @@ import Category from '../models/Category.js';
 
 const store: RequestHandler = async (req, res) => {
   try {
-    const { name, id: companyId } = req.body;
+    const { name, id: companyId, type } = req.body;
     if (!name)
       return response(res, {
         errors: [{ message: 'Name is required' }],
         status: 400,
       });
+    if (!type) req.body.type = 'food';
     let category = await Category.findByNameAndCompanyId(name, companyId);
     if (category)
       return response(res, {

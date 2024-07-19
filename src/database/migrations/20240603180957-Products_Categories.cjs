@@ -29,6 +29,11 @@ module.exports = {
         allowNull: false,
         defaultValue: true,
       },
+      type: {
+        type: Sequelize.ENUM("PRODUCT", "CATEGORY"),
+        allowNull: false,
+        defaultValue: "PRODUCT"
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false

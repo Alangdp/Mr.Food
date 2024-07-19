@@ -70,4 +70,44 @@ const ProductCompleteValidation = z.object({
   extras: extraSchema.default({ options: [] }),
 });
 
-export { ProductCompleteValidation };
+const keyToPortugueseMapping: Record<string, string> = {
+  category: 'Categoria',
+  name: 'Nome',
+  describe: 'Descrição',
+  image: 'Imagem',
+  price: 'Preço',
+  discount: 'Desconto',
+  extras: 'Extras',
+};
+
+function getPortugueseName(key: string): string {
+  return keyToPortugueseMapping[key] || key;
+}
+
+export { ProductCompleteValidation, getPortugueseName };
+
+export interface ProductResponse {
+  createdAt: string;
+  updatedAt: string;
+  active: boolean;
+  id: number;
+  companyId: number;
+  categoryId: number;
+  name: string;
+  price: string;
+  extras: Extras;
+  description: string;
+  discountPercent: number;
+}
+
+export interface Extras {
+  options: Option[];
+}
+
+export interface Option {
+  name: string;
+  price: number;
+  categoryId: string;
+  maxQuantity: number;
+  minQuantity: number;
+}

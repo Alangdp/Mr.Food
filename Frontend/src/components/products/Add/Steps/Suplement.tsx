@@ -67,7 +67,7 @@ interface ItemDetailsProps {
   product: Product;
   productChange: (props: Partial<Product>) => void;
   step: React.Dispatch<React.SetStateAction<number>>;
-  saveProduct: () => void;
+  saveProduct: () => Promise<boolean>;
 }
 
 export default function Suplements({
@@ -142,16 +142,6 @@ export default function Suplements({
         options: allExtras,
       },
     });
-    form.reset();
-    append({
-      name: '',
-      price: 0,
-      maxQuantity: 1,
-      minQuantity: 0,
-      categoryId: '',
-    });
-
-    console.log(product);
   };
 
   const categoryOnSubmit = async (data: CategorySchema) => {
@@ -548,8 +538,18 @@ export default function Suplements({
           type="submit"
           className="mt-4 bg-red-600 hover:bg-red-500"
           onClick={async () => {
-            await saveProduct();
-            step(1);
+            const valid = await saveProduct();
+            if (valid) {
+              step(0);
+              form.reset();
+              append({
+                name: '',
+                price: 0,
+                maxQuantity: 1,
+                minQuantity: 0,
+                categoryId: '',
+              });
+            }
           }}
         >
           Registrar Item

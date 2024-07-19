@@ -21,7 +21,6 @@ function isValidExtrasStructure(extras: any) {
         return false;
       }
 
-      // Valida as propriedades de cada item
       if (
         typeof extraItem.name !== 'string' ||
         extraItem.name.trim() === '' ||
@@ -121,6 +120,7 @@ const store: RequestHandler = async (req, res) => {
     const product = await Product.create({
       companyId: companyId,
       categoryId,
+      discountPercent: req.body.discount || 0,
       ...req.body,
     });
 

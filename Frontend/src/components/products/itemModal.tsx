@@ -1,22 +1,11 @@
-import { motion } from 'framer-motion';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-
-import { GiCookingPot } from 'react-icons/gi';
-import { CiBeerMugFull } from 'react-icons/ci';
-import { IoAlertCircleOutline } from 'react-icons/io5';
+import { useSearchParams } from 'react-router-dom';
 import { BasicModalProps } from '@/types/BasicModal.type';
-import { Cross1Icon } from '@radix-ui/react-icons';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ModalBody from './ModalBody';
 import GeneralModalAdd from './GeneralModalAdd';
-import { get } from 'http';
-import { title } from 'process';
 import AddItemModal from './Add/AddItemModal';
 
 export default function ItemAdminModal({ toggleModal }: BasicModalProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const type = searchParams.get('type');
 
@@ -27,7 +16,7 @@ export default function ItemAdminModal({ toggleModal }: BasicModalProps) {
           <GeneralModalAdd />
         )}
 
-        {type === 'prepared' && <AddItemModal />}
+        {type === 'prepared' && <AddItemModal toggleModal={toggleModal} />}
       </ModalBody>
     </>
   );

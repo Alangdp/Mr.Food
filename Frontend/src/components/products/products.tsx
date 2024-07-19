@@ -15,18 +15,42 @@ import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
 import { Modal } from '../utils/BgBlackOpacity80';
 import ItemAdminModal from './itemModal';
-import { ReactNode, useEffect } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { ReactNode, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ProductResponse } from '@/types/Product.type';
+import { useAuth } from '@/context/AuthContext';
+import { makeGet } from '@/utils/Getter';
+import { useToast } from '../ui/use-toast';
+import CategoryAdminModal from './Category/CategoryAdminModal';
 
 interface ProductsAdminProps {
   AddItemModalToggle: () => ReactNode;
+  CategoryModalToggleAdd: () => ReactNode;
 }
 
-function ProductsAdmin({ AddItemModalToggle }: ProductsAdminProps) {
+function ProductsAdmin({
+  AddItemModalToggle,
+  CategoryModalToggleAdd,
+}: ProductsAdminProps) {
+  const { companyToken } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
+  const [products, setProducts] = useState<ProductResponse[]>([]);
+
+  const fetchProducts = async () => {
+    const products = await makeGet<ProductResponse[]>('products', {
+      authToken: companyToken,
+      toast,
+      autoToast: true,
+    });
+
+    if (products) setProducts(products);
+  };
 
   useEffect(() => {
-    // navigate('/company/dashboard/products');
+    console.log(products);
+    if (products.length === 0) fetchProducts();
+    navigate('/company/dashboard/products');
   }, []);
 
   return (
@@ -38,28 +62,11 @@ function ProductsAdmin({ AddItemModalToggle }: ProductsAdminProps) {
           clientes de diferentes formas e disponibilizar um cardápio para cada
           situação.
         </p>
-        {/* <div className="h-12 rounded shadow-df w-full flex items-center justify-between">
-          <div className="left">
-            <Input
-              className="shadow-df w-60 m-2"
-              Icon={MagnifyingGlassIcon}
-              iconAction={() => console.log('TEste')}
-            />
-          </div>
-          <div className="right p-4 gap-2">
-            <div className="flex items-center gap-2">
-              <p>Criar Categoria</p>
-              <Button className="w-8 h-8">+</Button>
-            </div>
-          </div>
-        </div> */}
       </div>
 
-      <div className="flex flex-col gap-4 p-4">
+      <div className="flex flex-col gap-4 p-4 overflow-y-scroll h-[80vh]">
         <div className="flex items-center gap-4">
-          <Button size={'lg'} className="gap-2 bg-red-600 hover:bg-red-500">
-            <PlusIcon className="font-bold w-6 h-auto" /> Adicionar Categoria
-          </Button>
+          <CategoryModalToggleAdd />
           <AddItemModalToggle />
         </div>
 
@@ -84,76 +91,85 @@ function ProductsAdmin({ AddItemModalToggle }: ProductsAdminProps) {
         <div className="w-full">
           <div className="category">
             <div className="flex flex-col p-4 shadow-df">
-              <div className="flex items-center justify-between p-2 shadow-df rounded-t">
-                <h3 className="text-lg font-medium">Marmitex do Dia</h3>
-                <Switch
-                  className="data-[state=checked]:bg-red-500 mr-4"
-                  onCheckedChange={status => console.log(status)}
-                />
+              <div className="">
+                <div className="flex items-center justify-between p-2 shadow-df rounded-t">
+                  <h3 className="text-lg font-medium">Sem Categoria</h3>
+                  <Switch
+                    className="data-[state=checked]:bg-red-500 mr-4"
+                    onCheckedChange={status => console.log(status)}
+                  />
+                </div>
+                <table className="w-full border rounded-t-none rounded-lg shadow-lg">
+                  <thead className="bg-gray-200">
+                    <tr>
+                      <th className="text-black p-4">Item</th>
+                      <th className="text-black p-4">Preço</th>
+                      <th className="text-black p-4">Status de Venda</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products
+                      .filter(product => !product.categoryId)
+                      .map(product => (
+                        <tr className="border-b hover:bg-gray-100 transition duration-200">
+                          <td className="p-4">
+                            <div className="flex items-center gap-4">
+                              <HamburgerMenuIcon className="w-6 h-auto" />
+                              <div className="w-16 h-16 border-dashed border rounded border-secondary flex items-center justify-center text-secondary opacity-80 cursor-pointer">
+                                <CameraIcon className="w-6 h-auto" />
+                              </div>
+                              <div className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-semibold">
+                                    {product.name}
+                                  </h4>
+                                  <div className="flex items-center gap-2 p-1 bg-gray-300 rounded-lg hover:bg-gray-400 duration-300 cursor-pointer">
+                                    <BellIcon className="w-4 h-4" />
+                                  </div>
+                                  <div className="flex items-center gap-2 p-1 bg-gray-300 rounded-lg hover:bg-gray-400 duration-300 cursor-pointer">
+                                    <GearIcon className="w-4 h-4" />
+                                  </div>
+                                </div>
+                                <p className="text-secondary">
+                                  {product.description}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center gap">
+                              <div className="text-secondary line-through w-14">
+                                R${' '}
+                                {Number(product.price) -
+                                  (product.discountPercent / 100) *
+                                    Number(product.price)}
+                              </div>
+                              <Input
+                                type="text"
+                                className="w-24 border-gray-200 border p-1"
+                                placeholder={`R$ ${product.price}`}
+                                disabled
+                              />
+                            </div>
+                          </td>
+                          <td className="p-4 flex justify-center items-center">
+                            <Switch
+                              checked={product.active}
+                              className="data-[state=checked]:bg-red-500"
+                              onCheckedChange={status => console.log(status)}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+                <Button
+                  size={'lg'}
+                  className="gap-2 text-red-600 bg-white hover:bg-gray-100 w-full"
+                >
+                  <PlusIcon className="font-bold w-6 h-auto" /> Adicionar Item
+                </Button>
               </div>
-
-              <table className="w-full border rounded-t-none rounded-lg shadow-lg">
-                <thead className="bg-gray-200">
-                  <tr>
-                    <th className="text-black p-4">Item</th>
-                    <th className="text-black p-4">Preço</th>
-                    <th className="text-black p-4">Status de Venda</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b hover:bg-gray-100 transition duration-200">
-                    <td className="p-4">
-                      <div className="flex items-center gap-4">
-                        <HamburgerMenuIcon className="w-6 h-auto" />
-                        <div className="w-16 h-16 border-dashed border rounded border-secondary flex items-center justify-center text-secondary opacity-80 cursor-pointer">
-                          <CameraIcon className="w-6 h-auto" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-semibold">Marmitex do Dia</h4>
-                            <div className="flex items-center gap-2 p-1 bg-gray-300 rounded-lg hover:bg-gray-400 duration-300 cursor-pointer">
-                              <BellIcon className="w-4 h-4" />
-                            </div>
-                            <div className="flex items-center gap-2 p-1 bg-gray-300 rounded-lg hover:bg-gray-400 duration-300 cursor-pointer">
-                              <GearIcon className="w-4 h-4" />
-                            </div>
-                          </div>
-                          <p className="text-secondary">
-                            Personalize seu marmitex, de acordo com a sua
-                            preferencia.
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-4">
-                        <div className="text-secondary line-through">
-                          R$ 20,00
-                        </div>
-                        <Input
-                          type="text"
-                          className="w-24 border-gray-200 border p-1"
-                          placeholder="R$ 15,90"
-                        />
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <Switch
-                        checked={true}
-                        className="data-[state=checked]:bg-red-500"
-                        onCheckedChange={status => console.log(status)}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <Button
-                size={'lg'}
-                className="gap-2 text-red-600 bg-white hover:bg-gray-100"
-              >
-                <PlusIcon className="font-bold w-6 h-auto" /> Adicionar Item
-              </Button>
             </div>
           </div>
         </div>
@@ -168,12 +184,18 @@ export function ProductsAdminPageRoute() {
   const {
     ModalLink: ModalLinkAdd,
     ModalTogle: ModalTogleAdd,
-    isModalOpen: modalState,
+    isModalOpen: ModalState,
+  } = Modal();
+
+  const {
+    ModalLink: ModalLinkAddCategory,
+    ModalTogle: ModalTogleAddCategory,
+    isModalOpen: ModalStateCategory,
   } = Modal();
 
   useEffect(() => {
-    if (!modalState) navigate('/company/dashboard/products');
-  }, [modalState]);
+    if (!ModalState) navigate('/company/dashboard/products');
+  }, [ModalState]);
 
   // Button to toggle the modal Add Item
   const itemModalToggleAdd = () => {
@@ -189,6 +211,16 @@ export function ProductsAdminPageRoute() {
     );
   };
 
+  const CategoryModalToggleAdd = () => {
+    return (
+      <ModalTogleAddCategory>
+        <Button size={'lg'} className="gap-2 bg-red-600 hover:bg-red-500">
+          <PlusIcon className="font-bold w-6 h-auto" /> Adicionar Categoria
+        </Button>
+      </ModalTogleAddCategory>
+    );
+  };
+
   return (
     <div className="z-50 relative overflow-hidden">
       <MotionWrapper classname="bg-white z-50 relative">
@@ -196,9 +228,17 @@ export function ProductsAdminPageRoute() {
           <ModalLinkAdd
             modalElement={<ItemAdminModal toggleModal={itemModalToggleAdd} />}
           />
+          <ModalLinkAddCategory
+            modalElement={
+              <CategoryAdminModal toggleModal={CategoryModalToggleAdd} />
+            }
+          />
           <NavBar />
           <SideBar />
-          <ProductsAdmin AddItemModalToggle={itemModalToggleAdd} />
+          <ProductsAdmin
+            AddItemModalToggle={itemModalToggleAdd}
+            CategoryModalToggleAdd={CategoryModalToggleAdd}
+          />
         </>
       </MotionWrapper>
     </div>

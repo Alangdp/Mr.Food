@@ -1,7 +1,11 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ItemDetails from './Steps/Details';
 import { useEffect, useState } from 'react';
-import { Product, ProductCompleteValidation } from '@/types/Product.type';
+import {
+  getPortugueseName,
+  Product,
+  ProductCompleteValidation,
+} from '@/types/Product.type';
 import Price from './Steps/Price';
 import Suplements from './Steps/Suplement';
 import { makePost } from '@/utils/Getter';
@@ -18,7 +22,11 @@ interface Status {
   };
 }
 
-export default function AddItemModal() {
+interface AddItemModalProps {
+  toggleModal: () => void;
+}
+
+export default function AddItemModal({ toggleModal }: AddItemModalProps) {
   const { toast } = useToast();
   const { companyToken } = useAuth();
   const [step, setStep] = useState(0);
@@ -27,8 +35,6 @@ export default function AddItemModal() {
       step1: false,
       step2: false,
       step3: false,
-      // step4: false,
-      // step5: false,
     },
     name: '',
     category: '',
@@ -44,7 +50,20 @@ export default function AddItemModal() {
 
   const saveProduct = async () => {
     const parsed = ProductCompleteValidation.safeParse(product);
-    if (parsed.success) {
+
+    if (parsed.error && parsed.error.errors) {
+      parsed.error.errors.forEach(error => {
+        toast({
+          title: getPortugueseName(error.path.join(' ')),
+          description: error.message,
+          variant: 'destructive',
+        });
+      });
+
+      return false;
+    }
+
+    if (parsed.success && !parsed.error) {
       const newProduct = await makePost<
         Product & { description: string },
         Product
@@ -61,14 +80,14 @@ export default function AddItemModal() {
         },
       );
 
+      console.log(newProduct);
+
       if (newProduct) {
         setProduct({
           status: {
             step1: false,
             step2: false,
             step3: false,
-            // step4: false,
-            // step5: false,
           },
           name: '',
           category: '',
@@ -82,15 +101,14 @@ export default function AddItemModal() {
         toast({
           title: 'Produto salvo com sucesso',
         });
+
+        return true;
       }
 
-      return;
+      return false;
     }
 
-    toast({
-      title: 'Erro ao salvar produto',
-      variant: 'destructive',
-    });
+    return false;
   };
 
   return (
@@ -113,8 +131,6 @@ export default function AddItemModal() {
         <TabsTrigger onClick={() => setStep(2)} value="2">
           Complementos
         </TabsTrigger>
-        {/* <TabsTrigger value="3">Classificação</TabsTrigger>
-        <TabsTrigger value="4">Disponibilidade</TabsTrigger> */}
       </TabsList>
 
       <div className="mt-10">

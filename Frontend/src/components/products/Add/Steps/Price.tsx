@@ -14,10 +14,9 @@ import { Button } from '@/components/ui/button';
 import { Product } from '@/types/Product.type';
 
 const formSchema = z.object({
-  price: z.number().int().positive('O preço deve ser positivo.'),
+  price: z.number().positive('O preço deve ser positivo.'),
   discount: z
     .number()
-    .int()
     .min(0, 'O desconto deve ser positivo.')
     .max(100, 'O desconto deve ser menor que 100.'),
 });
@@ -70,18 +69,12 @@ export default function Price({
                         title="Preço"
                         isRequired
                         placeholder="0.00 R$"
+                        type="number"
                         inputProps={{
                           ...field,
                           onChange: e => {
-                            const value = e.target.value.replace(
-                              /[^0-9,.]/g,
-                              '',
-                            );
-
-                            const numberValue = Number(
-                              value.replace(',', '.').replace(/^0+/, ''),
-                            );
-                            form.setValue('price', numberValue);
+                            form.setValue('price', Number(e.target.value));
+                            form.trigger('price');
                           },
                         }}
                       />
@@ -100,22 +93,14 @@ export default function Price({
                         <DetailInput
                           title="Desconto"
                           placeholder="Descrição"
-                          type="text"
+                          type="number"
                           inputProps={{
                             ...field,
+                            step: '0.01',
+                            value: Number(form.getValues('discount')),
                             onChange: e => {
-                              const value = e.target.value.replace(
-                                /[^0-9,.]/g,
-                                '',
-                              );
-
-                              const numberValue = Number(
-                                value.replace(',', '.').replace(/^0+/, ''),
-                              );
-                              form.setValue(
-                                'discount',
-                                numberValue > 100 ? 100 : numberValue,
-                              );
+                              form.setValue('discount', Number(e.target.value));
+                              form.trigger('discount');
                             },
                           }}
                         />

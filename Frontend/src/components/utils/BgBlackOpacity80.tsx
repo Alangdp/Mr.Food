@@ -37,7 +37,7 @@ function Modal() {
     );
   }
 
-  return { ModalLink, ModalTogle, isModalOpen };
+  return { ModalLink, ModalTogle, isModalOpen, toggleModal };
 }
 
 export { Modal };
