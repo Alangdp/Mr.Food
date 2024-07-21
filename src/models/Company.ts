@@ -1,6 +1,6 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model } from 'sequelize';
 import database from '../database/index.js';
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
 
 export default class Company extends Model {
   static async findByPhone(phone: string) {
@@ -18,15 +18,15 @@ Company.init(
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-      allowNull: false
+      allowNull: false,
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true,
-        len: [1, 255]
-      }
+        len: [1, 255],
+      },
     },
     cnpj: {
       type: DataTypes.STRING,
@@ -34,8 +34,8 @@ Company.init(
       unique: true,
       validate: {
         is: /^[0-9]{14}$/,
-        len: [14, 14]
-      }
+        len: [14, 14],
+      },
     },
     email: {
       unique: true,
@@ -43,31 +43,31 @@ Company.init(
       allowNull: false,
       validate: {
         isEmail: true,
-        len: [5, 255]
-      }
+        len: [5, 255],
+      },
     },
     phone: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         is: /^\+?[0-9\-()\s]+$/,
-        len: [10, 20]
-      }
+        len: [10, 20],
+      },
     },
     orderMinimum: {
       type: DataTypes.DECIMAL,
       allowNull: false,
       validate: {
         isDecimal: true,
-        min: 0
-      }
+        min: 0,
+      },
     },
     paymentMethods: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
       defaultValue: [],
       validate: {
-        isArrayOfStrings(value: string[]  | undefined) {
+        isArrayOfStrings(value: string[] | undefined) {
           if (!Array.isArray(value)) {
             throw new Error('Payment methods must be an array');
           }
@@ -76,15 +76,15 @@ Company.init(
               throw new Error('Payment methods must be an array of strings');
             }
           });
-        }
-      }
+        },
+      },
     },
     address: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: [5, 255]
-      }
+        len: [5, 255],
+      },
     },
     openingHours: {
       type: DataTypes.JSONB,
@@ -96,12 +96,30 @@ Company.init(
         thursday: { open: '08:00', close: '18:00' },
         friday: { open: '08:00', close: '18:00' },
         saturday: { open: '09:00', close: '14:00' },
-        sunday: { closed: true }
+        sunday: { closed: true },
       },
       validate: {
-        isValidOpeningHours(value: { [key: string]: { open: string, close: string, closed?: boolean } } | undefined) {
-          const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-          days.forEach((day) => {
+        isValidOpeningHours(
+          value:
+            | {
+                [key: string]: {
+                  open: string;
+                  close: string;
+                  closed?: boolean;
+                };
+              }
+            | undefined,
+        ) {
+          const days = [
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+          ];
+          days.forEach(day => {
             if (!value || !value[day]) {
               throw new Error(`Opening hours for ${day} are missing`);
             }
@@ -109,12 +127,14 @@ Company.init(
               const { open, close } = value[day];
               const timeFormat = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/;
               if (!timeFormat.test(open) || !timeFormat.test(close)) {
-                throw new Error(`Invalid opening or closing time format for ${day}`);
+                throw new Error(
+                  `Invalid opening or closing time format for ${day}`,
+                );
               }
             }
           });
-        }
-      }
+        },
+      },
     },
     deliveryOptions: {
       type: DataTypes.ARRAY(DataTypes.STRING),
@@ -129,42 +149,40 @@ Company.init(
               throw new Error('Delivery options must be an array of strings');
             }
           });
-        }
-      }
+        },
+      },
     },
     website: {
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
         isUrl: true,
-        len: [5, 255]
-      }
+        len: [5, 255],
+      },
     },
     description: {
       type: DataTypes.TEXT,
       allowNull: true,
       validate: {
         notEmpty: true,
-        len: [10, 1000]
-      }
+        len: [10, 1000],
+      },
     },
     password: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-
-      }
+      validate: {},
     },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW
+      defaultValue: DataTypes.NOW,
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW
-    }
+      defaultValue: DataTypes.NOW,
+    },
   },
   {
     sequelize: database,
@@ -172,12 +190,12 @@ Company.init(
     tableName: 'Companies',
     underscored: false,
     timestamps: true,
-  }
+  },
 );
 
 Company.addHook('beforeSave', async (user: Company) => {
   const password = user.dataValues.password;
-  if(!password) throw new Error('Password is required');
+  if (!password) throw new Error('Password is required');
   const hash = await bcrypt.hash(password, 10);
   user.dataValues.password = hash;
 });

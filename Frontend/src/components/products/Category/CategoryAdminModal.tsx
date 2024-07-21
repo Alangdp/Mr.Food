@@ -29,12 +29,12 @@ export default function CategoryAdminModal({ toggleModal }: BasicModalProps) {
     defaultValues: {
       name: '',
       description: '',
-      type: 'category',
+      type: 'CATEGORY',
     },
   });
 
   useEffect(() => {
-    form.setValue('type', 'category');
+    form.setValue('type', 'CATEGORY');
   });
 
   const onSubmit = async (data: FormType) => {
@@ -68,7 +68,7 @@ export default function CategoryAdminModal({ toggleModal }: BasicModalProps) {
             <FormField
               control={form.control}
               name="type"
-              defaultValue="category"
+              defaultValue="CATEGORY"
               render={({ field }) => (
                 <FormItem className="hidden">
                   <DetailInput inputProps={field} />

@@ -10,7 +10,9 @@ const store: RequestHandler = async (req, res) => {
         errors: [{ message: 'Name is required' }],
         status: 400,
       });
-    if (!type) req.body.type = 'food';
+
+    console.log(req.body);
+    if (!type) req.body.type = 'PRODUCT';
     let category = await Category.findByNameAndCompanyId(name, companyId);
     if (category)
       return response(res, {
@@ -20,7 +22,10 @@ const store: RequestHandler = async (req, res) => {
     category = await Category.create({
       name,
       companyId,
+      type,
     });
+
+    console.log(category);
     return response(res, { data: category, status: 201 });
   } catch (error) {
     return errorResponse(res, error);

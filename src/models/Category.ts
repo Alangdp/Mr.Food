@@ -7,6 +7,7 @@ export default class Category extends Model {
   declare name: string;
   declare createdAt: Date;
   declare updatedAt: Date;
+  declare type: string;
 
   static async findByName(name: string) {
     return await this.findOne({ where: { name } });
@@ -22,7 +23,7 @@ export default class Category extends Model {
 
   static async categoryBelongsToCompany(categoryId: number, companyId: number) {
     const category = await this.findOne({ where: { id: categoryId } });
-    if(!category) return false;
+    if (!category) return false;
     return category.companyId === companyId;
   }
 }
@@ -33,6 +34,14 @@ Category.init(
       primaryKey: true,
       autoIncrement: true,
       type: DataTypes.INTEGER,
+    },
+    type: {
+      type: DataTypes.STRING(50),
+      validate: {
+        isIn: { args: [['PRODUCT', 'CATEGORY']], msg: 'Invalid type' },
+      },
+      allowNull: false,
+      defaultValue: 'PRODUCT',
     },
     companyId: {
       type: DataTypes.INTEGER,
@@ -47,14 +56,14 @@ Category.init(
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: "created_at"
+      field: 'created_at',
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: "updated_at"
-    }
+      field: 'updated_at',
+    },
   },
   {
     sequelize: database,
@@ -62,5 +71,5 @@ Category.init(
     tableName: 'Categories',
     underscored: false,
     timestamps: true,
-  }
+  },
 );

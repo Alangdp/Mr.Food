@@ -30,7 +30,6 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
-import { da } from '@faker-js/faker';
 
 const extraOptionSchema = z.object({
   name: z.string().nonempty('Nome é obrigatório'),
@@ -141,6 +140,14 @@ export default function Suplements({
       extras: {
         options: allExtras,
       },
+    });
+    form.reset();
+    append({
+      name: '',
+      price: 0,
+      maxQuantity: 1,
+      minQuantity: 0,
+      categoryId: '',
     });
   };
 
@@ -260,15 +267,18 @@ export default function Suplements({
                                               <SelectValue placeholder="Categoria" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                              {complementsCategories.map(
-                                                item => (
+                                              {complementsCategories
+                                                .filter(
+                                                  item =>
+                                                    item.type === 'PRODUCT',
+                                                )
+                                                .map(item => (
                                                   <SelectItem
                                                     value={item.id.toString()}
                                                   >
                                                     {item.name}
                                                   </SelectItem>
-                                                ),
-                                              )}
+                                                ))}
                                             </SelectContent>
                                           </div>
                                         </Select>
@@ -382,9 +392,6 @@ export default function Suplements({
                       type="submit"
                       size="lg"
                       className="gap-2 border border-gray-200 text-white bg-red-600 hover:bg-red-500"
-                      onClick={() => {
-                        console.log(form.getValues('extras.options'));
-                      }}
                     >
                       Salvar
                     </Button>
@@ -431,7 +438,7 @@ export default function Suplements({
 
             <TabsContent
               value="olds"
-              className="py-8 flex gap-2 w-full items-center"
+              className="py-8 gap-2 w-full items-center grid grid-cols-4"
             >
               {product.extras.options.map((item, index) => (
                 <div className="card flex-[0.3] h-60 bg-white rounded-lg shadow-lg p-6 border shadow-df">
@@ -450,7 +457,7 @@ export default function Suplements({
                           ...product,
                           extras: {
                             options: product.extras.options.filter(
-                              (val, i) => i !== index,
+                              (_val, i) => i !== index,
                             ),
                           },
                         });
@@ -519,15 +526,17 @@ export default function Suplements({
 
             <TabsContent value="oldcategories">
               <div className="flex flex-col gap-2">
-                {complementsCategories.map(item => (
-                  <div className="card flex-[0.3] h-60 bg-white rounded-lg shadow-lg p-6 border shadow-df">
-                    <div className="flex justify-between items-center border-b pb-2 mb-4">
-                      <h4 className="text-xl font-semibold text-gray-800">
-                        {item.name}
-                      </h4>
+                {complementsCategories
+                  .filter(item => item.type === 'CATEGORY')
+                  .map(item => (
+                    <div className="card flex-[0.3] h-60 bg-white rounded-lg shadow-lg p-6 border shadow-df">
+                      <div className="flex justify-between items-center border-b pb-2 mb-4">
+                        <h4 className="text-xl font-semibold text-gray-800">
+                          {item.name}
+                        </h4>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </TabsContent>
           </Tabs>

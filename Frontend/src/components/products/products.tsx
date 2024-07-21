@@ -187,11 +187,8 @@ export function ProductsAdminPageRoute() {
     isModalOpen: ModalState,
   } = Modal();
 
-  const {
-    ModalLink: ModalLinkAddCategory,
-    ModalTogle: ModalTogleAddCategory,
-    isModalOpen: ModalStateCategory,
-  } = Modal();
+  const { ModalLink: ModalLinkAddCategory, ModalTogle: ModalTogleAddCategory } =
+    Modal();
 
   useEffect(() => {
     if (!ModalState) navigate('/company/dashboard/products');
@@ -211,6 +208,7 @@ export function ProductsAdminPageRoute() {
     );
   };
 
+  // Button to toggle the modal Add Category
   const CategoryModalToggleAdd = () => {
     return (
       <ModalTogleAddCategory>
@@ -221,6 +219,7 @@ export function ProductsAdminPageRoute() {
     );
   };
 
+  // ModalLink is used to specify the modal layer to ensure it overlays other elements.
   return (
     <div className="z-50 relative overflow-hidden">
       <MotionWrapper classname="bg-white z-50 relative">
