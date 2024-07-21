@@ -3,6 +3,7 @@ import { BasicModalProps } from '@/types/BasicModal.type';
 import ModalBody from './ModalBody';
 import GeneralModalAdd from './GeneralModalAdd';
 import AddItemModal from './Add/AddItemModal';
+import { SuplementCategory } from '@/types/SuplementCategory.type';
 
 export default function ItemAdminModal({ toggleModal }: BasicModalProps) {
   const [searchParams] = useSearchParams();

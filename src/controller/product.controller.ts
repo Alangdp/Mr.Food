@@ -119,7 +119,7 @@ const store: RequestHandler = async (req, res) => {
     delete req.body.id;
     const product = await Product.create({
       companyId: companyId,
-      categoryId,
+      categoryId: req.body.category,
       discountPercent: req.body.discount || 0,
       ...req.body,
     });

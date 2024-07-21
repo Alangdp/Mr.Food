@@ -80,8 +80,6 @@ export default function AddItemModal({ toggleModal }: AddItemModalProps) {
         },
       );
 
-      console.log(newProduct);
-
       if (newProduct) {
         setProduct({
           status: {

@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { Input } from '../ui/input';
+import { cn } from '@/lib/utils';
 
 interface DetailInputProps {
   title?: string;
@@ -9,6 +10,7 @@ interface DetailInputProps {
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   type?: string;
   substitute?: ReactNode;
+  className?: string;
 }
 
 export default function DetailInput({
@@ -19,9 +21,10 @@ export default function DetailInput({
   inputProps,
   type,
   substitute,
+  className,
 }: DetailInputProps) {
   return (
-    <div className="flex flex-col justify-center gap-1">
+    <div className={cn('flex flex-col justify-center gap-1', className)}>
       <div className="flex gap-4">
         <h4 className="text-xl font-medium">{title}</h4>
         {isRequired && (

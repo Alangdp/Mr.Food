@@ -11,9 +11,22 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Product } from '@/types/Product.type';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { SuplementCategory } from '@/types/SuplementCategory.type';
+import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/context/AuthContext';
+import { makeGet } from '@/utils/Getter';
 
 const MAX_FILE_SIZE = 5 * 1000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -51,6 +64,24 @@ export default function ItemDetails({
   productChange,
   step,
 }: ItemDetailsProps) {
+  const { companyToken } = useAuth();
+  const { toast } = useToast();
+  const [categories, setCategories] = useState<SuplementCategory[]>([]);
+
+  const fetchCategories = async () => {
+    const categories = await makeGet<SuplementCategory[]>('categories', {
+      authToken: companyToken,
+      toast,
+      autoToast: true,
+    });
+
+    if (categories) setCategories(categories);
+  };
+
+  useEffect(() => {
+    if (categories.length === 0) fetchCategories();
+  }, []);
+
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const form = useForm<ProductSchema>({
     resolver: zodResolver(formSchema),
@@ -97,12 +128,46 @@ export default function ItemDetails({
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <DetailInput
-                        title="Categoria"
-                        isRequired
-                        placeholder="Categoria"
-                        inputProps={field}
-                      />
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="w-full">
+                          <DetailInput
+                            title="Categoria"
+                            isRequired
+                            placeholder="Categoria"
+                            inputProps={{
+                              ...field,
+                              className: 'cursor-pointer',
+                              value: categories.find(
+                                (item: SuplementCategory) =>
+                                  item.id.toString() === field.value,
+                              )?.name,
+                            }}
+                          />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56">
+                          <DropdownMenuLabel>
+                            Categoria do Produto
+                          </DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuRadioGroup
+                            value={'TESTE'}
+                            onValueChange={(value: string) => {
+                              form.setValue('category', value);
+                            }}
+                          >
+                            {categories
+                              .filter(item => item.type === 'CATEGORY')
+                              .map(category => (
+                                <DropdownMenuRadioItem
+                                  key={category.id}
+                                  value={category.id.toString()}
+                                >
+                                  {category.name}
+                                </DropdownMenuRadioItem>
+                              ))}
+                          </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

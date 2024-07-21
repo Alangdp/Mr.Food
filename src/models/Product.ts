@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import database from '../database/index.js';
 import { Extra } from '../../types/product.type.js';
-import { ProductProps } from "../../interfaces/product.interface.js";
+import { ProductProps } from '../../interfaces/product.interface.js';
 
 export default class Product extends Model implements ProductProps {
   declare id: number;
@@ -41,7 +41,7 @@ Product.init(
     },
     name: {
       type: DataTypes.STRING(100),
-      allowNull: false
+      allowNull: false,
     },
     description: {
       type: DataTypes.STRING(255),
@@ -68,14 +68,14 @@ Product.init(
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: "created_at"
+      field: 'created_at',
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: "updated_at"
-    }
+      field: 'updated_at',
+    },
   },
   {
     sequelize: database,
@@ -83,5 +83,5 @@ Product.init(
     tableName: 'Products',
     underscored: false,
     timestamps: true,
-  }
+  },
 );

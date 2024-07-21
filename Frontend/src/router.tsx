@@ -1,13 +1,13 @@
-import { createBrowserRouter } from 'react-router-dom'
-import Home from './components/home/home'
-import CompanyRegister from './components/company/register/register'
-import CompanyLogin from './components/company/login/login'
-import NavBar from './components/navigators/navbar'
-import PrivateCompany from './components/router/PrivateCompany'
-import MotionWrapper from './components/router/MotionWrapper'
-import { DashboardHomeRouter } from './components/companyDashboard/home'
-import { OrderPageRoute } from './components/companyDashboard/orders/orderPage'
-import { ProductsAdminPageRoute } from './components/products/products'
+import { createBrowserRouter } from 'react-router-dom';
+import Home from './components/home/home';
+import CompanyRegister from './components/company/register/register';
+import CompanyLogin from './components/company/login/login';
+import NavBar from './components/navigators/navbar';
+import PrivateCompany from './components/router/PrivateCompany';
+import MotionWrapper from './components/router/MotionWrapper';
+import { DashboardHomeRouter } from './components/companyDashboard/home';
+import { OrderPageRoute } from './components/companyDashboard/orders/orderPage';
+import { ProductsAdminPageRoute } from './components/products/products';
 
 const router = createBrowserRouter([
   {
@@ -84,6 +84,6 @@ const router = createBrowserRouter([
     path: '*',
     element: <div>404</div>,
   },
-])
+]);
 
-export default router
+export default router;
