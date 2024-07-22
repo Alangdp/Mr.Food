@@ -45,12 +45,8 @@ const extraOptionSchema = z.object({
   categoryId: z.string().nonempty('Categoria é obrigatória'),
 });
 
-const extraSchema = z.object({
-  options: z.array(extraOptionSchema),
-});
-
 const formSchema = z.object({
-  extras: extraSchema.default({ options: [] }),
+  extras: z.array(extraOptionSchema),
 });
 
 const categorySchema = z.object({
@@ -100,12 +96,14 @@ export default function Suplements({
     string | undefined
   >();
   const { toast } = useToast();
-  const [hasSuplements, setHasSuplements] = useState(false);
+  const [hasSuplements, setHasSuplements] = useState(
+    product.extras.length > 0 ? true : false,
+  );
 
   const form = useForm<ProductSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      extras: product.extras || { options: [] },
+      extras: product.extras || [],
     },
   });
 
@@ -118,7 +116,7 @@ export default function Suplements({
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'extras.options',
+    name: 'extras',
   });
 
   useEffect(() => {
@@ -134,13 +132,13 @@ export default function Suplements({
   }, []);
 
   const onSubmit = (data: ProductSchema) => {
-    const allExtras = [...data.extras.options, ...product.extras.options];
+    const allExtras = [...data.extras, ...product.extras];
     productChange({
       ...product,
-      extras: {
-        options: allExtras,
-      },
+      extras: allExtras,
     });
+
+    console.log(allExtras);
     form.reset();
     append({
       name: '',
@@ -189,6 +187,7 @@ export default function Suplements({
                 className="data-[state=checked]:bg-red-500 data-[state=unchecked]:bg-white mr-4"
                 onCheckedChange={status => setHasSuplements(status)}
                 classNameThumb="bg-zinc-400 data-[state=checked]:bg-white"
+                checked
               />
               Possui Complementos?
             </div>
@@ -196,7 +195,7 @@ export default function Suplements({
           </div>
 
           <Tabs
-            defaultValue="new"
+            defaultValue={product.extras.length > 1 ? 'olds' : 'new'}
             className={hasSuplements ? 'block' : 'hidden'}
             onValueChange={value => setSelectedFunction(value)}
             value={selectedFunction}
@@ -243,7 +242,7 @@ export default function Suplements({
                           >
                             <FormField
                               control={form.control}
-                              name={`extras.options.${index}.categoryId`}
+                              name={`extras.${index}.categoryId`}
                               render={({ field }) => (
                                 <FormItem>
                                   <FormControl>
@@ -254,7 +253,7 @@ export default function Suplements({
                                           onValueChange={val => {
                                             console.log(val);
                                             form.setValue(
-                                              `extras.options.${index}.categoryId`,
+                                              `extras.${index}.categoryId`,
                                               val,
                                             );
                                           }}
@@ -292,8 +291,8 @@ export default function Suplements({
 
                             <FormField
                               control={form.control}
-                              key={`extras.options.${index}.name`}
-                              name={`extras.options.${index}.name`}
+                              key={`extras.${index}.name`}
+                              name={`extras.${index}.name`}
                               render={({ field }) => (
                                 <FormItem>
                                   <FormControl>
@@ -310,32 +309,23 @@ export default function Suplements({
                             />
                             <FormField
                               control={form.control}
-                              key={`extras.options.${index}.price`}
-                              name={`extras.options.${index}.price`}
+                              key={`extras.${index}.price`}
+                              name={`extras.${index}.price`}
                               render={({ field }) => (
                                 <FormItem>
                                   <FormControl>
                                     <DetailInput
                                       title="Preço"
-                                      type="text"
+                                      type="number"
                                       placeholder="Preço"
                                       inputProps={{
                                         ...field,
                                         onChange: e => {
-                                          const value = e.target.value.replace(
-                                            /[^0-9,.]/g,
-                                            '',
-                                          );
-                                          console.log(value);
-                                          const numberValue = Number(
-                                            value
-                                              .replace(',', '.')
-                                              .replace(/^0+/, ''),
-                                          );
                                           form.setValue(
-                                            `extras.options.${index}.price`,
-                                            numberValue,
+                                            `extras.${index}.price`,
+                                            Number(e.target.value),
                                           );
+                                          form.trigger(`extras.${index}.price`);
                                         },
                                       }}
                                     />
@@ -348,7 +338,7 @@ export default function Suplements({
                             <div className="flex items-center w-min-[100%]">
                               <FormField
                                 control={form.control}
-                                name={`extras.options.${index}.maxQuantity`}
+                                name={`extras.${index}.maxQuantity`}
                                 render={({ field }) => (
                                   <FormItem className="w-1/2">
                                     <FormControl>
@@ -365,7 +355,7 @@ export default function Suplements({
                               />
                               <FormField
                                 control={form.control}
-                                name={`extras.options.${index}.minQuantity`}
+                                name={`extras.${index}.minQuantity`}
                                 render={({ field }) => (
                                   <FormItem className="w-1/2">
                                     <FormControl>
@@ -440,7 +430,7 @@ export default function Suplements({
               value="olds"
               className="py-8 gap-2 w-full items-center grid grid-cols-4"
             >
-              {product.extras.options.map((item, index) => (
+              {product.extras.map((item, index) => (
                 <div className="card flex-[0.3] h-60 bg-white rounded-lg shadow-lg p-6 border shadow-df">
                   <div className="flex justify-between items-center border-b pb-2 mb-4">
                     <h4 className="text-xl font-semibold text-gray-800">
@@ -455,11 +445,9 @@ export default function Suplements({
                       onClick={() => {
                         productChange({
                           ...product,
-                          extras: {
-                            options: product.extras.options.filter(
-                              (_val, i) => i !== index,
-                            ),
-                          },
+                          extras: product.extras.filter(
+                            (_val, i) => i !== index,
+                          ),
                         });
                       }}
                     />
@@ -527,7 +515,7 @@ export default function Suplements({
             <TabsContent value="oldcategories">
               <div className="flex flex-col gap-2">
                 {complementsCategories
-                  .filter(item => item.type === 'CATEGORY')
+                  .filter(item => item.type === 'PRODUCT')
                   .map(item => (
                     <div className="card flex-[0.3] h-60 bg-white rounded-lg shadow-lg p-6 border shadow-df">
                       <div className="flex justify-between items-center border-b pb-2 mb-4">

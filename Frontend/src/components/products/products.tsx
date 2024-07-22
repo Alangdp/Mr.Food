@@ -23,15 +23,20 @@ import { makeGet } from '@/utils/Getter';
 import { useToast } from '../ui/use-toast';
 import CategoryAdminModal from './Category/CategoryAdminModal';
 import { SuplementCategory } from '@/types/SuplementCategory.type';
+import EditItemModal from './Edit/EditItemModal';
 
 interface ProductsAdminProps {
   AddItemModalToggle: () => ReactNode;
   CategoryModalToggleAdd: () => ReactNode;
+  ItemModalToggleEdit: () => void;
+  setToEdit: (product: ProductResponse) => void;
 }
 
 function ProductsAdmin({
   AddItemModalToggle,
   CategoryModalToggleAdd,
+  ItemModalToggleEdit,
+  setToEdit,
 }: ProductsAdminProps) {
   const { companyToken } = useAuth();
   const { toast } = useToast();
@@ -194,8 +199,8 @@ function ProductsAdmin({
                     <div className="flex items-center justify-between p-2 shadow-df rounded-t">
                       <h3 className="text-lg font-medium">{category.name}</h3>
                       <Switch
+                        checked={category.active}
                         className="data-[state=checked]:bg-red-500 mr-4"
-                        onCheckedChange={status => console.log(status)}
                       />
                     </div>
                     <table className="w-full border rounded-t-none rounded-lg shadow-lg rounded-b-none">
@@ -211,7 +216,13 @@ function ProductsAdmin({
                           <tr className="border-b hover:bg-gray-100 transition duration-200">
                             <td className="p-4">
                               <div className="flex items-center gap-4">
-                                <HamburgerMenuIcon className="w-6 h-auto" />
+                                <HamburgerMenuIcon
+                                  className="w-6 h-auto cursor-pointer"
+                                  onClick={() => {
+                                    ItemModalToggleEdit();
+                                    setToEdit(product);
+                                  }}
+                                />
                                 <div className="w-16 h-16 border-dashed border rounded border-secondary flex items-center justify-center text-secondary opacity-80 cursor-pointer">
                                   <CameraIcon className="w-6 h-auto" />
                                 </div>
@@ -234,7 +245,7 @@ function ProductsAdmin({
                               </div>
                             </td>
                             <td className="p-4">
-                              <div className="flex items-center gap">
+                              <div className="flex items-center gap-4 w-full">
                                 <div className="text-secondary line-through w-14">
                                   R${' '}
                                   {Number(product.price) -
@@ -289,6 +300,13 @@ export function ProductsAdminPageRoute() {
   const { ModalLink: ModalLinkAddCategory, ModalTogle: ModalTogleAddCategory } =
     Modal();
 
+  const {
+    ModalLink: ModalLinkEdit,
+    ModalTogle: ModalTogleEdit,
+    toggleModal,
+  } = Modal();
+  const [productToEdit, setProductToEdit] = useState<ProductResponse | null>();
+
   useEffect(() => {
     if (!ModalState) navigate('/company/dashboard/products');
   }, [ModalState]);
@@ -318,6 +336,17 @@ export function ProductsAdminPageRoute() {
     );
   };
 
+  // Button to toggle the modal Edit Product
+  const itemModalToggleEdit = () => {
+    return (
+      <ModalTogleEdit>
+        <Button size={'lg'} className="gap-2 bg-red-600 hover:bg-red-500">
+          <PlusIcon className="font-bold w-6 h-auto" /> Editar Item
+        </Button>
+      </ModalTogleEdit>
+    );
+  };
+
   // ModalLink is used to specify the modal layer to ensure it overlays other elements.
   return (
     <div className="z-50 relative overflow-hidden">
@@ -331,11 +360,21 @@ export function ProductsAdminPageRoute() {
               <CategoryAdminModal toggleModal={CategoryModalToggleAdd} />
             }
           />
+          <ModalLinkEdit
+            modalElement={
+              <EditItemModal
+                toggleModal={itemModalToggleEdit}
+                product={productToEdit!}
+              />
+            }
+          />
           <NavBar />
           <SideBar />
           <ProductsAdmin
             AddItemModalToggle={itemModalToggleAdd}
             CategoryModalToggleAdd={CategoryModalToggleAdd}
+            ItemModalToggleEdit={toggleModal}
+            setToEdit={setProductToEdit}
           />
         </>
       </MotionWrapper>

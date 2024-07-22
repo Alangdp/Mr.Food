@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 interface ModalBodyProps {
   title?: string;
   closeButton?: ReactNode;
-  toggleModal: () => void;
+  toggleModal: (() => void) | ((...args: any[]) => any);
   children: ReactNode;
 }
 

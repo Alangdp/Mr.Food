@@ -5,4 +5,5 @@ export interface SuplementCategory {
   name: string;
   companyId: number;
   type?: string;
+  active?: boolean;
 }

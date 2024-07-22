@@ -8,6 +8,7 @@ export default class Category extends Model {
   declare createdAt: Date;
   declare updatedAt: Date;
   declare type: string;
+  declare active: boolean;
 
   static async findByName(name: string) {
     return await this.findOne({ where: { name } });
@@ -42,6 +43,10 @@ Category.init(
       },
       allowNull: false,
       defaultValue: 'PRODUCT',
+    },
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
     companyId: {
       type: DataTypes.INTEGER,

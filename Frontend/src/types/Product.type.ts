@@ -15,7 +15,7 @@ export interface Product {
   image?: File;
   price: number;
   discount?: number;
-  extras: Extra;
+  extras: Option[];
 }
 
 type ExtraOption = {
@@ -24,10 +24,6 @@ type ExtraOption = {
   maxQuantity: number;
   minQuantity: number;
   categoryId: string;
-};
-
-type Extra = {
-  options: ExtraOption[];
 };
 
 const extraOptionSchema = z.object({
@@ -42,10 +38,6 @@ const extraOptionSchema = z.object({
     .min(0, 'Quantidade mínima deve ser pelo menos 0')
     .default(1),
   categoryId: z.string().nonempty('Categoria é obrigatória'),
-});
-
-const extraSchema = z.object({
-  options: z.array(extraOptionSchema),
 });
 
 const ProductCompleteValidation = z.object({
@@ -67,7 +59,7 @@ const ProductCompleteValidation = z.object({
     .int()
     .min(0, 'O desconto deve ser positivo.')
     .max(100, 'O desconto deve ser menor que 100.'),
-  extras: extraSchema.default({ options: [] }),
+  extras: z.array(extraOptionSchema),
 });
 
 const keyToPortugueseMapping: Record<string, string> = {

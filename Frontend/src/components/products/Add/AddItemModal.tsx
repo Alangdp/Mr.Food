@@ -3,8 +3,10 @@ import ItemDetails from './Steps/Details';
 import { useEffect, useState } from 'react';
 import {
   getPortugueseName,
+  Option,
   Product,
   ProductCompleteValidation,
+  ProductResponse,
 } from '@/types/Product.type';
 import Price from './Steps/Price';
 import Suplements from './Steps/Suplement';
@@ -23,10 +25,13 @@ interface Status {
 }
 
 interface AddItemModalProps {
-  toggleModal: () => void;
+  toggleModal: (() => void) | ((...args: any[]) => any);
+  product?: ProductResponse;
 }
 
-export default function AddItemModal({ toggleModal }: AddItemModalProps) {
+export default function AddItemModal({
+  product: startProduct,
+}: AddItemModalProps) {
   const { toast } = useToast();
   const { companyToken } = useAuth();
   const [step, setStep] = useState(0);
@@ -36,14 +41,12 @@ export default function AddItemModal({ toggleModal }: AddItemModalProps) {
       step2: false,
       step3: false,
     },
-    name: '',
-    category: '',
-    describe: '',
-    price: 0,
-    discount: 0,
-    extras: {
-      options: [],
-    },
+    name: startProduct?.name || '',
+    category: startProduct?.categoryId.toString() || '',
+    describe: startProduct?.description || '',
+    price: Number(startProduct?.price) || 0,
+    discount: startProduct?.discountPercent || 0,
+    extras: startProduct?.extras?.options || [],
   });
 
   useEffect(() => {}, [product]);
@@ -92,9 +95,7 @@ export default function AddItemModal({ toggleModal }: AddItemModalProps) {
           describe: '',
           price: 0,
           discount: 0,
-          extras: {
-            options: [],
-          },
+          extras: [],
         });
         toast({
           title: 'Produto salvo com sucesso',

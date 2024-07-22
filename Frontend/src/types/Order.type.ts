@@ -1,3 +1,5 @@
+import { Options } from 'sequelize';
+
 export interface OrderProps {
   id: string;
   clientId: number;
@@ -20,17 +22,12 @@ type ProductProps = {
   quantity?: number;
   active: boolean;
   extras: Extra;
-}
-
-type ExtraOption = {
-  name: string;
-  price: number;
-}
+};
 
 type Extra = {
   [extraName: string]: {
-    options: ExtraOption[];
+    options: Options[];
     maxQuantity: number;
     minQuantity: number;
   };
-}
+};
