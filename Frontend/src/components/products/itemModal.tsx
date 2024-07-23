@@ -1,8 +1,8 @@
 import { useSearchParams } from 'react-router-dom';
 import { BasicModalProps } from '@/types/BasicModal.type';
-import ModalBody from './ModalBody';
-import GeneralModalAdd from './GeneralModalAdd';
-import AddItemModal from './Add/AddItemModal';
+import ModalBody from '../utilities/ModalBody';
+import GeneralModalAdd from './ModalsControllers/GeneralModalAddProduct';
+import AddItemModal from './ModalsControllers/AddItemModal';
 
 export default function ItemAdminModal({ toggleModal }: BasicModalProps) {
   const [searchParams] = useSearchParams();

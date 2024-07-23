@@ -7,16 +7,13 @@ import Product from '../models/Product.js';
 function isValidExtrasStructure(extras: any) {
   try {
     // Verifica se extras é um objeto e contém a propriedade options
-    if (
-      typeof extras !== 'object' ||
-      extras === null ||
-      !Array.isArray(extras.options)
-    ) {
+    if (!Array.isArray(extras) || extras === null) {
       return false;
     }
 
     // Itera sobre cada item em options
-    for (const extraItem of extras.options) {
+    for (const extraItem of extras) {
+      console.log(extraItem);
       if (typeof extraItem !== 'object' || extraItem === null) {
         return false;
       }

@@ -1,18 +1,17 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import ItemDetails from './Steps/Details';
 import { useEffect, useState } from 'react';
 import {
   getPortugueseName,
-  Option,
   Product,
   ProductCompleteValidation,
   ProductResponse,
 } from '@/types/Product.type';
-import Price from './Steps/Price';
-import Suplements from './Steps/Suplement';
 import { makePost } from '@/utils/Getter';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
+import ItemDetails from '../ProductSteps/Details';
+import Price from '../ProductSteps/Price';
+import Suplements from '../ProductSteps/Suplement';
 
 interface Status {
   status: {
@@ -46,7 +45,7 @@ export default function AddItemModal({
     describe: startProduct?.description || '',
     price: Number(startProduct?.price) || 0,
     discount: startProduct?.discountPercent || 0,
-    extras: startProduct?.extras?.options || [],
+    extras: startProduct?.extras || [],
   });
 
   useEffect(() => {}, [product]);

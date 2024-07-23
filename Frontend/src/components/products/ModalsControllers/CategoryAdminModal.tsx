@@ -1,10 +1,10 @@
 import { BasicModalProps } from '@/types/BasicModal.type';
-import ModalBody from '../ModalBody';
+import ModalBody from '../../utilities/ModalBody';
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import DetailInput from '../ItemInput';
+import DetailInput from '../../utilities/DetailInput';
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from '@radix-ui/react-icons';
 import { useEffect } from 'react';

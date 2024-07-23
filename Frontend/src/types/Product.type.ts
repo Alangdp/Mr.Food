@@ -87,15 +87,10 @@ export interface ProductResponse {
   categoryId: number;
   name: string;
   price: string;
-  extras: Extras;
+  extras: Option[];
   description: string;
   discountPercent: number;
 }
-
-export interface Extras {
-  options: Option[];
-}
-
 export interface Option {
   name: string;
   price: number;

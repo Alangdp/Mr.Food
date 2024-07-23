@@ -1,8 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import DetailInput from '../../ItemInput';
+import DetailInput from '../../utilities/DetailInput';
 import {
   Form,
   FormControl,
@@ -13,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { useState, ChangeEvent, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
-import { Product } from '@/types/Product.type';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,53 +22,25 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { SuplementCategory } from '@/types/SuplementCategory.type';
-import { useToast } from '@/components/ui/use-toast';
-import { useAuth } from '@/context/AuthContext';
 import { makeGet } from '@/utils/Getter';
-
-const MAX_FILE_SIZE = 5 * 1000000;
-const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
-];
-
-const formSchema = z.object({
-  category: z.string().nonempty('A categoria é obrigatória.'),
-  name: z.string().nonempty('O nome é obrigatório.'),
-  describe: z.string().nonempty('A descrição é obrigatória.'),
-  image: z
-    .any()
-    .refine(file => file?.size <= MAX_FILE_SIZE, {
-      message: 'O tamanho máximo da imagem é 5MB.',
-    })
-    .refine(file => ACCEPTED_IMAGE_TYPES.includes(file?.type), {
-      message: 'Apenas os formatos .jpg, .jpeg, .png e .webp são suportados.',
-    })
-    .optional(),
-});
-
-type ProductSchema = z.infer<typeof formSchema>;
-
-interface ItemDetailsProps {
-  product: Product;
-  productChange: (props: Partial<Product>) => void;
-  step: React.Dispatch<React.SetStateAction<number>>;
-}
+import {
+  ItemDetailsProps,
+  productDetailSchema,
+  ProductSchema,
+} from '../ProductStepsForms/Details';
+import { useDefaultImports } from '@/components/utilities/DefaultImports';
 
 export default function ItemDetails({
   product,
   productChange,
   step,
 }: ItemDetailsProps) {
-  const { companyToken } = useAuth();
-  const { toast } = useToast();
+  const { auth, toast } = useDefaultImports();
   const [categories, setCategories] = useState<SuplementCategory[]>([]);
 
   const fetchCategories = async () => {
     const categories = await makeGet<SuplementCategory[]>('categories', {
-      authToken: companyToken,
+      authToken: auth.companyToken,
       toast,
       autoToast: true,
     });
@@ -84,7 +54,7 @@ export default function ItemDetails({
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const form = useForm<ProductSchema>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(productDetailSchema),
     defaultValues: {
       category: product.category,
       describe: product.describe,

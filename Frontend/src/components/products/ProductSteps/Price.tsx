@@ -1,8 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import DetailInput from '../../ItemInput';
 import {
   Form,
   FormControl,
@@ -11,38 +9,27 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { Product } from '@/types/Product.type';
-
-const formSchema = z.object({
-  price: z.number().positive('O preço deve ser positivo.'),
-  discount: z
-    .number()
-    .min(0, 'O desconto deve ser positivo.')
-    .max(100, 'O desconto deve ser menor que 100.'),
-});
-
-type ProductSchema = z.infer<typeof formSchema>;
-
-interface ItemDetailsProps {
-  product: Product;
-  productChange: (props: Partial<Product>) => void;
-  step: React.Dispatch<React.SetStateAction<number>>;
-}
+import DetailInput from '../../utilities/DetailInput';
+import {
+  productPriceForm,
+  ProductPriceProps,
+  ProductPriceSchema,
+} from '../ProductStepsForms/Price';
 
 export default function Price({
   product,
   productChange,
   step,
-}: ItemDetailsProps) {
-  const form = useForm<ProductSchema>({
-    resolver: zodResolver(formSchema),
+}: ProductPriceProps) {
+  const form = useForm<ProductPriceSchema>({
+    resolver: zodResolver(productPriceForm),
     defaultValues: {
       price: product.price,
       discount: product.discount,
     },
   });
 
-  const onSubmit = (data: ProductSchema) => {
+  const onSubmit = (data: ProductPriceSchema) => {
     productChange(data);
     step(2);
   };

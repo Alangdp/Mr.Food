@@ -13,7 +13,7 @@ import MotionWrapper from '../router/MotionWrapper';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
-import { Modal } from '../utils/BgBlackOpacity80';
+import { Modal } from '../utilities/Modal';
 import ItemAdminModal from './itemModal';
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,9 +21,9 @@ import { ProductResponse } from '@/types/Product.type';
 import { useAuth } from '@/context/AuthContext';
 import { makeGet } from '@/utils/Getter';
 import { useToast } from '../ui/use-toast';
-import CategoryAdminModal from './Category/CategoryAdminModal';
+import CategoryAdminModal from './ModalsControllers/CategoryAdminModal';
 import { SuplementCategory } from '@/types/SuplementCategory.type';
-import EditItemModal from './Edit/EditItemModal';
+import EditItemModal from './ModalsControllers/EditItemModal';
 
 interface ProductsAdminProps {
   AddItemModalToggle: () => ReactNode;
@@ -107,86 +107,6 @@ function ProductsAdmin({
 
         <div className="w-full">
           <div className="category flex flex-col gap-4">
-            <div className="">
-              <div className="flex items-center justify-between p-2 shadow-df rounded-t">
-                <h3 className="text-lg font-medium">Sem Categoria</h3>
-                <Switch
-                  className="data-[state=checked]:bg-red-500 mr-4"
-                  onCheckedChange={status => console.log(status)}
-                />
-              </div>
-              <table className="w-full border rounded-t-none rounded-lg shadow-lg rounded-b-none">
-                <thead className="bg-gray-200">
-                  <tr>
-                    <th className="text-black p-4">Item</th>
-                    <th className="text-black p-4">Preço</th>
-                    <th className="text-black p-4">Status de Venda</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products
-                    .filter(product => !product.categoryId)
-                    .map(product => (
-                      <tr className="border-b hover:bg-gray-100 transition duration-200">
-                        <td className="p-4">
-                          <div className="flex items-center gap-4">
-                            <HamburgerMenuIcon className="w-6 h-auto" />
-                            <div className="w-16 h-16 border-dashed border rounded border-secondary flex items-center justify-center text-secondary opacity-80 cursor-pointer">
-                              <CameraIcon className="w-6 h-auto" />
-                            </div>
-                            <div className="flex flex-col gap-2">
-                              <div className="flex items-center gap-2">
-                                <h4 className="font-semibold">
-                                  {product.name}
-                                </h4>
-                                <div className="flex items-center gap-2 p-1 bg-gray-300 rounded-lg hover:bg-gray-400 duration-300 cursor-pointer">
-                                  <BellIcon className="w-4 h-4" />
-                                </div>
-                                <div className="flex items-center gap-2 p-1 bg-gray-300 rounded-lg hover:bg-gray-400 duration-300 cursor-pointer">
-                                  <GearIcon className="w-4 h-4" />
-                                </div>
-                              </div>
-                              <p className="text-secondary">
-                                {product.description}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center gap">
-                            <div className="text-secondary line-through w-14">
-                              R${' '}
-                              {Number(product.price) -
-                                (product.discountPercent / 100) *
-                                  Number(product.price)}
-                            </div>
-                            <Input
-                              type="text"
-                              className="w-24 border-gray-200 border p-1"
-                              placeholder={`R$ ${product.price}`}
-                              disabled
-                            />
-                          </div>
-                        </td>
-                        <td className="p-4 flex justify-center items-center">
-                          <Switch
-                            checked={product.active}
-                            className="data-[state=checked]:bg-red-500"
-                            onCheckedChange={status => console.log(status)}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-              <Button
-                size={'lg'}
-                className="gap-2 text-red-600 bg-white hover:bg-gray-100 w-full rounded-t-none border-t-0 "
-              >
-                <PlusIcon className="font-bold w-6 h-auto" /> Adicionar Item
-              </Button>
-            </div>
-
             {categories
               .filter(item => item.type === 'CATEGORY')
               .map(category => {
@@ -194,8 +114,9 @@ function ProductsAdmin({
                   item => item.categoryId === category.id,
                 );
 
+                if (productsFiltred.length === 0) return null;
                 return (
-                  <div className="">
+                  <div className="" key={`Table-Category-${category.id}`}>
                     <div className="flex items-center justify-between p-2 shadow-df rounded-t">
                       <h3 className="text-lg font-medium">{category.name}</h3>
                       <Switch
@@ -213,7 +134,10 @@ function ProductsAdmin({
                       </thead>
                       <tbody>
                         {productsFiltred.map(product => (
-                          <tr className="border-b hover:bg-gray-100 transition duration-200">
+                          <tr
+                            className="border-b hover:bg-gray-100 transition duration-200"
+                            key={`Table-Item-${product.id}`}
+                          >
                             <td className="p-4">
                               <div className="flex items-center gap-4">
                                 <HamburgerMenuIcon
