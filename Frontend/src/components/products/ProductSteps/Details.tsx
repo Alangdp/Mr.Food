@@ -29,6 +29,8 @@ import {
   ProductSchema,
 } from '../ProductStepsForms/Details';
 import { useDefaultImports } from '@/components/utilities/DefaultImports';
+import { GiNextButton, GiPreviousButton } from 'react-icons/gi';
+import { Cross1Icon } from '@radix-ui/react-icons';
 
 export default function ItemDetails({
   product,
@@ -52,26 +54,68 @@ export default function ItemDetails({
     if (categories.length === 0) fetchCategories();
   }, []);
 
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  useEffect(() => {
+    if (product.image && product.image.length > 0) {
+      const previews: string[] = [];
+      const files = product.image;
+
+      files.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          previews[index] = reader.result as string;
+          if (previews.length === files.length) {
+            setImagePreviews(previews);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    } else {
+      setImagePreviews([]);
+    }
+  }, [product.image]);
+
+  const [imagePreview, setImagePreviews] = useState<string[]>([]);
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const form = useForm<ProductSchema>({
     resolver: zodResolver(productDetailSchema),
     defaultValues: {
       category: product.category,
       describe: product.describe,
-      image: product.image,
+      image: product.image || [],
       name: product.name,
     },
   });
 
+  const handleNextImage = () => {
+    setCurrentImageIndex(prevIndex => (prevIndex + 1) % imagePreview.length);
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex(
+      prevIndex => (prevIndex - 1 + imagePreview.length) % imagePreview.length,
+    );
+  };
+
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-      form.setValue('image', file, { shouldValidate: true });
+    const files = e.target.files;
+    if (files) {
+      const previews: string[] = [];
+      const newImages: File[] = [];
+
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          previews.push(reader.result as string);
+          if (previews.length === files.length) {
+            setImagePreviews(previews);
+          }
+        };
+        reader.readAsDataURL(file);
+        newImages.push(file);
+      });
+
+      form.setValue('image', newImages, { shouldValidate: true });
     }
   };
 
@@ -181,23 +225,63 @@ export default function ItemDetails({
             </div>
             <div className="col-span-2 h-full flex flex-col gap-2">
               <h4 className="text-xl font-medium">Imagem</h4>
-              <div className="w-full h-60 border-dashed border rounded-lg border-secondary flex items-center justify-center text-secondary opacity-80 cursor-pointer">
+              <div className="w-full h-60 border-dashed border rounded-lg border-secondary flex items-center justify-center text-secondary opacity-80">
                 <div className="flex flex-col items-center justify-center gap-2">
                   <div
-                    className="w-full min-h-max relative bg-auto bg-center h-60"
+                    className="w-full min-h-max relative bg-auto bg-center h-60 bg-no-repeat"
                     onClick={() => {
                       document.getElementById('fileInput')?.click();
                     }}
                   >
-                    {imagePreview ? (
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="w-full h-full object-cover"
-                        style={{
-                          borderRadius: '6px',
-                        }}
-                      />
+                    {imagePreview.length > 0 ? (
+                      <>
+                        <img
+                          src={imagePreview[currentImageIndex]}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                          style={{
+                            borderRadius: '6px',
+                          }}
+                        />
+
+                        <span className="absolute top-0 left-0 bg-black text-white p-1 text-sm rounded-bl-lg">
+                          {currentImageIndex + 1}/{imagePreview.length}
+                        </span>
+
+                        <span className="absolute top-0 right-0 bg-black text-white p-1 text-sm rounded-br-lg">
+                          {imagePreview[currentImageIndex].length / 1000}KB
+                        </span>
+
+                        <span
+                          className="absolute top-8 right-2 bg-white border border-gray-400 text-red-600 p-1 text-sm rounded-full cursor-pointer"
+                          onClick={() => {
+                            const newPreviews = imagePreview.filter(
+                              (_, index) => index !== currentImageIndex,
+                            );
+                            form.setValue('image', newPreviews, {
+                              shouldValidate: true,
+                            });
+                            setImagePreviews(newPreviews);
+                            setCurrentImageIndex(0);
+                          }}
+                        >
+                          <Cross1Icon className="w-4 h-4" />
+                        </span>
+
+                        <button
+                          onClick={handlePrevImage}
+                          className="absolute left-1 top-1/2 transform -translate-y-1/2 text-white p-2 z-50 bg-white border border-gray-400 rounded-full"
+                        >
+                          <GiPreviousButton className="text-red-600" />
+                        </button>
+
+                        <button
+                          onClick={handleNextImage}
+                          className="absolute right-1 top-1/2 transform -translate-y-1/2 text-white p-2 z-50 bg-white border border-gray-400 rounded-full"
+                        >
+                          <GiNextButton className=" text-red-600" />
+                        </button>
+                      </>
                     ) : (
                       <div className="flex items-center justify-center h-full">
                         <span className="text-gray-500">
@@ -206,12 +290,15 @@ export default function ItemDetails({
                       </div>
                     )}
                   </div>
-                  <input
-                    id="fileInput"
-                    type="file"
-                    className="hidden"
-                    onChange={handleImageChange}
-                  />
+                  {imagePreview.length === 0 && (
+                    <input
+                      id="fileInput"
+                      type="file"
+                      className="hidden"
+                      onChange={handleImageChange}
+                      multiple
+                    />
+                  )}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
