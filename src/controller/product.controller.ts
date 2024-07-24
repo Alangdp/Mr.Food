@@ -2,47 +2,7 @@ import { RequestHandler } from 'express';
 import { errorResponse, response } from '../utils/responses.js';
 import Category from '../models/Category.js';
 import Product from '../models/Product.js';
-// FUNCTIONS
-
-function isValidExtrasStructure(extras: any) {
-  try {
-    // Verifica se extras é um objeto e contém a propriedade options
-    if (!Array.isArray(extras) || extras === null) {
-      return false;
-    }
-
-    // Itera sobre cada item em options
-    for (const extraItem of extras) {
-      console.log(extraItem);
-      if (typeof extraItem !== 'object' || extraItem === null) {
-        return false;
-      }
-
-      if (
-        typeof extraItem.name !== 'string' ||
-        extraItem.name.trim() === '' ||
-        typeof extraItem.price !== 'number' ||
-        isNaN(extraItem.price) ||
-        extraItem.price < 0 ||
-        typeof extraItem.maxQuantity !== 'number' ||
-        isNaN(extraItem.maxQuantity) ||
-        extraItem.maxQuantity < 1 ||
-        typeof extraItem.minQuantity !== 'number' ||
-        isNaN(extraItem.minQuantity) ||
-        extraItem.minQuantity < 0 ||
-        typeof extraItem.categoryId !== 'string' ||
-        extraItem.categoryId.trim() === ''
-      ) {
-        return false;
-      }
-    }
-
-    return true;
-  } catch (error) {
-    console.error('Erro durante a validação:', error);
-    return false;
-  }
-}
+import { isValidExtrasStructure } from '../utils/validExtraOptions.js';
 
 const index: RequestHandler = async (req, res) => {
   try {
@@ -97,11 +57,29 @@ const store: RequestHandler = async (req, res) => {
         status: 400,
       });
     }
-    if (!isValidExtrasStructure(req.body.extras)) {
+
+    const isValidExtrasStructureData = isValidExtrasStructure(req.body.extras);
+    console.log(isValidExtrasStructureData);
+    if (!isValidExtrasStructureData.isValid) {
       return response(res, {
         errors: [{ message: 'Invalid extras structure' }],
         status: 400,
       });
+    }
+
+    const categorys: Category[] = [];
+    if (isValidExtrasStructureData.categories) {
+      for (const category of isValidExtrasStructureData.categories) {
+        const newCategory = await Category.create({
+          companyId: companyId,
+          name: category.name,
+          min: category.min,
+          max: category.max,
+          obrigatory: category.obrigatory,
+          type: 'PRODUCT',
+        });
+        categorys.push(newCategory);
+      }
     }
     if (
       categoryId &&
@@ -152,6 +130,7 @@ const destroy: RequestHandler = async (req, res) => {
 
 const update: RequestHandler = async (req, res) => {
   try {
+    console.log(req.body);
     const { id: companyId, productId, categoryId } = req.body;
     if (!companyId || !productId) {
       return response(res, {

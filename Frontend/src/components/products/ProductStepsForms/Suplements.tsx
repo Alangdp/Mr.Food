@@ -1,18 +1,19 @@
 import { Product } from '@/types/Product.type';
 import { z } from 'zod';
 
-const extraOptionSchema = z.object({
+const optionsSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
   price: z.number().min(0, 'Preço deve ser um valor positivo'),
-  maxQuantity: z
-    .number()
-    .min(1, 'Quantidade máxima deve ser pelo menos 1')
-    .default(1),
-  minQuantity: z
-    .number()
-    .min(0, 'Quantidade mínima deve ser pelo menos 0')
-    .default(1),
-  categoryId: z.string().nonempty('Categoria é obrigatória'),
+});
+
+const extraOptionSchema = z.object({
+  name: z.string().min(1, 'Nome é obrigatório'),
+  obrigatory: z.boolean(),
+  min: z.number().min(0, 'Mínimo deve ser um valor positivo'),
+  max: z.number().min(0, 'Máximo deve ser um valor positivo'),
+  itens: z
+    .array(optionsSchema)
+    .min(1, 'Cada Categoria deve ter pelo menos um item'),
 });
 
 const productSuplementSchema = z.object({

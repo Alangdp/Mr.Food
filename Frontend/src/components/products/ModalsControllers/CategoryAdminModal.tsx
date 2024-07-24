@@ -58,7 +58,10 @@ export default function CategoryAdminModal({ toggleModal }: BasicModalProps) {
   };
   return (
     <>
-      <ModalBody toggleModal={toggleModal} title="Registar Categoria de Lanche">
+      <ModalBody
+        toggleModal={toggleModal}
+        title="Registrar Categoria de Lanche"
+      >
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -68,7 +71,7 @@ export default function CategoryAdminModal({ toggleModal }: BasicModalProps) {
             <FormField
               control={form.control}
               name="type"
-              defaultValue="CATEGORY"
+              defaultValue="PRODUCT"
               render={({ field }) => (
                 <FormItem className="hidden">
                   <DetailInput inputProps={field} />

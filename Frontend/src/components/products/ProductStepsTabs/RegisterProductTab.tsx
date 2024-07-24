@@ -7,18 +7,14 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { TabsContent } from '@radix-ui/react-tabs';
-import { Cross1Icon, PlusIcon } from '@radix-ui/react-icons';
+import { MinusIcon, PlusIcon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
 import { RegisterProductSuplementsTabProps } from './RegisterSuplementProductTab.type';
 import { toast } from '@/components/ui/use-toast';
 import DetailInput from '@/components/utilities/DetailInput';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { fi } from '@faker-js/faker';
 
 export default function RegisterProductTab({
   hasSuplements,
@@ -26,15 +22,11 @@ export default function RegisterProductTab({
   append,
   remove,
   productForm,
-  complementsCategories,
   categoryForm,
   setSelectedFunction,
 }: RegisterProductSuplementsTabProps) {
   return (
-    <TabsContent
-      value="new"
-      className="py-8 overflow-y-scroll h-96 no-scrollbar"
-    >
+    <TabsContent value="new" className="py-8  h-96">
       {hasSuplements && (
         <div
           className={cn(
@@ -43,97 +35,19 @@ export default function RegisterProductTab({
           )}
         >
           {fields.map((field, index) => (
-            <span key={`Field-Index-${index}`}>
-              <div className="absolute right-2 top-5 w-6 h-6 text-red-600">
-                <Cross1Icon
-                  onClick={() => remove(index)}
-                  className="cursor-pointer"
-                />
-              </div>
-              <div key={field.id} className="flex flex-col gap-4 mt-4">
+            <div key={`COMPLEMENTE-INDEX-${index}`}>
+              <span className="flex items-center flex-[0.9] gap-4">
                 <FormField
                   control={productForm.control}
-                  name={`extras.${index}.categoryId`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <DetailInput
-                          {...field}
-                          substitute={
-                            <Select
-                              onValueChange={val => {
-                                console.log(val);
-                                productForm.setValue(
-                                  `extras.${index}.categoryId`,
-                                  val,
-                                );
-                              }}
-                            >
-                              <div className="flex flex-col gap-2">
-                                <h4 className="text-xl font-medium">
-                                  Categoria
-                                </h4>
-                                <SelectTrigger className="w-[180px]">
-                                  <SelectValue placeholder="Categoria" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {complementsCategories
-                                    .filter(item => item.type === 'PRODUCT')
-                                    .map(item => (
-                                      <SelectItem value={item.id.toString()}>
-                                        {item.name}
-                                      </SelectItem>
-                                    ))}
-                                </SelectContent>
-                              </div>
-                            </Select>
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={productForm.control}
-                  key={`extras.${index}.name`}
                   name={`extras.${index}.name`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <DetailInput
                           title="Nome do Complemento"
-                          type="text"
-                          placeholder="Nome"
-                          inputProps={field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={productForm.control}
-                  key={`extras.${index}.price`}
-                  name={`extras.${index}.price`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <DetailInput
-                          title="Preço"
-                          type="number"
-                          placeholder="Preço"
-                          inputProps={{
-                            ...field,
-                            onChange: e => {
-                              productForm.setValue(
-                                `extras.${index}.price`,
-                                Number(e.target.value),
-                              );
-                              productForm.trigger(`extras.${index}.price`);
-                            },
-                          }}
+                          isRequired
+                          placeholder=""
+                          inputProps={{ ...field }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -141,44 +55,290 @@ export default function RegisterProductTab({
                   )}
                 />
 
-                <div className="flex items-center w-min-[100%]">
-                  <FormField
-                    control={productForm.control}
-                    name={`extras.${index}.maxQuantity`}
-                    render={({ field }) => (
-                      <FormItem className="w-1/2">
-                        <FormControl>
-                          <DetailInput
-                            title="Quantidade Máxima"
-                            type="number"
-                            placeholder="Quantidade Máxima"
-                            {...field}
+                <FormField
+                  control={productForm.control}
+                  name={`extras.${index}.obrigatory`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <span className="relative h-fit flex flex-col gap-2">
+                          <h4 className="text-xl font-medium">
+                            Complemento Obrigatório ?
+                          </h4>
+                          <Switch
+                            className="data-[state=checked]:bg-red-500 "
+                            onCheckedChange={status => {
+                              if (status) {
+                                productForm.setValue(`extras.${index}.min`, 1);
+                                productForm.setValue(`extras.${index}.max`, 1);
+                              }
+                              productForm.setValue(
+                                `extras.${index}.obrigatory`,
+                                status,
+                              );
+
+                              return;
+                            }}
+                            checked={field.value}
                           />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={productForm.control}
-                    name={`extras.${index}.minQuantity`}
-                    render={({ field }) => (
-                      <FormItem className="w-1/2">
-                        <FormControl>
-                          <DetailInput
-                            title="Quantidade Mínima"
-                            type="number"
-                            placeholder="Quantidade Mínima"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                        </span>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </span>
+
+              <span className="flex itesm-center">
+                <FormField
+                  control={productForm.control}
+                  name={`extras.${index}.min`}
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <span className="relative h-fit">
+                          <h4 className="text-xl font-medium">
+                            Quantidade Mínima
+                          </h4>
+                          <div className="flex items-center space-x w-full max-w-sm border rounded-md">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-10 w-10 rounded-l-md text-red-600 hover:text-red-500 hover:bg-transparent"
+                              onClick={() => {
+                                if (
+                                  productForm.getValues(
+                                    `extras.${index}.obrigatory`,
+                                  ) === true &&
+                                  field.value === 1
+                                ) {
+                                  toast({
+                                    title: 'Complemento obrigatório',
+                                    description:
+                                      'Quantidade mínima não pode ser 0',
+                                  });
+                                  return;
+                                }
+                                if (field.value === 0) return;
+                                productForm.setValue(
+                                  `extras.${index}.min`,
+                                  field.value - 1,
+                                );
+                              }}
+                            >
+                              <MinusIcon className="h-5 w-5" />
+                            </Button>
+                            <Input
+                              type="number"
+                              className="flex-1 rounded-none border-x border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                              readOnly
+                              {...field}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-10 w-10 rounded-r-md text-red-600 hover:text-red-500 hover:bg-transparent"
+                              onClick={() => {
+                                if (
+                                  field.value >=
+                                  productForm.getValues(`extras.${index}.max`)
+                                )
+                                  return;
+                                productForm.setValue(
+                                  `extras.${index}.min`,
+                                  field.value + 1,
+                                );
+                              }}
+                            >
+                              <PlusIcon className="h-5 w-5" />
+                            </Button>
+                          </div>
+                        </span>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={productForm.control}
+                  name={`extras.${index}.max`}
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <span className="relative h-fit">
+                          <h4 className="text-xl font-medium">
+                            Quantidade Máxima
+                          </h4>
+                          <div className="flex items-center space-x w-full max-w-sm border rounded-md">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-10 w-10 rounded-l-md text-red-600 hover:text-red-500 hover:bg-transparent"
+                              onClick={() => {
+                                if (
+                                  field.value <=
+                                  productForm.getValues(`extras.${index}.min`)
+                                ) {
+                                  toast({
+                                    title: 'Quantidade mínima',
+                                    description:
+                                      'Quantidade máxima não pode ser menor que a mínima',
+                                  });
+                                  return;
+                                }
+                                if (field.value === 0) return;
+                                productForm.setValue(
+                                  `extras.${index}.max`,
+                                  field.value - 1,
+                                );
+                              }}
+                            >
+                              <MinusIcon className="h-5 w-5" />
+                            </Button>
+                            <Input
+                              type="number"
+                              className="flex-1 rounded-none border-x border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                              readOnly
+                              {...field}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-10 w-10 rounded-r-md text-red-600 hover:text-red-500 hover:bg-transparent"
+                              onClick={() => {
+                                productForm.setValue(
+                                  `extras.${index}.max`,
+                                  field.value + 1,
+                                );
+                              }}
+                            >
+                              <PlusIcon className="h-5 w-5" />
+                            </Button>
+                          </div>
+                        </span>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </span>
+
+              <div className="w-full  h-52 border border-gray-200 shadow-df mt-4 rounded mx-auto flex flex-col gap-2 p-2 overflow-y-scroll">
+                <div className="flex flex-col gap-2">
+                  <h4 className="text-xl font-medium">Opções</h4>
+                  <Button
+                    size="icon"
+                    className="h-10 w-fit px-4 rounded-l-md bg-white shadow-df border-gray-200 text-red-600 hover:text-red-500 hover:bg-gray-100 gap-4"
+                    type="button"
+                    onClick={() => {
+                      const itensToIndex = productForm.getValues(
+                        `extras.${index}.itens`,
+                      );
+
+                      if (
+                        itensToIndex.length > 0 &&
+                        itensToIndex[itensToIndex.length - 1].name === ''
+                      ) {
+                        toast({
+                          title: 'Preencha o campo anterior',
+                        });
+                        return;
+                      }
+
+                      productForm.setValue(`extras.${index}.itens`, [
+                        ...itensToIndex,
+                        {
+                          name: '',
+                          price: 0,
+                        },
+                      ]);
+                    }}
+                  >
+                    Nova Opção
+                    <PlusIcon className="h-5 w-5" />
+                  </Button>
+                </div>
+
+                <div className="flex items-center">
+                  <span className="flex flex-col w-full flex-1">
+                    {productForm
+                      .getValues(`extras.${index}.itens`)
+                      .map((item, itemIndex) => {
+                        return (
+                          <div
+                            key={`ITEM-INDEX-${itemIndex}`}
+                            className="flex items-center"
+                          >
+                            <span className="flex items-center gap-4 w-full">
+                              <FormField
+                                control={productForm.control}
+                                name={`extras.${index}.itens.${itemIndex}.name`}
+                                render={({ field }) => (
+                                  <FormItem className="flex-1">
+                                    <FormControl>
+                                      <DetailInput
+                                        title="Nome do Item"
+                                        isRequired
+                                        placeholder=""
+                                        inputProps={field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              <FormField
+                                control={productForm.control}
+                                name={`extras.${index}.itens.${itemIndex}.price`}
+                                render={({ field }) => (
+                                  <FormItem className="flex-1">
+                                    <FormControl>
+                                      <DetailInput
+                                        title="Preço"
+                                        isRequired
+                                        type="number"
+                                        placeholder=""
+                                        inputProps={{
+                                          ...field,
+                                          onChange: e => {
+                                            const value = Number(
+                                              e.target.value,
+                                            );
+                                            productForm.setValue(
+                                              `extras.${index}.itens.${itemIndex}.price`,
+                                              value,
+                                            );
+                                          },
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </span>
+                            <Button
+                              size="icon"
+                              className="h-10 w-fit px-4 rounded-l-md bg-white shadow-df border-gray-200 text-red-600 hover:text-red-500 hover:bg-gray-100 gap-4"
+                              onClick={() => {
+                                field.itens.splice(itemIndex, 1);
+                                productForm.setValue(
+                                  `extras.${index}.itens`,
+                                  field.itens,
+                                );
+                              }}
+                            >
+                              <MinusIcon className="h-5 w-5" />
+                            </Button>
+                          </div>
+                        );
+                      })}
+                  </span>
                 </div>
               </div>
-            </span>
+            </div>
           ))}
         </div>
       )}
@@ -192,31 +352,30 @@ export default function RegisterProductTab({
           Salvar
         </Button>
         <Button
-          size={'lg'}
+          size="lg"
           className="gap-2 border border-gray-200 text-red-600 bg-white hover:bg-gray-100"
           onClick={() => {
             categoryForm.reset();
             if (fields.length > 0) {
               toast({
-                title: 'So pode haver um cadastro de complemento por vez',
+                title: 'Só pode haver um cadastro de complemento por vez',
               });
               return;
-            } else {
-              append({
-                name: '',
-                price: 0,
-                maxQuantity: 1,
-                minQuantity: 0,
-                categoryId: '',
-              });
             }
+            append({
+              name: '',
+              itens: [],
+              obrigatory: false,
+              max: 0,
+              min: 0,
+            });
           }}
         >
           <PlusIcon className="font-bold w-6 h-auto" />
           Novo Complemento
         </Button>
         <Button
-          size={'lg'}
+          size="lg"
           className="gap-2 border border-gray-200 text-white bg-red-600 hover:bg-red-500"
           onClick={() => {
             remove(fields.map((_, index) => index));

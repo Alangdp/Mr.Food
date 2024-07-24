@@ -1,6 +1,6 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 
 interface ModalBodyProps {
   title?: string;
@@ -9,7 +9,7 @@ interface ModalBodyProps {
   children: ReactNode;
 }
 
-export default function ModalBody({
+export default function ModdadadadaalBody({
   toggleModal,
   closeButton,
   title,

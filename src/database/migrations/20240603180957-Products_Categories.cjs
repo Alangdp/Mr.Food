@@ -10,6 +10,19 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true
       },
+      min: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
+      max: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
+      obrigatory: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: false
+      },
       company_id: {
         type: Sequelize.INTEGER,
         allowNull: false,

@@ -12,10 +12,13 @@ export type RegisterProductSuplementsTabProps = {
     {
       extras: {
         name: string;
-        price: number;
-        maxQuantity: number;
-        minQuantity: number;
-        categoryId: string;
+        obrigatory: boolean;
+        min: number;
+        max: number;
+        itens: {
+          name: string;
+          price: number;
+        }[];
       }[];
     },
     'extras',
@@ -25,10 +28,13 @@ export type RegisterProductSuplementsTabProps = {
     {
       extras: {
         name: string;
-        price: number;
-        maxQuantity: number;
-        minQuantity: number;
-        categoryId: string;
+        obrigatory: boolean;
+        min: number;
+        max: number;
+        itens: {
+          name: string;
+          price: number;
+        }[];
       }[];
     },
     'extras'
@@ -37,10 +43,13 @@ export type RegisterProductSuplementsTabProps = {
     {
       extras: {
         name: string;
-        price: number;
-        maxQuantity: number;
-        minQuantity: number;
-        categoryId: string;
+        obrigatory: boolean;
+        min: number;
+        max: number;
+        itens: {
+          name: string;
+          price: number;
+        }[];
       }[];
     },
     any,

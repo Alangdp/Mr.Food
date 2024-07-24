@@ -1,12 +1,13 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useEffect, useState } from 'react';
 import {
+  Category,
   getPortugueseName,
   Product,
   ProductCompleteValidation,
   ProductResponse,
 } from '@/types/Product.type';
-import { makePost } from '@/utils/Getter';
+import { makePost, makePut } from '@/utils/Getter';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import ItemDetails from '../ProductSteps/Details';
@@ -26,10 +27,12 @@ interface Status {
 interface AddItemModalProps {
   toggleModal: (() => void) | ((...args: any[]) => any);
   product?: ProductResponse;
+  type?: string;
 }
 
 export default function AddItemModal({
   product: startProduct,
+  type,
 }: AddItemModalProps) {
   const { toast } = useToast();
   const { companyToken } = useAuth();
@@ -45,7 +48,8 @@ export default function AddItemModal({
     describe: startProduct?.description || '',
     price: Number(startProduct?.price) || 0,
     discount: startProduct?.discountPercent || 0,
-    extras: startProduct?.extras || [],
+    extras: startProduct?.extras || ([] as Category[]),
+    image: [],
   });
 
   useEffect(() => {}, [product]);
@@ -66,6 +70,29 @@ export default function AddItemModal({
     }
 
     if (parsed.success && !parsed.error) {
+      if (type === 'edit') {
+        const { id } = startProduct || { id: 0 };
+
+        const EditProduct = await makePut<
+          Product & { description: string; productId: number },
+          Product
+        >(
+          'products/',
+          {
+            ...product,
+            productId: id,
+            description: product.describe,
+          },
+          {
+            authToken: companyToken,
+            autoToast: true,
+            toast: toast,
+          },
+        );
+
+        if (EditProduct) return true;
+        return false;
+      }
       const newProduct = await makePost<
         Product & { description: string },
         Product
@@ -95,6 +122,7 @@ export default function AddItemModal({
           price: 0,
           discount: 0,
           extras: [],
+          image: [],
         });
         toast({
           title: 'Produto salvo com sucesso',
@@ -116,7 +144,7 @@ export default function AddItemModal({
           (val, i) => val === true || i === 0,
         ).length - 1
       ).toString()}
-      className="w-full"
+      className="w-full h-screen"
       value={step.toString()}
     >
       <TabsList className="gap-8">
@@ -131,7 +159,7 @@ export default function AddItemModal({
         </TabsTrigger>
       </TabsList>
 
-      <div className="mt-10">
+      <div className="mt-10 h-full">
         <TabsContent value="0">
           <ItemDetails
             step={setStep}
@@ -158,10 +186,7 @@ export default function AddItemModal({
             }}
           />
         </TabsContent>
-        <TabsContent
-          value="2"
-          className="overflow-y-scroll h-[700px] no-scrollbar"
-        >
+        <TabsContent value="2" className="overflow-y-scroll  h-[80vh]">
           <Suplements
             saveProduct={saveProduct}
             step={setStep}

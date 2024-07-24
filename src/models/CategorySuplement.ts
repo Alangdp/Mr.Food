@@ -1,38 +1,20 @@
-import { Model, DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import database from '../database/index.js';
 
-export default class Category extends Model {
-  declare id: number;
-  declare companyId: number;
+export default class CategorySuplement extends Model {
+  declare id: number; // ! Auto
+  declare companyId: number; // ! Auto
   declare name: string;
-  declare createdAt: Date;
-  declare updatedAt: Date;
-  declare type: string;
-  declare active: boolean;
+  declare type: string; // ! Auto - Default: 'PRODUCT'
   declare min: number;
-  declare maxnumber: number;
-  declare obrigatory: boolean;
-
-  static async findByName(name: string) {
-    return await this.findOne({ where: { name } });
-  }
-
-  static async findByCompanyId(company_id: number) {
-    return await this.findAll({ where: { company_id } });
-  }
-
-  static async findByNameAndCompanyId(name: string, company_id: number) {
-    return await this.findOne({ where: { name, company_id } });
-  }
-
-  static async categoryBelongsToCompany(categoryId: number, companyId: number) {
-    const category = await this.findOne({ where: { id: categoryId } });
-    if (!category) return false;
-    return category.companyId === companyId;
-  }
+  declare max: number;
+  declare obrigatory: boolean; // ? Auto - Default: false
+  declare active: boolean; // ! Auto
+  declare createdAt: Date; // ! Auto
+  declare updatedAt: Date; // ! Auto
 }
 
-Category.init(
+CategorySuplement.init(
   {
     id: {
       primaryKey: true,

@@ -8,51 +8,61 @@ const ACCEPTED_IMAGE_TYPES = [
   'image/webp',
 ];
 
+export interface ProductResponse {
+  id: number;
+  companyId: number;
+  categoryId: number;
+  name: string;
+  description: string;
+  price: string;
+  discountPercent: number;
+  active: boolean;
+  extras: Category[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Category {
+  max: number;
+  min: number;
+  name: string;
+  itens: Option[];
+  obrigatory: boolean;
+}
+
+export interface Option {
+  name: string;
+  price: number;
+}
+
 export interface Product {
+  id?: number;
   name: string;
   category: string;
   describe: string;
   image: File[];
   price: number;
   discount?: number;
-  extras: Option[];
+  extras: Category[];
 }
 
-type ExtraOption = {
-  name: string;
-  price: number;
-  maxQuantity: number;
-  minQuantity: number;
-  categoryId: string;
-};
+const optionsSchema = z.object({
+  name: z.string().min(1, 'Nome é obrigatório'),
+  price: z.number().min(0, 'Preço deve ser um valor positivo'),
+});
 
 const extraOptionSchema = z.object({
-  name: z.string().nonempty('Nome é obrigatório'),
-  price: z.number().min(0, 'Preço deve ser um valor positivo'),
-  maxQuantity: z
-    .number()
-    .min(1, 'Quantidade máxima deve ser pelo menos 1')
-    .default(1),
-  minQuantity: z
-    .number()
-    .min(0, 'Quantidade mínima deve ser pelo menos 0')
-    .default(1),
-  categoryId: z.string().nonempty('Categoria é obrigatória'),
+  name: z.string().min(1, 'Nome é obrigatório'),
+  obrigatory: z.boolean(),
+  min: z.number().min(0, 'Mínimo deve ser um valor positivo'),
+  max: z.number().min(0, 'Máximo deve ser um valor positivo'),
+  itens: z.array(optionsSchema),
 });
 
 const ProductCompleteValidation = z.object({
-  category: z.string().nonempty('A categoria é obrigatória.'),
-  name: z.string().nonempty('O nome é obrigatório.'),
-  describe: z.string().nonempty('A descrição é obrigatória.'),
-  image: z
-    .any()
-    .refine(file => file?.size <= MAX_FILE_SIZE, {
-      message: 'O tamanho máximo da imagem é 5MB.',
-    })
-    .refine(file => ACCEPTED_IMAGE_TYPES.includes(file?.type), {
-      message: 'Apenas os formatos .jpg, .jpeg, .png e .webp são suportados.',
-    })
-    .optional(),
+  name: z.string().min(1, 'O nome é obrigatório.'),
+  describe: z.string().min(1, 'A descrição é obrigatória.'),
+  image: z.any().optional(),
   price: z.number().int().positive('O preço deve ser positivo.'),
   discount: z
     .number()
@@ -77,24 +87,3 @@ function getPortugueseName(key: string): string {
 }
 
 export { ProductCompleteValidation, getPortugueseName };
-
-export interface ProductResponse {
-  createdAt: string;
-  updatedAt: string;
-  active: boolean;
-  id: number;
-  companyId: number;
-  categoryId: number;
-  name: string;
-  price: string;
-  extras: Option[];
-  description: string;
-  discountPercent: number;
-}
-export interface Option {
-  name: string;
-  price: number;
-  categoryId: string;
-  maxQuantity: number;
-  minQuantity: number;
-}

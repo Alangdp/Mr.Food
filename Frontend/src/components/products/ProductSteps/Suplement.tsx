@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { makeGet, makePost } from '@/utils/Getter';
+import { makeGet } from '@/utils/Getter';
 import { SuplementCategory } from '@/types/SuplementCategory.type';
 import {
   CategoryType,
@@ -19,8 +19,6 @@ import {
 import { useDefaultImports } from '@/components/utilities/DefaultImports';
 import RegisterProductTab from '../ProductStepsTabs/RegisterProductTab';
 import ListProductSuplementTab from '../ProductStepsTabs/ListProductSuplementTab';
-import RegisterCategoryTab from '../ProductStepsTabs/RegisterCategoryTab';
-import ListCategoryTab from '../ProductStepsTabs/ListCategoryTab';
 export default function Suplements({
   product,
   productChange,
@@ -28,15 +26,19 @@ export default function Suplements({
   saveProduct,
 }: ProductSuplementsProps) {
   const { auth, toast } = useDefaultImports();
+
   const [complementsCategories, setComplementsCategories] = useState<
     SuplementCategory[]
   >([]);
+
   const [selectedFunction, setSelectedFunction] = useState<
     string | undefined
   >();
+
   const [hasSuplements, setHasSuplements] = useState(
     product.extras.length > 0 ? true : false,
   );
+
   const fetchCategories = async () => {
     const categories = await makeGet<SuplementCategory[]>('categories/', {
       autoToast: true,
@@ -56,7 +58,7 @@ export default function Suplements({
   const productForm = useForm<ProductSuplementSchema>({
     resolver: zodResolver(productSuplementSchema),
     defaultValues: {
-      extras: product.extras || [],
+      extras: [],
     },
   });
 
@@ -76,10 +78,10 @@ export default function Suplements({
     if (fields.length === 0 && product.extras.length === 0) {
       append({
         name: '',
-        price: 0,
-        maxQuantity: 1,
-        minQuantity: 0,
-        categoryId: '',
+        itens: [],
+        obrigatory: false,
+        max: 0,
+        min: 0,
       });
     }
   }, []);
@@ -91,31 +93,14 @@ export default function Suplements({
       extras: allExtras,
     });
 
-    console.log(allExtras);
     productForm.reset();
     append({
       name: '',
-      price: 0,
-      maxQuantity: 1,
-      minQuantity: 0,
-      categoryId: '',
+      itens: [],
+      obrigatory: false,
+      max: 0,
+      min: 0,
     });
-  };
-
-  const categoryOnSubmit = async (data: CategoryType) => {
-    const dataResponse = await makePost<CategoryType, SuplementCategory>(
-      'categories/',
-      { ...data },
-      { toast, autoToast: true, authToken: auth.companyToken },
-    );
-    if (dataResponse) {
-      toast({
-        title: 'Categoria cadastrada com sucesso',
-      });
-      categoryForm.reset();
-      setSelectedFunction('new');
-      setComplementsCategories(prevState => [...prevState, dataResponse]);
-    }
   };
 
   return (
@@ -160,12 +145,6 @@ export default function Suplements({
               <TabsTrigger className="w-20" value="olds">
                 Existentes
               </TabsTrigger>
-              <TabsTrigger className="w-20" value="categories">
-                Categorias
-              </TabsTrigger>
-              <TabsTrigger className="" value="oldcategories">
-                Categorias Cadastradas
-              </TabsTrigger>
             </TabsList>
 
             <Form {...productForm}>
@@ -188,17 +167,6 @@ export default function Suplements({
               productChange={productChange}
               complementsCategories={complementsCategories}
             />
-
-            <Form {...categoryForm}>
-              <form onSubmit={categoryForm.handleSubmit(categoryOnSubmit)}>
-                <RegisterCategoryTab
-                  categoryForm={categoryForm}
-                  fields={fields}
-                />
-              </form>
-            </Form>
-
-            <ListCategoryTab complementsCategories={complementsCategories} />
           </Tabs>
         </div>
       </div>
@@ -213,10 +181,10 @@ export default function Suplements({
               productForm.reset();
               append({
                 name: '',
-                price: 0,
-                maxQuantity: 1,
-                minQuantity: 0,
-                categoryId: '',
+                itens: [],
+                obrigatory: false,
+                max: 0,
+                min: 0,
               });
             }
           }}

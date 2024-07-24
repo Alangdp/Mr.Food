@@ -13,12 +13,10 @@ export default function EditItemModal({
   toggleModal,
   product,
 }: EditItemModalProps) {
-  console.log(product);
-
   return (
     <>
       <ModalBody toggleModal={toggleModal} title="Registar Item">
-        <AddItemModal toggleModal={toggleModal} product={product} />
+        <AddItemModal toggleModal={toggleModal} product={product} type="edit" />
       </ModalBody>
     </>
   );

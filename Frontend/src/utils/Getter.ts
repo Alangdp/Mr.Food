@@ -157,6 +157,54 @@ export async function makePost<T, Y>(
   }
 }
 
+export async function makePut<T, Y>(
+  apiComplement: string,
+  data: T,
+  options: {
+    toast?: ({ ...props }: Toast) => {
+      id: string;
+      dismiss: () => void;
+      update: (props: ToasterToast) => void;
+    };
+    autoToast?: boolean;
+    authToken?: string | null;
+  },
+) {
+  try {
+    const response = await axios.put(`${API_URL}/${apiComplement}`, data, {
+      headers: {
+        Authorization: options.authToken,
+      },
+    });
+    const responseData: ResponseProps<Y> = response.data;
+    if (responseData.errors && responseData.errors.length > 0) {
+      if (options.toast && options.autoToast) {
+        responseData.errors.forEach(error => {
+          options.toast!({
+            title: error.message,
+            variant: 'destructive',
+          });
+        });
+      }
+      return null;
+    }
+
+    return responseData.data || null;
+  } catch (error) {
+    const errors = handleApiError(error);
+    if (options.toast && options.autoToast) {
+      errors.forEach(error => {
+        options.toast!({
+          title: error,
+          variant: 'destructive',
+        });
+      });
+    }
+
+    return null;
+  }
+}
+
 export async function makeGet<Y>(
   apiComplement: string,
   options: {
