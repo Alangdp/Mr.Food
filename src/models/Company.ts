@@ -3,6 +3,30 @@ import database from '../database/index.js';
 import bcrypt from 'bcrypt';
 
 export default class Company extends Model {
+  public declare id: number;
+  public declare name: string;
+  public declare cnpj: string;
+  public declare email: string;
+  public declare phone: string;
+  public declare orderMinimum: number;
+  public declare paymentMethods: string[];
+  public declare address: string;
+  public declare openingHours: {
+    monday: { open: string; close: string; closed?: boolean };
+    tuesday: { open: string; close: string; closed?: boolean };
+    wednesday: { open: string; close: string; closed?: boolean };
+    thursday: { open: string; close: string; closed?: boolean };
+    friday: { open: string; close: string; closed?: boolean };
+    saturday: { open: string; close: string; closed?: boolean };
+    sunday: { open?: string; close?: string; closed: boolean };
+  };
+  public declare deliveryOptions: string[];
+  public declare website?: string;
+  public declare description?: string;
+  public declare password?: string;
+  public declare createdAt: Date;
+  public declare updatedAt: Date;
+
   static async findByPhone(phone: string) {
     return await this.findOne({ where: { phoneNumber: phone } });
   }

@@ -19,7 +19,7 @@ module.exports = {
       },
     },
     extend: {
-      
+
       textColor: {
         secondary: '#3f3e3e',
       },
@@ -86,6 +86,7 @@ module.exports = {
     },
   },
   plugins: [
+    require('@tailwindcss/line-clamp'),
     require('tailwindcss-animate'),
     plugin(function ({ addUtilities }) {
       addUtilities({

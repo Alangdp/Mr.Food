@@ -3,6 +3,7 @@ import { errorResponse, response } from '../utils/responses.js';
 import Category from '../models/Category.js';
 import Product from '../models/Product.js';
 import { isValidExtrasStructure } from '../utils/validExtraOptions.js';
+import Company from '../models/Company.js';
 
 const index: RequestHandler = async (req, res) => {
   try {
@@ -173,4 +174,31 @@ const update: RequestHandler = async (req, res) => {
   }
 };
 
-export { store, destroy, update, index, indexActives };
+const indexById: RequestHandler = async (req, res) => {
+  try {
+    const { productId } = req.body;
+    const product = await Product.findByPk(productId);
+    if (!product) throw new Error('Product not found');
+    const company = await Company.findByPk(product.companyId);
+    if (!company) throw new Error('Company not found');
+
+    return response(res, {
+      data: {
+        product: product.dataValues,
+        company: {
+          id: company.id,
+          name: company.name,
+          logo: '',
+          phone: company.phone,
+          orderMinimum: company.orderMinimum,
+          deliveryOptions: company.deliveryOptions,
+        },
+      },
+      status: 200,
+    });
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+export { store, destroy, update, index, indexActives, indexById };

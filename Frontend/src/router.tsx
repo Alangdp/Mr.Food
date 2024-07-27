@@ -8,6 +8,7 @@ import MotionWrapper from './components/router/MotionWrapper';
 import { DashboardHomeRouter } from './components/companyDashboard/home';
 import { OrderPageRoute } from './components/companyDashboard/orders/orderPage';
 import { ProductsAdminPageRoute } from './components/products/products';
+import Product from './components/product/product';
 
 const router = createBrowserRouter([
   {
@@ -79,6 +80,17 @@ const router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path: '/products/:productId',
+    element: (
+      <>
+        <NavBar />
+        <MotionWrapper>
+          <Product />
+        </MotionWrapper>
+      </>
+    ),
   },
   {
     path: '*',

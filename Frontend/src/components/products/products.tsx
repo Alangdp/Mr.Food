@@ -152,9 +152,12 @@ function ProductsAdmin({
                                 </div>
                                 <div className="flex flex-col gap-2">
                                   <div className="flex items-center gap-2">
-                                    <h4 className="font-semibold">
+                                    <a
+                                      href={`/products/${product.id}`}
+                                      className="font-semibold hover:underline cursor-pointer duration-200"
+                                    >
                                       {product.name}
-                                    </h4>
+                                    </a>
                                     <div className="flex items-center gap-2 p-1 bg-gray-300 rounded-lg hover:bg-gray-400 duration-300 cursor-pointer">
                                       <BellIcon className="w-4 h-4" />
                                     </div>
