@@ -5,11 +5,11 @@ import {
   FormControl,
   FormDescription,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { RegisterStepProps } from '@/types/Company.type'
-import { AnimatePresence, motion } from 'framer-motion'
-import { Checkbox } from '@/components/ui/checkbox'
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { RegisterStepProps } from '@/types/Company.type';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const opcoesDeEntrega = [
   {
@@ -36,7 +36,7 @@ const opcoesDeEntrega = [
     id: 'delivery_partner',
     label: 'Parceiro de Entrega',
   },
-] as const
+] as const;
 
 const metodosDePagamento = [
   {
@@ -63,11 +63,9 @@ const metodosDePagamento = [
     id: 'pagamento_online',
     label: 'Pagamento Online',
   },
-] as const
+] as const;
 
 export default function RegisterStep3({ form }: RegisterStepProps) {
-  console.log(form.getValues())
-
   return (
     <AnimatePresence>
       <motion.span
@@ -111,7 +109,7 @@ export default function RegisterStep3({ form }: RegisterStepProps) {
                                       field.value?.filter(
                                         (value: string) => value !== metodo.id,
                                       ),
-                                    )
+                                    );
                               }}
                             />
                           </FormControl>
@@ -119,11 +117,10 @@ export default function RegisterStep3({ form }: RegisterStepProps) {
                             {metodo.label}
                           </FormLabel>
                         </FormItem>
-                      )
+                      );
                     }}
                   />
                 ))}
-                <FormMessage className="pl-1" />
               </FormItem>
             )}
           />
@@ -132,17 +129,17 @@ export default function RegisterStep3({ form }: RegisterStepProps) {
             control={form.control}
             name="deliveryOptions"
             render={({ field }) => {
-                if(!field.value) {
-                  field.value = []
-                }
-              return(
+              if (!field.value) {
+                field.value = [];
+              }
+              return (
                 <FormItem className="mt-4 w-fit">
                   <div className="mb-4">
                     <FormLabel className="text-base">
-                      Formas de pagamento
+                      Formas de retirada/entrega
                     </FormLabel>
                     <FormDescription className="pl-1">
-                      Selecione as formas de pagamento aceitas.
+                      Selecione as formas de retirada/entrega aceitas.
                     </FormDescription>
                   </div>
                   {opcoesDeEntrega.map(metodo => (
@@ -155,11 +152,11 @@ export default function RegisterStep3({ form }: RegisterStepProps) {
                           checked={field.value?.includes(metodo.id)}
                           onCheckedChange={checked => {
                             const newValue = checked
-                              ? [...field.value, metodo.id] // Adicionando ao array existente
+                              ? [...field.value, metodo.id]
                               : field.value?.filter(
                                   (value: string) => value !== metodo.id,
-                                ) // Removendo do array existente
-                            field.onChange(newValue) // Atualizando o valor do campo
+                                );
+                            field.onChange(newValue);
                           }}
                         />
                       </FormControl>
@@ -168,9 +165,8 @@ export default function RegisterStep3({ form }: RegisterStepProps) {
                       </FormLabel>
                     </FormItem>
                   ))}
-                  <FormMessage className="pl-1" />
                 </FormItem>
-              )
+              );
             }}
           />
         </div>
@@ -187,7 +183,7 @@ export default function RegisterStep3({ form }: RegisterStepProps) {
                   placeholder="Pedido minimo"
                   {...field}
                   onChange={e => {
-                    form.setValue('orderMinimum', Number(e.target.value))
+                    form.setValue('orderMinimum', Number(e.target.value));
                   }}
                   type="number"
                 />
@@ -205,5 +201,5 @@ export default function RegisterStep3({ form }: RegisterStepProps) {
         />
       </motion.span>
     </AnimatePresence>
-  )
+  );
 }

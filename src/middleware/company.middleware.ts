@@ -1,7 +1,7 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { errorResponse } from "../utils/responses.js";
-import { configDotenv } from "dotenv";
+import { errorResponse } from '../utils/responses.js';
+import { configDotenv } from 'dotenv';
 
 configDotenv();
 
@@ -15,6 +15,7 @@ const CompanyLoginMiddleware: RequestHandler = async (req, res, next) => {
     req.body.id = id as number;
     next();
   } catch (error) {
+    console.log(error);
     return errorResponse(res, error);
   }
 };

@@ -4,6 +4,7 @@ import Category from '../models/Category.js';
 import Product from '../models/Product.js';
 import { isValidExtrasStructure } from '../utils/validExtraOptions.js';
 import Company from '../models/Company.js';
+// import { changeStatus } from './order.controller.js';
 
 const index: RequestHandler = async (req, res) => {
   try {
@@ -176,7 +177,7 @@ const update: RequestHandler = async (req, res) => {
 
 const indexById: RequestHandler = async (req, res) => {
   try {
-    const { productId } = req.body;
+    const { productId } = req.params;
     const product = await Product.findByPk(productId);
     if (!product) throw new Error('Product not found');
     const company = await Company.findByPk(product.companyId);
@@ -201,4 +202,77 @@ const indexById: RequestHandler = async (req, res) => {
   }
 };
 
-export { store, destroy, update, index, indexActives, indexById };
+const changeActive: RequestHandler = async (req, res) => {
+  try {
+    const { id: companyId } = req.body;
+    const { productId } = req.params;
+    if (!companyId || !productId) {
+      return response(res, {
+        errors: [{ message: 'companyId and productId are required' }],
+        status: 400,
+      });
+    }
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      return response(res, {
+        errors: [{ message: 'Product not found' }],
+        status: 404,
+      });
+    }
+    const updatedProduct = await product.update({
+      active: !product.active,
+    });
+    await product.save();
+    return response(res, { data: updatedProduct, status: 200 });
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+const indexAllWithCompany: RequestHandler = async (req, res) => {
+  try {
+    const { companyId } = req.body;
+    const products = await Product.findAll({
+      where: {
+        companyId,
+      },
+    });
+    const categories = await Category.findAll({ where: { companyId } });
+    const company = await Company.findByPk(companyId);
+    if (!company) {
+      return response(res, {
+        errors: [{ message: 'Company not found' }],
+        status: 404,
+      });
+    }
+    return response(res, {
+      status: 200,
+      data: {
+        company: {
+          id: company.id,
+          name: company.name,
+          logo: '',
+          phone: company.phone,
+          orderMinimum: company.orderMinimum,
+          deliveryOptions: company.deliveryOptions,
+        },
+        products,
+        categories: categories.filter(category => category.type === 'CATEGORY'),
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return errorResponse(res, error);
+  }
+};
+
+export {
+  store,
+  destroy,
+  update,
+  index,
+  indexActives,
+  indexById,
+  changeActive,
+  indexAllWithCompany,
+};

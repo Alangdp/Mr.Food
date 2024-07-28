@@ -1,5 +1,5 @@
-import { UseFormReturn } from 'react-hook-form'
-import { z } from 'zod'
+import { UseFormReturn } from 'react-hook-form';
+import { z } from 'zod';
 
 const formSchema = z.object({
   name: z
@@ -15,8 +15,8 @@ const formSchema = z.object({
     })
     .refine(
       value => {
-        const replaced = value.replace(/\D/g, '')
-        return replaced.length >= 14
+        const replaced = value.replace(/\D/g, '');
+        return replaced.length >= 14;
       },
       {
         message: 'CNPJeve conter 14 caracteres',
@@ -24,8 +24,8 @@ const formSchema = z.object({
     )
     .refine(
       value => {
-        const replaced = value.replace(/\D/g, '')
-        return !!Number(replaced)
+        const replaced = value.replace(/\D/g, '');
+        return !!Number(replaced);
       },
       {
         message: 'CNPJ Deve conter apenas números',
@@ -76,10 +76,10 @@ const formSchema = z.object({
   deliveryOptions: z
     .array(z.string())
     .refine(value => value.some(item => item), {
-      message: 'Você deve selecionar ao menos uma forma de pagamento',
+      message: 'Você deve selecionar ao menos uma forma de entrega',
     })
     .default([]),
-})
+});
 
 const formSchemaLogin = z.object({
   email: z
@@ -96,13 +96,13 @@ const formSchemaLogin = z.object({
     .min(8, {
       message: 'Senha deve ter no mínimo 8 caracteres',
     }),
-})
+});
 
-export type CompanyProps = z.infer<typeof formSchema>
-export type FormSchemaLogin = z.infer<typeof formSchemaLogin>
+export type CompanyProps = z.infer<typeof formSchema>;
+export type FormSchemaLogin = z.infer<typeof formSchemaLogin>;
 
 export interface RegisterStepProps {
-  form: UseFormReturn<CompanyProps>
+  form: UseFormReturn<CompanyProps>;
 }
 
-export { formSchema, formSchemaLogin }
+export { formSchema, formSchemaLogin };

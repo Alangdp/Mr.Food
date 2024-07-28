@@ -19,11 +19,12 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProductResponse } from '@/types/Product.type';
 import { useAuth } from '@/context/AuthContext';
-import { makeGet } from '@/utils/Getter';
+import { makeGet, makePost, makePut, validateToken } from '@/utils/Getter';
 import { useToast } from '../ui/use-toast';
 import CategoryAdminModal from './ModalsControllers/CategoryAdminModal';
 import { SuplementCategory } from '@/types/SuplementCategory.type';
 import EditItemModal from './ModalsControllers/EditItemModal';
+import { Company } from '@/types/CompanyDataProducts';
 
 interface ProductsAdminProps {
   AddItemModalToggle: () => ReactNode;
@@ -43,6 +44,17 @@ function ProductsAdmin({
   const navigate = useNavigate();
   const [products, setProducts] = useState<ProductResponse[]>([]);
   const [categories, setCategories] = useState<SuplementCategory[]>([]);
+  const [company, setCompany] = useState<Company>();
+
+  const fetchCompany = async () => {
+    const company = await makeGet<Company>('companies', {
+      authToken: companyToken,
+      toast,
+      autoToast: true,
+    });
+
+    if (company) setCompany(company);
+  };
 
   const fetchProducts = async () => {
     const products = await makeGet<ProductResponse[]>('products', {
@@ -67,6 +79,7 @@ function ProductsAdmin({
   useEffect(() => {
     if (products.length === 0) fetchProducts();
     if (categories.length === 0) fetchCategories();
+    fetchCompany();
     navigate('/company/dashboard/products');
   }, []);
 
@@ -153,7 +166,7 @@ function ProductsAdmin({
                                 <div className="flex flex-col gap-2">
                                   <div className="flex items-center gap-2">
                                     <a
-                                      href={`/products/${product.id}`}
+                                      href={`/products/${company?.id}`}
                                       className="font-semibold hover:underline cursor-pointer duration-200"
                                     >
                                       {product.name}
@@ -191,7 +204,24 @@ function ProductsAdmin({
                               <Switch
                                 checked={product.active}
                                 className="data-[state=checked]:bg-red-500"
-                                onCheckedChange={status => console.log(status)}
+                                onCheckedChange={async status => {
+                                  await makePut<null, unknown>(
+                                    `products/product/${product.id}`,
+                                    null,
+                                    {
+                                      authToken: companyToken,
+                                      toast,
+                                      autoToast: true,
+                                    },
+                                  );
+                                  setProducts(
+                                    products.map(item =>
+                                      item.id === product.id
+                                        ? { ...item, active: status }
+                                        : item,
+                                    ),
+                                  );
+                                }}
                               />
                             </td>
                           </tr>

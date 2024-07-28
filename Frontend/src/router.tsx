@@ -8,7 +8,7 @@ import MotionWrapper from './components/router/MotionWrapper';
 import { DashboardHomeRouter } from './components/companyDashboard/home';
 import { OrderPageRoute } from './components/companyDashboard/orders/orderPage';
 import { ProductsAdminPageRoute } from './components/products/products';
-import Product from './components/product/product';
+import Product from './components/product/companyProductPage';
 
 const router = createBrowserRouter([
   {
@@ -82,11 +82,10 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/products/:productId',
+    path: '/products/:companyId',
     element: (
       <>
-        <NavBar />
-        <MotionWrapper>
+        <MotionWrapper classname="overflow-hidden">
           <Product />
         </MotionWrapper>
       </>
