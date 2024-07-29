@@ -154,16 +154,16 @@ function ProductsAdmin({
                             <td className="p-4">
                               <div className="flex items-center gap-4">
                                 <HamburgerMenuIcon
-                                  className="w-6 h-auto cursor-pointer"
+                                  className="w-[30px] flex-[0.02] h-auto cursor-pointer"
                                   onClick={() => {
                                     ItemModalToggleEdit();
                                     setToEdit(product);
                                   }}
                                 />
-                                <div className="w-16 h-16 border-dashed border rounded border-secondary flex items-center justify-center text-secondary opacity-80 cursor-pointer">
+                                <div className="flex-[0.05] w-16 h-16 border-dashed border rounded border-secondary flex items-center justify-center text-secondary opacity-80 cursor-pointer">
                                   <CameraIcon className="w-6 h-auto" />
                                 </div>
-                                <div className="flex flex-col gap-2">
+                                <div className="flex flex-col gap-2 flex-[0.7]">
                                   <div className="flex items-center gap-2">
                                     <a
                                       href={`/products/${company?.id}`}
@@ -178,7 +178,7 @@ function ProductsAdmin({
                                       <GearIcon className="w-4 h-4" />
                                     </div>
                                   </div>
-                                  <p className="text-secondary">
+                                  <p className="text-secondary text-ellipsis h-12 text-sm line-clamp-1 overflow-hidden pt-2 break-all">
                                     {product.description}
                                   </p>
                                 </div>

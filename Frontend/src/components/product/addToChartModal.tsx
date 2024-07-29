@@ -4,6 +4,8 @@ import ModalBody from '../utilities/ModalBody';
 import { Checkbox } from '../ui/checkbox';
 import { Separator } from '@radix-ui/react-menubar';
 import { Button } from '../ui/button';
+import ValidateExtraOptions from './Validate';
+import { MyCheckbox } from './checkboxValiate';
 
 interface AddCartModalProps {
   products?: ProductResponse[];
@@ -34,6 +36,14 @@ export default function AddCartModal({
                 'https://nutrimassasesalgados.com/wp-content/uploads/2020/05/MG_6472-copiar-1.jpg'
               }
               alt={product?.name}
+              onError={({ currentTarget }) => {
+                currentTarget.onerror = null;
+                currentTarget.src =
+                  'https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg';
+                currentTarget.style.width = '80%';
+                currentTarget.style.border = '1px dashed black';
+              }}
+              className="w-full rounded"
             />
           </div>
           <div className="h-[40vh] flex flex-col gap-2 overflow-y-scroll">
@@ -55,62 +65,72 @@ export default function AddCartModal({
             </div>
             <div className="h-18 w-full">
               {product?.extras && product.extras.length > 0
-                ? product?.extras.map(extra => (
-                    <span className="">
-                      <div
-                        className="flex justify-between items-center p-2 bg-gray-200"
-                        key={extra.name}
-                      >
-                        <div className="flex flex-col">
-                          <p className="text font-medium text-secondary">
-                            {extra.name}
-                          </p>
-                          <p className="text-sm text-secondary">
-                            {extra.obrigatory && extra.max > 1
-                              ? `Escolha até ${extra.max} opções`
-                              : extra.obrigatory
-                                ? 'Escolha uma opção'
-                                : `Escolha até ${extra.max} opções`}
-                          </p>
-                        </div>
-                        {extra.obrigatory && (
-                          <div className="flex justify-center items-center w-20 h-6 bg-[#717171] rounded">
-                            <p className="text-sm text-white font-medium">
-                              Obrigatório
+                ? product?.extras.map(extra => {
+                    const validator = new ValidateExtraOptions(
+                      extra.itens,
+                      extra.max,
+                      extra.min,
+                      extra.obrigatory,
+                    );
+
+                    return (
+                      <span className="">
+                        <div
+                          className="flex justify-between items-center p-2 bg-gray-200"
+                          key={extra.name}
+                        >
+                          <div className="flex flex-col">
+                            <p className="text font-medium text-secondary">
+                              {extra.name}
+                            </p>
+                            <p className="text-sm text-secondary">
+                              {extra.obrigatory && extra.max > 1
+                                ? `Escolha até ${extra.max} opções`
+                                : extra.obrigatory
+                                  ? 'Escolha uma opção'
+                                  : `Escolha até ${extra.max} opções`}
                             </p>
                           </div>
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        {extra.itens.map(option => (
-                          <>
-                            <div
-                              className="flex justify-between items-center p-2 w-[90%] mx-auto"
-                              key={option.name}
-                            >
-                              <div className="flex justify-between items-center">
-                                <p className="text font-light text-secondary flex items-center">
-                                  {option.name}
-                                  <p className="text-secondary opacity-70 text-sm">
-                                    {option.price > 0
-                                      ? `R$ ${option.price.toFixed(2)}`
-                                      : null}
-                                  </p>
-                                </p>
-                              </div>
-                              <div className="flex justify-center items-center h-6 rounded">
-                                <Checkbox
-                                  id={option.name}
-                                  className="h-5 w-5 rounded-full bg-[#d6d6d6] shadow duration-300 text-white"
-                                />
-                              </div>
+                          {extra.obrigatory && (
+                            <div className="flex justify-center items-center w-20 h-6 bg-[#717171] rounded">
+                              <p className="text-sm text-white font-medium">
+                                Obrigatório
+                              </p>
                             </div>
-                            <Separator className="bg-black opacity-10 h-[0.3px]" />
-                          </>
-                        ))}
-                      </div>
-                    </span>
-                  ))
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          {extra.itens.map((option, index) => (
+                            <>
+                              <div
+                                className="flex justify-between items-center p-2 w-[90%] mx-auto"
+                                key={option.name}
+                              >
+                                <div className="flex justify-between items-center">
+                                  <p className="text font-light text-secondary flex items-center gap-2">
+                                    {option.name}
+                                    <p className="text-secondary opacity-70 text-sm">
+                                      {option.price > 0
+                                        ? `- R$ ${option.price.toFixed(2)}`
+                                        : null}
+                                    </p>
+                                  </p>
+                                </div>
+                                <div className="flex justify-center items-center h-6 rounded">
+                                  <MyCheckbox
+                                    option={option}
+                                    index={index}
+                                    validator={validator}
+                                  />
+                                </div>
+                              </div>
+                              <Separator className="bg-black opacity-10 h-[0.3px]" />
+                            </>
+                          ))}
+                        </div>
+                      </span>
+                    );
+                  })
                 : null}
             </div>
             <div className="flex justify-end mt-10 ">
