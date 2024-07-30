@@ -80,6 +80,7 @@ export default function CompanyProductPage() {
         <ModalLink
           modalElement={
             <AddCartModal
+              toast={toast}
               toggleModal={toggleModal}
               products={companyData?.products}
               productSelectedId={searchParams.get('productCart') || ''}

@@ -1,13 +1,13 @@
 import { Option } from '../../types/Product.type';
 
 export default class ValidateExtraOptions {
-  declare options: Option[];
-  declare maxOptions: number;
-  declare minOptions: number;
-  declare obrigatory: boolean;
-  declare selectedOptions: number;
-  declare selectedOptionsList: string[];
-  declare extraValue: number;
+  options: Option[];
+  maxOptions: number;
+  minOptions: number;
+  obrigatory: boolean;
+  selectedOptions: number;
+  selectedOptionsList: string[];
+  extraValue: number;
 
   constructor(
     options: Option[],
@@ -24,55 +24,76 @@ export default class ValidateExtraOptions {
     this.extraValue = 0;
   }
 
-  public getStatusByIndex(index: number): boolean {
-    if (index < 0 || index >= this.options.length) return false;
-
-    const option = this.options[index];
-
-    return this.selectedOptionsList.includes(option.name);
+  public getStatus(option: string): boolean {
+    return this.selectedOptionsList.includes(option);
   }
 
-  public toggleOption(index: number, status: boolean): boolean {
-    if (index < 0 || index >= this.options.length) return false;
-    const option = this.options[index];
+  public setStatus(action: 'add' | 'remove', option: string) {
+    const indexOnSelectedOptionsList = this.selectedOptionsList.indexOf(option);
 
-    const previousSelectedOptions = this.selectedOptions;
-    const previousSelectedOptionsList = [...this.selectedOptionsList];
-    const previousExtraValue = this.extraValue;
+    const elementToAdd = this.options.find(item => item.name === option);
+    if (!elementToAdd)
+      return { status: false, message: 'Elemento não encontrado' };
 
-    if (!status) {
-      if (!this.selectedOptionsList.includes(option.name)) {
-        this.selectedOptions++;
-        this.selectedOptionsList.push(option.name);
-        this.extraValue += option.price;
-      }
-      return true;
-    } else {
-      if (this.selectedOptionsList.includes(option.name)) {
-        this.selectedOptions--;
+    if (action === 'add' && indexOnSelectedOptionsList === -1) {
+      this.selectedOptionsList.push(elementToAdd.name);
+      this.selectedOptions++;
+      this.extraValue +=
+        this.options.find(item => item.name === option)?.price || 0;
+
+      const valiationStatus = this.validateOptions();
+
+      if (!valiationStatus.status) {
+        this.selectedOptions = this.selectedOptions - 1;
         this.selectedOptionsList = this.selectedOptionsList.filter(
-          selectedOption => selectedOption !== option.name,
+          item => item !== option,
         );
-        this.extraValue -= option.price;
+        this.extraValue -=
+          this.options.find(item => item.name === option)?.price || 0;
       }
+
+      return valiationStatus;
+    } else if (action === 'remove') {
+      this.selectedOptionsList = this.selectedOptionsList.filter(
+        item => item !== option,
+      );
+      this.selectedOptions--;
+      this.extraValue -=
+        this.options.find(item => item.name === option)?.price || 0;
     }
 
-    if (!this.validateOptions()) {
-      this.selectedOptions = previousSelectedOptions;
-      this.selectedOptionsList = previousSelectedOptionsList;
-      this.extraValue = previousExtraValue;
-      return false;
-    }
-
-    return true;
+    return this.validateOptions();
   }
 
-  public validateOptions(): boolean {
-    if (this.obrigatory && this.selectedOptions < 1) return false;
-    if (this.selectedOptions > this.maxOptions) return false;
-    if (this.selectedOptions < this.minOptions) return false;
-    if (this.extraValue < 0) return false;
+  public validateOptions() {
+    if (this.obrigatory && this.selectedOptions < this.minOptions) {
+      // console.log(
+      //   `Validação falhou: obrigatoriedade de seleção e opções selecionadas (${this.selectedOptions}) é menor que o mínimo permitido (${this.minOptions})`,
+      // );
+      return { status: false, message: 'ob' };
+    }
 
-    return true;
+    if (this.selectedOptions > this.maxOptions) {
+      // console.log(
+      //   `Validação falhou: opções selecionadas (${this.selectedOptions}) é maior que o máximo permitido (${this.maxOptions})`,
+      // );
+      return { status: false, message: 'max' };
+    }
+
+    if (this.selectedOptions < this.minOptions) {
+      // console.log(
+      //   `Validação falhou: opções selecionadas (${this.selectedOptions}) é menor que o mínimo permitido (${this.minOptions})`,
+      // );
+      return { status: false, message: 'min' };
+    }
+
+    if (this.extraValue < 0) {
+      // console.log(
+      //   `Validação falhou: valor extra (${this.extraValue}) é negativo`,
+      // );
+      return { status: false, message: 'negative' };
+    }
+
+    return { status: true, message: 'ok' };
   }
 }

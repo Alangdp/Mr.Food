@@ -9,6 +9,7 @@ interface ModalBodyProps {
   toggleModal: (() => void) | ((...args: any[]) => any);
   children: ReactNode;
   className?: string;
+  animation?: boolean;
 }
 
 export default function ModalBody({
@@ -17,14 +18,22 @@ export default function ModalBody({
   title,
   children,
   className,
+  animation,
 }: ModalBodyProps) {
+  const animationProps = {
+    initial: { x: '100%', opacity: 0 },
+    animate: { x: 0, opacity: 1 },
+    exit: { y: '-100%', opacity: 0 },
+  };
+
   return (
     <motion.div
       key={location.pathname}
-      initial={{ x: '100%', opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ y: '-100%', opacity: 0 }}
-      transition={{ duration: 0.2 }}
+      {...(animation
+        ? animationProps
+        : {
+            animate: { x: 0, opacity: 1 },
+          })}
       className={cn(
         'w-[50vw] h-screen absolute right-0 top-0 bg-white z-50 p-4',
         className,

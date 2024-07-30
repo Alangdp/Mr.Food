@@ -1,15 +1,22 @@
 import { BasicModalProps } from '@/types/BasicModal.type';
 import { ProductResponse } from '@/types/Product.type';
 import ModalBody from '../utilities/ModalBody';
-import { Checkbox } from '../ui/checkbox';
 import { Separator } from '@radix-ui/react-menubar';
 import { Button } from '../ui/button';
 import ValidateExtraOptions from './Validate';
-import { MyCheckbox } from './checkboxValiate';
+import CheckboxWithValidation from './ValidateCheckbox';
+import { useState, useEffect } from 'react';
+import { useDefaultImports } from '../utilities/DefaultImports';
+import { Toast, ToasterToast } from '../ui/use-toast';
 
 interface AddCartModalProps {
   products?: ProductResponse[];
   productSelectedId?: string;
+  toast: ({ ...props }: Toast) => {
+    id: string;
+    dismiss: () => void;
+    update: (props: ToasterToast) => void;
+  };
 }
 
 export default function AddCartModal({
@@ -17,10 +24,27 @@ export default function AddCartModal({
   onKeyPress,
   products,
   productSelectedId,
+  toast,
 }: BasicModalProps & AddCartModalProps) {
+  const [validators, setValidators] = useState<ValidateExtraOptions[]>([]);
   const product = products?.find(
     item => item.id.toString() === productSelectedId,
   );
+
+  if (validators.length === 0) {
+    if (product?.extras) {
+      const initialValidators = product.extras.map(
+        extra =>
+          new ValidateExtraOptions(
+            extra.itens,
+            extra.max,
+            extra.min,
+            extra.obrigatory,
+          ),
+      );
+      setValidators(initialValidators);
+    }
+  }
 
   return (
     <span onKeyUp={onKeyPress}>
@@ -65,20 +89,12 @@ export default function AddCartModal({
             </div>
             <div className="h-18 w-full">
               {product?.extras && product.extras.length > 0
-                ? product?.extras.map(extra => {
-                    const validator = new ValidateExtraOptions(
-                      extra.itens,
-                      extra.max,
-                      extra.min,
-                      extra.obrigatory,
-                    );
+                ? product.extras.map((extra, generalIndex) => {
+                    const validator = validators[generalIndex];
 
                     return (
-                      <span className="">
-                        <div
-                          className="flex justify-between items-center p-2 bg-gray-200"
-                          key={extra.name}
-                        >
+                      <span className="" key={extra.name}>
+                        <div className="flex justify-between items-center p-2 bg-gray-200">
                           <div className="flex flex-col">
                             <p className="text font-medium text-secondary">
                               {extra.name}
@@ -100,41 +116,53 @@ export default function AddCartModal({
                           )}
                         </div>
                         <div className="flex flex-col gap-1">
-                          {extra.itens.map((option, index) => (
-                            <>
+                          {extra.itens.map((option, index) => {
+                            return (
                               <div
                                 className="flex justify-between items-center p-2 w-[90%] mx-auto"
-                                key={option.name}
+                                key={option.name + '-' + index}
                               >
                                 <div className="flex justify-between items-center">
                                   <p className="text font-light text-secondary flex items-center gap-2">
                                     {option.name}
-                                    <p className="text-secondary opacity-70 text-sm">
+                                    <span className="text-secondary opacity-70 text-sm">
                                       {option.price > 0
                                         ? `- R$ ${option.price.toFixed(2)}`
                                         : null}
-                                    </p>
+                                    </span>
                                   </p>
                                 </div>
                                 <div className="flex justify-center items-center h-6 rounded">
-                                  <MyCheckbox
+                                  <CheckboxWithValidation
                                     option={option}
-                                    index={index}
                                     validator={validator}
                                   />
                                 </div>
                               </div>
-                              <Separator className="bg-black opacity-10 h-[0.3px]" />
-                            </>
-                          ))}
+                            );
+                          })}
                         </div>
+                        <Separator className="bg-black opacity-10 h-[0.3px]" />
                       </span>
                     );
                   })
                 : null}
             </div>
             <div className="flex justify-end mt-10 ">
-              <Button className="bg-primary text-white bg-red-600 hover:bg-red-500">
+              <Button
+                className="bg-primary text-white bg-red-600 hover:bg-red-500"
+                onClick={() => {
+                  for (let i = 0; i < validators.length; i++) {
+                    const status = validators[i].validateOptions();
+                    if (!status.status) {
+                      toast({
+                        title: 'Você precisa selecionar todas as opções',
+                      });
+                      return;
+                    }
+                  }
+                }}
+              >
                 Adicionar
               </Button>
             </div>
