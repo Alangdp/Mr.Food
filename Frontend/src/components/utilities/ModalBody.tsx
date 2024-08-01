@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { motion } from 'framer-motion';
-import { ReactNode, useEffect, useRef } from 'react';
+import { ReactNode } from 'react';
 
 interface ModalBodyProps {
   title?: string;

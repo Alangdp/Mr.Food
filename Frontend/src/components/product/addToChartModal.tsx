@@ -5,9 +5,10 @@ import { Separator } from '@radix-ui/react-menubar';
 import { Button } from '../ui/button';
 import ValidateExtraOptions from './Validate';
 import CheckboxWithValidation from './ValidateCheckbox';
-import { useState, useEffect } from 'react';
-import { useDefaultImports } from '../utilities/DefaultImports';
+import { useEffect, useState } from 'react';
 import { Toast, ToasterToast } from '../ui/use-toast';
+import { CartProduct, ExtraOptionsSelected } from './Cart.type';
+import { randomUUID } from 'crypto';
 
 interface AddCartModalProps {
   products?: ProductResponse[];
@@ -17,6 +18,7 @@ interface AddCartModalProps {
     dismiss: () => void;
     update: (props: ToasterToast) => void;
   };
+  addCart: (product: CartProduct) => void;
 }
 
 export default function AddCartModal({
@@ -25,11 +27,22 @@ export default function AddCartModal({
   products,
   productSelectedId,
   toast,
+  addCart,
 }: BasicModalProps & AddCartModalProps) {
   const [validators, setValidators] = useState<ValidateExtraOptions[]>([]);
   const product = products?.find(
     item => item.id.toString() === productSelectedId,
   );
+
+  useEffect(() => {
+    if (!product) {
+      toggleModal();
+      toast({
+        title: 'Produto não encontrado',
+      });
+      return;
+    }
+  });
 
   if (validators.length === 0) {
     if (product?.extras) {
@@ -40,6 +53,7 @@ export default function AddCartModal({
             extra.max,
             extra.min,
             extra.obrigatory,
+            extra.name,
           ),
       );
       setValidators(initialValidators);
@@ -152,14 +166,45 @@ export default function AddCartModal({
               <Button
                 className="bg-primary text-white bg-red-600 hover:bg-red-500"
                 onClick={() => {
+                  let valid = true;
+                  const selectedOptions: ExtraOptionsSelected = {};
+
                   for (let i = 0; i < validators.length; i++) {
                     const status = validators[i].validateOptions();
                     if (!status.status) {
                       toast({
                         title: 'Você precisa selecionar todas as opções',
                       });
+                      valid = false;
                       return;
                     }
+                  }
+
+                  console.log(valid);
+                  if (valid) {
+                    validators.forEach(validator => {
+                      selectedOptions[validator.groupName] = {
+                        selectedOptions: validator.selectedOptionsList,
+                        extraValue: validator.extraValue,
+                      };
+                    });
+
+                    const addToCartData: CartProduct = {
+                      id: new Date().getMilliseconds().toString(),
+                      name: product!.name,
+                      extras: selectedOptions,
+                      priceWithoutExtras: Number(product!.price),
+                      priceWithExtras:
+                        Number(product!.price) +
+                        Object.values(selectedOptions).reduce(
+                          (acc, item) => acc + item.extraValue,
+                          0,
+                        ),
+                      quantity: 1,
+                      selectedProduct: product!,
+                    };
+
+                    addCart(addToCartData);
                   }
                 }}
               >

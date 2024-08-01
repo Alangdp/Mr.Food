@@ -8,13 +8,16 @@ export default class ValidateExtraOptions {
   selectedOptions: number;
   selectedOptionsList: string[];
   extraValue: number;
+  groupName: string;
 
   constructor(
     options: Option[],
     maxOptions: number,
     minOptions: number,
     obrigatory: boolean,
+    groupName: string,
   ) {
+    this.groupName = groupName;
     this.options = options;
     this.maxOptions = maxOptions;
     this.minOptions = minOptions;

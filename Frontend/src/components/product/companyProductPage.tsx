@@ -32,12 +32,11 @@ interface categoryItem {
 }
 
 export default function CompanyProductPage() {
-  const { toast, navigate } = useDefaultImports();
+  const { toast, navigate, cart } = useDefaultImports();
   const [companyData, setCompanyData] = useState<CompanyDataProducts | null>(
     null,
   );
   const [search, setSearch] = useState('');
-
   const { ModalLink, ModalTogle, isModalOpen, toggleModal } = Modal();
 
   const { companyId } = useParams();
@@ -80,6 +79,7 @@ export default function CompanyProductPage() {
         <ModalLink
           modalElement={
             <AddCartModal
+              addCart={cart.addProduct}
               toast={toast}
               toggleModal={toggleModal}
               products={companyData?.products}

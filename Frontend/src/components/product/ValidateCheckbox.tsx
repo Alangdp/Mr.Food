@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { Option } from '../../types/Product.type';
 import { Checkbox } from '../ui/checkbox';
 import ValidateExtraOptions from './Validate';
-import { stat } from 'fs';
-import { useDefaultImports } from '../utilities/DefaultImports';
 
 interface CheckboxWithValidationProps {
   option: Option;
