@@ -12,7 +12,9 @@ export default function CheckboxWithValidation({
   option,
   validator,
 }: CheckboxWithValidationProps) {
-  const [status, setStatus] = useState(validator.getStatus(option.name));
+  const [status, setStatus] = useState(
+    validator.getStatus(option.name) || false,
+  );
 
   return (
     <Checkbox

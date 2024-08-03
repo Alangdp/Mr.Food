@@ -12,6 +12,7 @@ import {
 import { CompanyLoginMiddleware } from '../middleware/company.middleware.js';
 
 const router = express.Router();
+
 router.get('/', CompanyLoginMiddleware, index);
 router.get('/actives', CompanyLoginMiddleware, indexActives);
 router.get('/product/:productId', CompanyLoginMiddleware, indexById);

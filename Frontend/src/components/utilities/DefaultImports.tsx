@@ -1,6 +1,6 @@
-import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../ui/use-toast';
+import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 
 export const useDefaultImports = () => {

@@ -1,12 +1,11 @@
-import { IconJarLogoIcon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/context/AuthContext'
+import { IconJarLogoIcon, MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { useDefaultImports } from '../utilities/DefaultImports';
+import { IoCartOutline } from 'react-icons/io5';
 
 export default function NavBar() {
-  const navigate = useNavigate()
-  const { companyToken, clientToken } = useAuth()
+  const { navigate, auth, cart } = useDefaultImports();
 
   return (
     <nav className="top-0 h-[6vh] bg-white shadow-sm border-b drop-shadow dark:bg-gray-950/90 z-10">
@@ -43,7 +42,7 @@ export default function NavBar() {
           />
 
           <div className="flex items-center gap-4">
-            {companyToken || clientToken ? null : (
+            {auth.companyToken || auth.clientToken ? null : (
               <>
                 <Button
                   variant="outline"
@@ -62,7 +61,7 @@ export default function NavBar() {
                 </Button>
               </>
             )}
-            {companyToken && (
+            {auth.companyToken && (
               <Button
                 variant={'destructive'}
                 className="bg-red-600"
@@ -72,7 +71,7 @@ export default function NavBar() {
                 Dashboard
               </Button>
             )}
-            {clientToken && (
+            {auth.clientToken && (
               <Button
                 variant={'destructive'}
                 className="bg-red-600"
@@ -82,9 +81,25 @@ export default function NavBar() {
                 Conta
               </Button>
             )}
+
+            {auth.clientToken && (
+              <Button
+                variant={'destructive'}
+                className="hover:bg-red-500 bg-red-600 relative"
+                size="sm"
+                onClick={() => navigate('/client/cart')}
+              >
+                <span className="w-full">
+                  <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-white border border-gray-300 flex items-center justify-center text-secondary font-light">
+                    {cart.cart.products.length}
+                  </div>
+                  <IoCartOutline className="h-5 w-5" />
+                </span>
+              </Button>
+            )}
           </div>
         </div>
       </div>
     </nav>
-  )
+  );
 }

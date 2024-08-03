@@ -82,6 +82,19 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: '/client',
+    children: [
+      {
+        path: 'cart',
+        element: (
+          <PrivateCompany>
+            <OrderPageRoute />
+          </PrivateCompany>
+        ),
+      },
+    ],
+  },
+  {
     path: '/products/:companyId',
     element: (
       <>

@@ -37,7 +37,7 @@ export default function CompanyProductPage() {
     null,
   );
   const [search, setSearch] = useState('');
-  const { ModalLink, ModalTogle, isModalOpen, toggleModal } = Modal();
+  const { ModalLink, toggleModal } = Modal();
 
   const { companyId } = useParams();
   const [searchParams] = useSearchParams();
@@ -79,7 +79,7 @@ export default function CompanyProductPage() {
         <ModalLink
           modalElement={
             <AddCartModal
-              addCart={cart.addProduct}
+              cart={cart}
               toast={toast}
               toggleModal={toggleModal}
               products={companyData?.products}

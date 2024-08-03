@@ -1,13 +1,15 @@
+import React, { createContext, useContext, useState } from 'react';
 import { Cart, CartProduct } from '@/components/product/Cart.type';
-import React, { createContext, useContext } from 'react';
 
 export const CartContext = createContext<{
   cart: Cart;
+  setCart: (cart: Cart) => void;
   clearCart: () => void;
   addProduct: (product: CartProduct) => void;
   removeProduct: (productId: string) => void;
 }>({
   cart: { products: [], total: 0 },
+  setCart: () => {},
   clearCart: () => {},
   addProduct: () => {},
   removeProduct: () => {},
@@ -18,12 +20,10 @@ interface CartProviderProps {
 }
 
 const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
-  const [cart, setCart] = React.useState<Cart>(
-    (localStorage.getItem('cart') as unknown as Cart) || {
-      products: [],
-      total: 0,
-    },
-  );
+  const [cart, setCart] = useState<Cart>(() => {
+    const storedCart = localStorage.getItem('cart');
+    return storedCart ? JSON.parse(storedCart) : { products: [], total: 0 };
+  });
 
   const setStateAndLocalStorage = (newCart: Cart) => {
     setCart(newCart);
@@ -40,9 +40,22 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     );
 
     if (productAlreadyInCart) {
-      productAlreadyInCart.quantity++;
-      productAlreadyInCart.priceWithExtras += product.priceWithExtras;
-      productAlreadyInCart.extras = product.extras;
+      const updatedProducts = cart.products.map(cartProduct =>
+        cartProduct.id === product.id
+          ? {
+              ...cartProduct,
+              quantity: cartProduct.quantity + 1,
+              priceWithExtras:
+                cartProduct.priceWithExtras + product.priceWithExtras,
+              extras: product.extras,
+            }
+          : cartProduct,
+      );
+
+      setStateAndLocalStorage({
+        products: updatedProducts,
+        total: cart.total + product.priceWithExtras,
+      });
     } else {
       setStateAndLocalStorage({
         products: [...cart.products, product],
@@ -58,20 +71,21 @@ const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
     if (!productToRemove) return;
 
-    const newCart = {
-      products: cart.products.filter(
-        cartProduct => cartProduct.id !== productId,
-      ),
-      total: cart.total - productToRemove.priceWithExtras,
-    };
+    const updatedProducts = cart.products.filter(
+      cartProduct => cartProduct.id !== productId,
+    );
 
-    setStateAndLocalStorage(newCart);
+    setStateAndLocalStorage({
+      products: updatedProducts,
+      total: cart.total - productToRemove.priceWithExtras,
+    });
   };
 
   return (
     <CartContext.Provider
       value={{
-        cart: cart,
+        cart,
+        setCart,
         clearCart,
         addProduct,
         removeProduct,

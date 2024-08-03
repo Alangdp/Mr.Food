@@ -7,8 +7,7 @@ import ValidateExtraOptions from './Validate';
 import CheckboxWithValidation from './ValidateCheckbox';
 import { useEffect, useState } from 'react';
 import { Toast, ToasterToast } from '../ui/use-toast';
-import { CartProduct, ExtraOptionsSelected } from './Cart.type';
-import { randomUUID } from 'crypto';
+import { Cart, CartProduct, ExtraOptionsSelected } from './Cart.type';
 
 interface AddCartModalProps {
   products?: ProductResponse[];
@@ -18,7 +17,13 @@ interface AddCartModalProps {
     dismiss: () => void;
     update: (props: ToasterToast) => void;
   };
-  addCart: (product: CartProduct) => void;
+  cart: {
+    cart: Cart;
+    setCart: (cart: Cart) => void;
+    clearCart: () => void;
+    addProduct: (product: CartProduct) => void;
+    removeProduct: (productId: string) => void;
+  };
 }
 
 export default function AddCartModal({
@@ -27,7 +32,7 @@ export default function AddCartModal({
   products,
   productSelectedId,
   toast,
-  addCart,
+  cart,
 }: BasicModalProps & AddCartModalProps) {
   const [validators, setValidators] = useState<ValidateExtraOptions[]>([]);
   const product = products?.find(
@@ -42,9 +47,9 @@ export default function AddCartModal({
       });
       return;
     }
-  });
+  }, []);
 
-  if (validators.length === 0) {
+  if (validators.length === 0 && (product?.extras?.length ?? 0) > 0) {
     if (product?.extras) {
       const initialValidators = product.extras.map(
         extra =>
@@ -180,7 +185,6 @@ export default function AddCartModal({
                     }
                   }
 
-                  console.log(valid);
                   if (valid) {
                     validators.forEach(validator => {
                       selectedOptions[validator.groupName] = {
@@ -188,6 +192,22 @@ export default function AddCartModal({
                         extraValue: validator.extraValue,
                       };
                     });
+
+                    const companyId = [
+                      ...cart.cart.products.map(
+                        item => item.selectedProduct.companyId,
+                      ),
+                      product!.companyId,
+                    ];
+
+                    console.log(new Set(companyId).size);
+                    if (new Set(companyId).size > 1) {
+                      toast({
+                        title:
+                          'Você só pode adicionar produtos de uma empresa por vez',
+                      });
+                      return;
+                    }
 
                     const addToCartData: CartProduct = {
                       id: new Date().getMilliseconds().toString(),
@@ -204,7 +224,7 @@ export default function AddCartModal({
                       selectedProduct: product!,
                     };
 
-                    addCart(addToCartData);
+                    cart.addProduct(addToCartData);
                   }
                 }}
               >
