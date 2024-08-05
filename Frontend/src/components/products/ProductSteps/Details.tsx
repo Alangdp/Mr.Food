@@ -269,6 +269,7 @@ export default function ItemDetails({
                         </span>
 
                         <button
+                          type="button"
                           onClick={handlePrevImage}
                           className="absolute left-1 top-1/2 transform -translate-y-1/2 text-white p-2 z-50 bg-white border border-gray-400 rounded-full"
                         >
@@ -276,10 +277,11 @@ export default function ItemDetails({
                         </button>
 
                         <button
+                          type="button"
                           onClick={handleNextImage}
                           className="absolute right-1 top-1/2 transform -translate-y-1/2 text-white p-2 z-50 bg-white border border-gray-400 rounded-full"
                         >
-                          <GiNextButton className=" text-red-600" />
+                          <GiNextButton className="text-red-600" />
                         </button>
                       </>
                     ) : (
@@ -297,6 +299,7 @@ export default function ItemDetails({
                       className="hidden"
                       onChange={handleImageChange}
                       multiple
+                      accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
                     />
                   )}
                 </div>

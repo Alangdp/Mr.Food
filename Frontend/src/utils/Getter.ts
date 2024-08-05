@@ -5,6 +5,7 @@ import { CompanyProps } from '@/types/Company.type';
 import { OrderProps } from '@/types/Order.type';
 import { ResponseProps } from '@/types/Responses.type';
 import axios from 'axios';
+import objectToFormData from './AppendFormData';
 
 const API_URL = import.meta.env.VITE_BACKEND_URL as string;
 
@@ -241,6 +242,58 @@ export async function makeGet<Y>(
     const errors = handleApiError(error);
     if (options.toast && options.autoToast) {
       errors.forEach(error => {
+        options.toast!({
+          title: error,
+          variant: 'destructive',
+        });
+      });
+    }
+
+    return null;
+  }
+}
+
+export async function makePostWithFormData<T extends Record<string, any>, Y>(
+  apiComplement: string,
+  data: T,
+  options: {
+    toast?: ({ ...props }: Toast) => {
+      id: string;
+      dismiss: () => void;
+      update: (props: ToasterToast) => void;
+    };
+    autoToast?: boolean;
+    authToken?: string | null;
+  },
+) {
+  try {
+    const formData = objectToFormData(data);
+    const response = await axios.post(`${API_URL}/${apiComplement}`, formData, {
+      headers: {
+        Authorization: options.authToken ? `${options.authToken}` : '',
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    const responseData: ResponseProps<Y> = response.data;
+
+    if (responseData.errors && responseData.errors.length > 0) {
+      if (options.toast && options.autoToast) {
+        responseData.errors.forEach((error: any) => {
+          options.toast!({
+            title: error.message,
+            variant: 'destructive',
+          });
+        });
+      }
+      return null;
+    }
+
+    return responseData.data || null;
+  } catch (error) {
+    const errors = handleApiError(error);
+    if (options.toast && options.autoToast) {
+      errors.forEach((error: string) => {
         options.toast!({
           title: error,
           variant: 'destructive',

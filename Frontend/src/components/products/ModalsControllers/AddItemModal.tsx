@@ -7,7 +7,7 @@ import {
   ProductCompleteValidation,
   ProductResponse,
 } from '@/types/Product.type';
-import { makePost, makePut } from '@/utils/Getter';
+import { makePostWithFormData, makePut } from '@/utils/Getter';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import ItemDetails from '../ProductSteps/Details';
@@ -19,8 +19,6 @@ interface Status {
     step1: boolean;
     step2: boolean;
     step3: boolean;
-    // step4: boolean;
-    // step5: boolean;
   };
 }
 
@@ -93,7 +91,7 @@ export default function AddItemModal({
         if (EditProduct) return true;
         return false;
       }
-      const newProduct = await makePost<
+      const newProduct = await makePostWithFormData<
         Product & { description: string },
         Product
       >(

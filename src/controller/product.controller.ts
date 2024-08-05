@@ -4,6 +4,7 @@ import Category from '../models/Category.js';
 import Product from '../models/Product.js';
 import { isValidExtrasStructure } from '../utils/validExtraOptions.js';
 import Company from '../models/Company.js';
+import { parseFormData } from '../utils/parseFormData.js';
 // import { changeStatus } from './order.controller.js';
 
 const index: RequestHandler = async (req, res) => {
@@ -61,7 +62,6 @@ const store: RequestHandler = async (req, res) => {
     }
 
     const isValidExtrasStructureData = isValidExtrasStructure(req.body.extras);
-    console.log(isValidExtrasStructureData);
     if (!isValidExtrasStructureData.isValid) {
       return response(res, {
         errors: [{ message: 'Invalid extras structure' }],
@@ -107,6 +107,82 @@ const store: RequestHandler = async (req, res) => {
   }
 };
 
+const storePhoto: RequestHandler = async (req, res) => {
+  try {
+    const { id: companyId, categoryId } = req.body;
+    const requiredFields = ['name', 'price', 'extras', 'describe'];
+    if (!companyId) {
+      return response(res, {
+        errors: [{ message: 'companyId and categoryId are required' }],
+        status: 400,
+      });
+    }
+
+    const parsedData = parseFormData(req.body);
+    const missingFields = requiredFields.filter(field => {
+      return !parsedData[field];
+    });
+
+    if (missingFields.length) {
+      return response(res, {
+        errors: missingFields.map(field => ({
+          message: `${field} is required`,
+        })),
+        status: 400,
+      });
+    }
+
+    const isValidExtrasStructureData = isValidExtrasStructure(
+      parsedData.extras,
+    );
+    if (!isValidExtrasStructureData.isValid) {
+      return response(res, {
+        errors: [{ message: 'Invalid extras structure' }],
+        status: 400,
+      });
+    }
+
+    const categorys: Category[] = [];
+    if (isValidExtrasStructureData.categories) {
+      for (const category of isValidExtrasStructureData.categories) {
+        const newCategory = await Category.create({
+          companyId: companyId,
+          name: category.name,
+          min: category.min,
+          max: category.max,
+          obrigatory: category.obrigatory,
+          type: 'PRODUCT',
+        });
+        categorys.push(newCategory);
+      }
+    }
+    if (
+      categoryId &&
+      !(await Category.categoryBelongsToCompany(categoryId, companyId))
+    ) {
+      return response(res, {
+        errors: [{ message: 'Category does not belong to company' }],
+        status: 400,
+      });
+    }
+
+    delete req.body.id;
+    delete parsedData.id;
+    const toBuild = {
+      companyId: companyId,
+      categoryId: parsedData.category,
+      discountPercent: parsedData.discount || 0,
+      ...parsedData,
+    };
+
+    const product = await Product.create(toBuild);
+
+    return response(res, { data: product, status: 201 });
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
 const destroy: RequestHandler = async (req, res) => {
   try {
     const { id: companyId, productId } = req.body;
@@ -132,7 +208,6 @@ const destroy: RequestHandler = async (req, res) => {
 
 const update: RequestHandler = async (req, res) => {
   try {
-    console.log(req.body);
     const { id: companyId, productId, categoryId } = req.body;
     if (!companyId || !productId) {
       return response(res, {
@@ -275,4 +350,5 @@ export {
   indexById,
   changeActive,
   indexAllWithCompany,
+  storePhoto,
 };

@@ -20,7 +20,6 @@ export function isValidExtrasStructure(extras: any): ValidationResult {
 
   // Função para validar cada extraItem recursivamente
   const validateExtraItem = (extraItem: any): Category | null => {
-    console.log(extraItem);
     if (
       typeof extraItem !== 'object' ||
       extraItem === null ||
@@ -47,7 +46,6 @@ export function isValidExtrasStructure(extras: any): ValidationResult {
       extras: [],
     };
 
-    // Verifica cada item dentro de itens
     for (const item of extraItem.itens) {
       if (
         typeof item !== 'object' ||

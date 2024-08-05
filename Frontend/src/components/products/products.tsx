@@ -162,7 +162,13 @@ function ProductsAdmin({
                                     setToEdit(product);
                                   }}
                                 />
-                                <div className="flex-[0.1] min-w-16 max-w-16  h-16 border-dashed border rounded border-secondary flex items-center justify-center text-secondary opacity-80 cursor-pointer">
+                                <div
+                                  className="flex-[0.1] min-w-16 max-w-16  h-16 border-dashed border rounded border-secondary flex items-center justify-center text-secondary opacity-80 cursor-pointer"
+                                  onClick={() => {
+                                    ItemModalToggleEdit();
+                                    setToEdit(product);
+                                  }}
+                                >
                                   <CameraIcon className="w-6 h-auto" />
                                 </div>
                                 <div className="flex flex-col gap-2 flex-[0.7]">
