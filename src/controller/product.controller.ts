@@ -5,7 +5,7 @@ import Product from '../models/Product.js';
 import { isValidExtrasStructure } from '../utils/validExtraOptions.js';
 import Company from '../models/Company.js';
 import { parseFormData } from '../utils/parseFormData.js';
-// import { changeStatus } from './order.controller.js';
+import { unlinkSync } from 'fs';
 
 const index: RequestHandler = async (req, res) => {
   try {
@@ -119,6 +119,8 @@ const storePhoto: RequestHandler = async (req, res) => {
     }
 
     const parsedData = parseFormData(req.body);
+    console.log(parsedData);
+    if (!parsedData.extras) parsedData.extras = [];
     const missingFields = requiredFields.filter(field => {
       return !parsedData[field];
     });
@@ -136,26 +138,9 @@ const storePhoto: RequestHandler = async (req, res) => {
       parsedData.extras,
     );
     if (!isValidExtrasStructureData.isValid) {
-      return response(res, {
-        errors: [{ message: 'Invalid extras structure' }],
-        status: 400,
-      });
+      throw new Error('Invalid extras structure');
     }
 
-    const categorys: Category[] = [];
-    if (isValidExtrasStructureData.categories) {
-      for (const category of isValidExtrasStructureData.categories) {
-        const newCategory = await Category.create({
-          companyId: companyId,
-          name: category.name,
-          min: category.min,
-          max: category.max,
-          obrigatory: category.obrigatory,
-          type: 'PRODUCT',
-        });
-        categorys.push(newCategory);
-      }
-    }
     if (
       categoryId &&
       !(await Category.categoryBelongsToCompany(categoryId, companyId))
@@ -179,6 +164,14 @@ const storePhoto: RequestHandler = async (req, res) => {
 
     return response(res, { data: product, status: 201 });
   } catch (error) {
+    if (req.files) {
+      const files = req.files as Express.Multer.File[];
+      for (const file of files) {
+        console.log(file);
+        unlinkSync(file.path);
+      }
+    }
+
     return errorResponse(res, error);
   }
 };
