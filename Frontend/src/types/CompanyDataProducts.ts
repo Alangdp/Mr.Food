@@ -1,6 +1,8 @@
+import { ProductResponse } from './Product.type';
+
 export interface CompanyDataProducts {
   company: Company;
-  products: Product[];
+  products: ProductResponse[];
   categories: Category[];
 }
 

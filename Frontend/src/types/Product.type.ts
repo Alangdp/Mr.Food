@@ -18,6 +18,7 @@ export interface ProductResponse {
   discountPercent: number;
   active: boolean;
   extras: Category[];
+  images: string[];
   createdAt: string;
   updatedAt: string;
 }

@@ -7,7 +7,7 @@ import RegisterStep1 from './RegisterStep1';
 import { Form } from '@/components/ui/form';
 import RegisterStep2 from './RegisterStep2';
 import RegisterStep3 from './RegisterStep3';
-import { registerCompanyPost } from '@/utils/Getter';
+import { makePost } from '@/utils/Getter';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -45,7 +45,11 @@ export default function CompanyRegister() {
   });
 
   const onSubmit = async (data: CompanyProps) => {
-    const token = await registerCompanyPost(data);
+    const token = await makePost<CompanyProps, string>('companies', data, {
+      autoToast: true,
+      authToken: companyToken,
+      toast,
+    });
 
     if (token) {
       setCompanyToken(token);

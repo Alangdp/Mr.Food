@@ -32,6 +32,6 @@ router.post('/product/', indexAllWithCompany);
 router.put('/product/:productId', CompanyLoginMiddleware, changeActive);
 router.post('/', upload.array('image[0]'), CompanyLoginMiddleware, storePhoto);
 router.delete('/', CompanyLoginMiddleware, destroy);
-router.put('/', CompanyLoginMiddleware, update);
+router.put('/', upload.array('image[0]'), CompanyLoginMiddleware, update);
 
 export default router;

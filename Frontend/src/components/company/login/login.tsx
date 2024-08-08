@@ -1,8 +1,7 @@
-import NavBar from '@/components/navigators/navbar'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { CompanyProps, formSchemaLogin } from '@/types/Company.type'
-import { useForm } from 'react-hook-form'
-import { Form } from '@/components/ui/form'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CompanyProps, formSchemaLogin } from '@/types/Company.type';
+import { useForm } from 'react-hook-form';
+import { Form } from '@/components/ui/form';
 import {
   FormControl,
   FormDescription,
@@ -10,18 +9,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/use-toast'
-import { loginCompanyPost } from '@/utils/Getter'
-import { useAuth } from '@/context/AuthContext'
-import { useNavigate } from 'react-router-dom'
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
+import { makePost } from '@/utils/Getter';
+import { useAuth } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function CompanyLogin() {
-  const { toast } = useToast()
-  const { updateCompanyToken, companyToken } = useAuth()
-  const navigate = useNavigate()
+  const { toast } = useToast();
+  const { updateCompanyToken } = useAuth();
+  const navigate = useNavigate();
 
   const form = useForm<CompanyProps>({
     resolver: zodResolver(formSchemaLogin),
@@ -29,27 +28,25 @@ export default function CompanyLogin() {
       email: '',
       password: '',
     },
-  })
+  });
 
   const onsubmit = async (data: { email: string; password: string }) => {
-    const token = await loginCompanyPost(data)
+    const token = await makePost<{ email: string; password: string }, string>(
+      'companies/login',
+      data,
+      {
+        toast,
+        autoToast: true,
+      },
+    );
 
-    if (Array.isArray(token)) {
-      token.forEach(error => {
-        toast({
-          title: error,
-          variant: 'destructive',
-        })
-      })
-      return
-    }
-
-    updateCompanyToken(token)
+    if (!token) return;
+    updateCompanyToken(token);
     toast({
       title: 'Logado com sucesso',
-    })
-    navigate('/company/dashboard')
-  }
+    });
+    navigate('/company/dashboard');
+  };
 
   return (
     <div className="h-screen w-screen relative overflow-hidden">
@@ -126,5 +123,5 @@ export default function CompanyLogin() {
         </div>
       </div>
     </div>
-  )
+  );
 }

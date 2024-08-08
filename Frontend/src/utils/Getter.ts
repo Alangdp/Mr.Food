@@ -6,95 +6,53 @@ import { OrderProps } from '@/types/Order.type';
 import { ResponseProps } from '@/types/Responses.type';
 import axios from 'axios';
 import objectToFormData from './AppendFormData';
+import { GetterOptions } from '@/types/Utils.type';
 
 const API_URL = import.meta.env.VITE_BACKEND_URL as string;
 
 export async function getCEP(cep: string) {
-  console.log();
   const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
   if (response.status !== 200) throw new Error('CEP inválido');
   return response.data as CEP;
 }
 
-export async function registerCompanyPost(data: CompanyProps) {
-  const response: ResponseProps<string> = (
-    await axios.post(`${API_URL}/companies`, data)
-  ).data;
-  return response.data;
-}
-
 export async function validateToken(token: string) {
   try {
-    const response = await axios.get(`${API_URL}/companies`, {
-      headers: {
-        Authorization: `${token}`,
-      },
+    const response = await makeGet<CompanyProps>('companies', {
+      authToken: token,
     });
-
-    console.log(response.status);
-    if (response.status !== 200) return false;
-    return true;
+    return response ? true : false;
   } catch (error) {
     return false;
   }
 }
 
-export async function loginCompanyPost(data: {
-  email: string;
-  password: string;
-}) {
-  try {
-    const response = await axios.post(`${API_URL}/companies/login`, data);
-    const responseData: ResponseProps<string> = response.data;
-    console.log(responseData);
-    return responseData.data!;
-  } catch (error: any) {
-    console.log(error);
-    console.log(error.response);
-    console.log(error.response.data);
-
-    if (error.response && error.response.data) {
-      const errorResponse: ResponseProps<unknown> = error.response.data;
-      if (errorResponse.errors) {
-        return errorResponse.errors.map(error => error.message);
-      }
-    }
-
-    return [error.message as string];
-  }
-}
-
-export async function getOrders(token: string) {
-  const response = await axios.get(`${API_URL}/orders`, {
-    headers: {
-      authorization: token,
-    },
-  });
-  const responseData: ResponseProps<OrderProps[]> = response.data;
-  if (!responseData.data) throw new Error('Error Getting Orders');
-  return responseData.data;
-}
-
+// Reutilizable function to changeStatus
 export async function setStatus(
   token: string,
   orderId: string,
   status: number,
 ) {
   try {
-    const response = await axios.post(
-      `${API_URL}/orders/status`,
+    const response = await makePost<
+      {
+        orderId: string;
+        status: number;
+      },
+      OrderProps
+    >(
+      'orders/status',
       {
         orderId: orderId,
         status: status,
       },
       {
-        headers: {
-          Authorization: token,
-        },
+        authToken: token,
       },
     );
-    if (response.status !== 200) return false;
-    return true;
+
+    if (response) return true;
+    return false;
   } catch (error) {
     return false;
   }
@@ -113,15 +71,7 @@ function handleApiError(error: any): string[] {
 export async function makePost<T, Y>(
   apiComplement: string,
   data: T,
-  options: {
-    toast?: ({ ...props }: Toast) => {
-      id: string;
-      dismiss: () => void;
-      update: (props: ToasterToast) => void;
-    };
-    autoToast?: boolean;
-    authToken?: string | null;
-  },
+  options: GetterOptions,
 ) {
   try {
     const response = await axios.post(`${API_URL}/${apiComplement}`, data, {
@@ -216,6 +166,7 @@ export async function makeGet<Y>(
     };
     autoToast?: boolean;
     authToken?: string | null;
+    url?: string;
   },
 ) {
   try {
@@ -253,10 +204,11 @@ export async function makeGet<Y>(
   }
 }
 
-export async function makePostWithFormData<T extends Record<string, any>, Y>(
+export async function makeRequestWithFormData<T extends Record<string, any>, Y>(
   apiComplement: string,
   data: T,
   options: {
+    type: 'post' | 'put';
     toast?: ({ ...props }: Toast) => {
       id: string;
       dismiss: () => void;
@@ -268,12 +220,26 @@ export async function makePostWithFormData<T extends Record<string, any>, Y>(
 ) {
   try {
     const formData = objectToFormData(data);
-    const response = await axios.post(`${API_URL}/${apiComplement}`, formData, {
-      headers: {
-        Authorization: options.authToken ? `${options.authToken}` : '',
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+
+    let response: any;
+
+    if (options.type === 'post') {
+      response = await axios.post(`${API_URL}/${apiComplement}`, formData, {
+        headers: {
+          Authorization: options.authToken ? `${options.authToken}` : '',
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    }
+
+    if (options.type === 'put') {
+      response = await axios.put(`${API_URL}/${apiComplement}`, formData, {
+        headers: {
+          Authorization: options.authToken ? `${options.authToken}` : '',
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    }
 
     const responseData: ResponseProps<Y> = response.data;
 

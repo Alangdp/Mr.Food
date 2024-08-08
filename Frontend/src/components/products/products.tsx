@@ -19,12 +19,13 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProductResponse } from '@/types/Product.type';
 import { useAuth } from '@/context/AuthContext';
-import { makeGet, makePost, makePut, validateToken } from '@/utils/Getter';
+import { makeGet, makePut } from '@/utils/Getter';
 import { useToast } from '../ui/use-toast';
 import CategoryAdminModal from './ModalsControllers/CategoryAdminModal';
 import { SuplementCategory } from '@/types/SuplementCategory.type';
 import EditItemModal from './ModalsControllers/EditItemModal';
 import { Company } from '@/types/CompanyDataProducts';
+import { cn } from '@/lib/utils';
 
 interface ProductsAdminProps {
   AddItemModalToggle: () => ReactNode;
@@ -163,13 +164,26 @@ function ProductsAdmin({
                                   }}
                                 />
                                 <div
-                                  className="flex-[0.1] min-w-16 max-w-16  h-16 border-dashed border rounded border-secondary flex items-center justify-center text-secondary opacity-80 cursor-pointer"
+                                  className={cn(
+                                    'flex-[0.1] min-w-16 max-w-16  h-16 border-dashed border rounded border-secondary flex items-center justify-center text-secondary opacity-80 cursor-pointer',
+                                    product.images.length > 0
+                                      ? 'opacity-100 border-none'
+                                      : 'opacity-80',
+                                  )}
                                   onClick={() => {
                                     ItemModalToggleEdit();
                                     setToEdit(product);
                                   }}
                                 >
-                                  <CameraIcon className="w-6 h-auto" />
+                                  {product.images.length > 0 ? (
+                                    <img
+                                      src={`http://localhost:3000/${product.images[0]}`}
+                                      alt="Product Image"
+                                      className="w-16 h-16 rounded-lg opacity-100 cursor-pointer"
+                                    />
+                                  ) : (
+                                    <CameraIcon className="w-6 h-auto" />
+                                  )}
                                 </div>
                                 <div className="flex flex-col gap-2 flex-[0.7]">
                                   <div className="flex items-center gap-2">

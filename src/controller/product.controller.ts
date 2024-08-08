@@ -1,11 +1,14 @@
 import { RequestHandler } from 'express';
+import { unlinkSync } from 'fs';
+
 import { errorResponse, response } from '../utils/responses.js';
+import { isValidExtrasStructure } from '../utils/validExtraOptions.js';
+import { parseFormData } from '../utils/parseFormData.js';
+
 import Category from '../models/Category.js';
 import Product from '../models/Product.js';
-import { isValidExtrasStructure } from '../utils/validExtraOptions.js';
 import Company from '../models/Company.js';
-import { parseFormData } from '../utils/parseFormData.js';
-import { unlinkSync } from 'fs';
+import Image from '../models/Image.js';
 
 const index: RequestHandler = async (req, res) => {
   try {
@@ -16,8 +19,25 @@ const index: RequestHandler = async (req, res) => {
         status: 400,
       });
     }
+
     const products = await Product.findAll({ where: { companyId } });
-    return response(res, { data: products, status: 200 });
+    const productWithImages = [];
+
+    for (const product of products) {
+      const images = await Image.findAll({
+        where: { referenceId: `PRODUCT_${product.id}` },
+      });
+
+      productWithImages.push({
+        ...product.dataValues,
+        images: images.map(image => image.path),
+      });
+    }
+
+    return response(res, {
+      data: productWithImages,
+      status: 200,
+    });
   } catch (error) {
     return errorResponse(res, error);
   }
@@ -119,7 +139,6 @@ const storePhoto: RequestHandler = async (req, res) => {
     }
 
     const parsedData = parseFormData(req.body);
-    console.log(parsedData);
     if (!parsedData.extras) parsedData.extras = [];
     const missingFields = requiredFields.filter(field => {
       return !parsedData[field];
@@ -162,12 +181,21 @@ const storePhoto: RequestHandler = async (req, res) => {
 
     const product = await Product.create(toBuild);
 
+    if (req.files) {
+      const files = req.files as Express.Multer.File[];
+      for (const file of files) {
+        await Image.create({
+          referenceId: `PRODUCT_${product.id}`,
+          path: file.path,
+        });
+      }
+    }
+
     return response(res, { data: product, status: 201 });
   } catch (error) {
     if (req.files) {
       const files = req.files as Express.Multer.File[];
       for (const file of files) {
-        console.log(file);
         unlinkSync(file.path);
       }
     }
@@ -217,6 +245,8 @@ const update: RequestHandler = async (req, res) => {
         status: 400,
       });
     }
+
+    const parsedData = parseFormData(req.body);
     const product = await Product.findByPk(productId);
     if (!product) {
       return response(res, {
@@ -224,18 +254,25 @@ const update: RequestHandler = async (req, res) => {
         status: 404,
       });
     }
-    if (!isValidExtrasStructure(req.body.extras)) {
+    if (!isValidExtrasStructure(parsedData.extras)) {
       return response(res, {
         errors: [{ message: 'Invalid extras structure' }],
         status: 400,
       });
     }
-    delete req.body.id;
+    delete parsedData.id;
     const updatedProduct = await product.update({
       companyId: companyId,
       categoryId,
-      ...req.body,
+      ...parsedData.body,
     });
+
+    if (req.files) {
+      const path = Array.isArray(req.files)
+        ? (req.files[0].path as string)
+        : '';
+      await Image.updateImage(path, productId, 'PRODUCT');
+    }
     await product.save();
     return response(res, { data: updatedProduct, status: 200 });
   } catch (error) {
@@ -305,6 +342,18 @@ const indexAllWithCompany: RequestHandler = async (req, res) => {
         companyId,
       },
     });
+
+    const productWithImages = [];
+    for (const product of products) {
+      const images = await Image.findAll({
+        where: { referenceId: `PRODUCT_${product.id}` },
+      });
+
+      productWithImages.push({
+        ...product.dataValues,
+        images: images.map(image => image.path),
+      });
+    }
     const categories = await Category.findAll({ where: { companyId } });
     const company = await Company.findByPk(companyId);
     if (!company) {
@@ -324,7 +373,7 @@ const indexAllWithCompany: RequestHandler = async (req, res) => {
           orderMinimum: company.orderMinimum,
           deliveryOptions: company.deliveryOptions,
         },
-        products,
+        products: productWithImages,
         categories: categories.filter(category => category.type === 'CATEGORY'),
       },
     });

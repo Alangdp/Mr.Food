@@ -1,4 +1,4 @@
-import { makeGet, makePost } from '@/utils/Getter';
+import { makePost } from '@/utils/Getter';
 import { motion } from 'framer-motion';
 import { MdOutlineAttachMoney } from 'react-icons/md';
 import { Separator } from '../ui/separator';
@@ -20,15 +20,17 @@ import { useEffect, useState } from 'react';
 import {
   CompanyDataProducts,
   deliveryOptions,
-  Product,
 } from '@/types/CompanyDataProducts';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Modal } from '../utilities/Modal';
 import NavBar from '../navigators/navbar';
 import AddCartModal from './addToChartModal';
+import { ProductResponse } from '@/types/Product.type';
+
+const API_URL = import.meta.env.VITE_BACKEND_URL as string;
 
 interface categoryItem {
-  [key: string]: Product[];
+  [key: string]: ProductResponse[];
 }
 
 export default function CompanyProductPage() {
@@ -82,7 +84,7 @@ export default function CompanyProductPage() {
               cart={cart}
               toast={toast}
               toggleModal={toggleModal}
-              products={companyData?.products}
+              products={companyData?.products || []}
               productSelectedId={searchParams.get('productCart') || ''}
             />
           }
@@ -330,7 +332,7 @@ export default function CompanyProductPage() {
                             </div>
                             <div className="flex-[0.3] h-full bg-transparent rounded-r-md flex items-center justify-center">
                               <img
-                                src="https://images.unsplash.com/photo-1481391145929-5bcf567d5211?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                src={`${API_URL}/${product.images[0]}`}
                                 alt=""
                                 className="w-28 h-28 rounded-lg hover:scale-110 duration-300"
                               />

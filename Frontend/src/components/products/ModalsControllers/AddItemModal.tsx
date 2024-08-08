@@ -1,5 +1,5 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Category,
   getPortugueseName,
@@ -7,7 +7,7 @@ import {
   ProductCompleteValidation,
   ProductResponse,
 } from '@/types/Product.type';
-import { makePostWithFormData, makePut } from '@/utils/Getter';
+import { makeRequestWithFormData } from '@/utils/Getter';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import ItemDetails from '../ProductSteps/Details';
@@ -50,8 +50,6 @@ export default function AddItemModal({
     image: [],
   });
 
-  useEffect(() => {}, [product]);
-
   const saveProduct = async () => {
     const parsed = ProductCompleteValidation.safeParse(product);
 
@@ -71,7 +69,7 @@ export default function AddItemModal({
       if (type === 'edit') {
         const { id } = startProduct || { id: 0 };
 
-        const EditProduct = await makePut<
+        const EditProduct = await makeRequestWithFormData<
           Product & { description: string; productId: number },
           Product
         >(
@@ -82,6 +80,7 @@ export default function AddItemModal({
             description: product.describe,
           },
           {
+            type: 'put',
             authToken: companyToken,
             autoToast: true,
             toast: toast,
@@ -91,7 +90,7 @@ export default function AddItemModal({
         if (EditProduct) return true;
         return false;
       }
-      const newProduct = await makePostWithFormData<
+      const newProduct = await makeRequestWithFormData<
         Product & { description: string },
         Product
       >(
@@ -101,6 +100,7 @@ export default function AddItemModal({
           description: product.describe,
         },
         {
+          type: 'post',
           authToken: companyToken,
           autoToast: true,
           toast: toast,

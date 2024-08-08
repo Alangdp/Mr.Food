@@ -8,6 +8,7 @@ import CheckboxWithValidation from './ValidateCheckbox';
 import { useEffect, useState } from 'react';
 import { Toast, ToasterToast } from '../ui/use-toast';
 import { Cart, CartProduct, ExtraOptionsSelected } from './Cart.type';
+import { ToastAction } from '../ui/toast';
 
 interface AddCartModalProps {
   products?: ProductResponse[];
@@ -25,6 +26,8 @@ interface AddCartModalProps {
     removeProduct: (productId: string) => void;
   };
 }
+
+const API_URL = import.meta.env.VITE_BACKEND_URL as string;
 
 export default function AddCartModal({
   toggleModal,
@@ -72,12 +75,10 @@ export default function AddCartModal({
         title="Adicionar ao Carrinho"
         className="top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2 h-[50vh] rounded pt-0"
       >
-        <div className="w-full grid grid-cols-2">
+        <div className="w-full grid grid-cols-2 gap-4">
           <div>
             <img
-              src={
-                'https://nutrimassasesalgados.com/wp-content/uploads/2020/05/MG_6472-copiar-1.jpg'
-              }
+              src={`${API_URL}/${product?.images[0] || ''}`}
               alt={product?.name}
               onError={({ currentTarget }) => {
                 currentTarget.onerror = null;
@@ -86,7 +87,7 @@ export default function AddCartModal({
                 currentTarget.style.width = '80%';
                 currentTarget.style.border = '1px dashed black';
               }}
-              className="w-full rounded"
+              className="w-full rounded-lg"
             />
           </div>
           <div className="h-[40vh] flex flex-col gap-2 overflow-y-scroll">
@@ -101,9 +102,12 @@ export default function AddCartModal({
                 <h2 className="text font-medium text-green-600">
                   R$ {product?.price}
                 </h2>
-                <h2 className="text-sm font-light text-secondary opacity-50 line-through">
-                  R$ {product?.price}
-                </h2>
+                {product?.discountPercent ||
+                  (0 > 0 && (
+                    <h2 className="text-sm font-light text-secondary opacity-50 line-through">
+                      R$ {product?.price}
+                    </h2>
+                  ))}
               </div>
             </div>
             <div className="h-18 w-full">
@@ -200,11 +204,25 @@ export default function AddCartModal({
                       product!.companyId,
                     ];
 
-                    console.log(new Set(companyId).size);
                     if (new Set(companyId).size > 1) {
                       toast({
                         title:
                           'Você só pode adicionar produtos de uma empresa por vez',
+                        action: (
+                          <ToastAction
+                            title="Ok"
+                            altText="Teste"
+                            className="bg-red-600 shadow-df border border-gray-200 text-white hover:bg-red-500 duration-300"
+                            onClick={() => {
+                              cart.clearCart();
+                              toast({
+                                title: 'Carrinho limpo',
+                              });
+                            }}
+                          >
+                            Limpar Carrinho
+                          </ToastAction>
+                        ),
                       });
                       return;
                     }
