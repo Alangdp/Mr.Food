@@ -23,6 +23,7 @@ const storage = multer.diskStorage({
     cb(null, new Date().getTime() + file.originalname);
   },
 });
+
 const upload = multer({ storage });
 
 router.get('/', CompanyLoginMiddleware, index);

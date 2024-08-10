@@ -81,7 +81,7 @@ function ProductsAdmin({
     if (products.length === 0) fetchProducts();
     if (categories.length === 0) fetchCategories();
     fetchCompany();
-    navigate('/company/dashboard/products');
+    navigate('/company/products');
   }, []);
 
   return (
@@ -208,12 +208,18 @@ function ProductsAdmin({
                             </td>
                             <td className="p-4">
                               <div className="flex items-center gap-4 w-full">
-                                <div className="text-secondary line-through w-14">
-                                  R${' '}
-                                  {Number(product.price) -
-                                    (product.discountPercent / 100) *
-                                      Number(product.price)}
-                                </div>
+                                {product.discountPercent > 0 && (
+                                  <div className="text-secondary line-through w-14">
+                                    R${' '}
+                                    {(
+                                      Number(product.price) -
+                                      (product.discountPercent / 100) *
+                                        Number(product.price)
+                                    ).toLocaleString('pt-BR', {
+                                      minimumFractionDigits: 2,
+                                    })}
+                                  </div>
+                                )}
                                 <Input
                                   type="text"
                                   className="w-24 border-gray-200 border p-1"
@@ -253,6 +259,24 @@ function ProductsAdmin({
                     <Button
                       size={'lg'}
                       className="gap-2 text-red-600 bg-white hover:bg-gray-100 w-full rounded-t-none border-t-0"
+                      onClick={() => {
+                        setToEdit({
+                          id: 0,
+                          companyId: 0,
+                          categoryId: category.id,
+                          name: '',
+                          description: '',
+                          price: '',
+                          discountPercent: 0,
+                          active: false,
+                          extras: [],
+                          images: [],
+                          createdAt: '',
+                          updatedAt: '',
+                        });
+
+                        ItemModalToggleEdit();
+                      }}
                     >
                       <PlusIcon className="font-bold w-6 h-auto" /> Adicionar
                       Item
@@ -287,7 +311,7 @@ export function ProductsAdminPageRoute() {
   const [productToEdit, setProductToEdit] = useState<ProductResponse | null>();
 
   useEffect(() => {
-    if (!ModalState) navigate('/company/dashboard/products');
+    if (!ModalState) navigate('/company/products');
   }, [ModalState]);
 
   // Button to toggle the modal Add Item

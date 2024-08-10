@@ -264,10 +264,10 @@ const update: RequestHandler = async (req, res) => {
     const updatedProduct = await product.update({
       companyId: companyId,
       categoryId,
-      ...parsedData.body,
+      ...parsedData,
     });
 
-    if (req.files) {
+    if (Array.isArray(req.files) && req.files.length > 0) {
       const path = Array.isArray(req.files)
         ? (req.files[0].path as string)
         : '';
@@ -276,6 +276,7 @@ const update: RequestHandler = async (req, res) => {
     await product.save();
     return response(res, { data: updatedProduct, status: 200 });
   } catch (error) {
+    console.log(error);
     return errorResponse(res, error);
   }
 };

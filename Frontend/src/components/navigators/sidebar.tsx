@@ -90,7 +90,7 @@ export default function SideBar() {
           </li>
           <li>
             <a
-              href="/company/dashboard/orders"
+              href="/company/orders"
               className={cn(
                 'relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6',
                 lastPath === 'orders'
@@ -117,7 +117,7 @@ export default function SideBar() {
           </li>
           <li>
             <a
-              href="/company/dashboard/products"
+              href="/company/products"
               className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6"
             >
               <span className="inline-flex justify-center items-center ml-4">

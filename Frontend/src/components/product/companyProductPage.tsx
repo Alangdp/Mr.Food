@@ -321,13 +321,19 @@ export default function CompanyProductPage() {
                               <div className="flex items-center gap-2 pt-10">
                                 <p className="text-green-600 font-li">
                                   R${' '}
-                                  {Number(product.price) -
+                                  {(
+                                    Number(product.price) -
                                     Number(product.price) *
-                                      product.discountPercent}
+                                      product.discountPercent
+                                  ).toLocaleString('pt-BR', {
+                                    minimumFractionDigits: 2,
+                                  })}
                                 </p>
-                                <p className="text-secondary opacity-70 line-through">
-                                  R$ {product.price}
-                                </p>
+                                {product.discountPercent > 0 && (
+                                  <p className="text-secondary opacity-70 line-through">
+                                    R$ {product.price}
+                                  </p>
+                                )}
                               </div>
                             </div>
                             <div className="flex-[0.3] h-full bg-transparent rounded-r-md flex items-center justify-center">

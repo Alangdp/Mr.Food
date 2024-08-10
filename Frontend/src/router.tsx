@@ -12,43 +12,10 @@ import Product from './components/product/companyProductPage';
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: (
-      <>
-        <NavBar />
-        <MotionWrapper>
-          <Home />
-        </MotionWrapper>
-      </>
-    ),
-  },
-  {
-    path: '/company/register',
-    element: (
-      <>
-        <NavBar />
-        <MotionWrapper>
-          <CompanyRegister />
-        </MotionWrapper>
-      </>
-    ),
-  },
-  {
-    path: '/company/login',
-    element: (
-      <>
-        <NavBar />
-        <MotionWrapper>
-          <CompanyLogin />
-        </MotionWrapper>
-      </>
-    ),
-  },
-  {
-    path: '/company/dashboard',
+    path: '/company/',
     children: [
       {
-        path: '',
+        path: 'dashboard',
         element: (
           <PrivateCompany>
             <DashboardHomeRouter />
@@ -79,20 +46,43 @@ const router = createBrowserRouter([
           </PrivateCompany>
         ),
       },
-    ],
-  },
-  {
-    path: '/client',
-    children: [
       {
-        path: 'cart',
+        path: 'register',
         element: (
-          <PrivateCompany>
-            <OrderPageRoute />
-          </PrivateCompany>
+          <>
+            <NavBar />
+            <MotionWrapper>
+              <CompanyRegister />
+            </MotionWrapper>
+          </>
+        ),
+      },
+      {
+        path: '/company/login',
+        element: (
+          <>
+            <NavBar />
+            <MotionWrapper>
+              <CompanyLogin />
+            </MotionWrapper>
+          </>
         ),
       },
     ],
+  },
+
+  // Divisão de rotas
+
+  {
+    path: '/',
+    element: (
+      <>
+        <NavBar />
+        <MotionWrapper>
+          <Home />
+        </MotionWrapper>
+      </>
+    ),
   },
   {
     path: '/products/:companyId',

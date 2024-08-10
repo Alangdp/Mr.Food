@@ -87,6 +87,10 @@ export default function AddItemModal({
           },
         );
 
+        toast({
+          title: 'Produto salvo com sucesso',
+        });
+
         if (EditProduct) return true;
         return false;
       }

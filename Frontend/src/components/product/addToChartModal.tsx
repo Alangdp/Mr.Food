@@ -204,6 +204,7 @@ export default function AddCartModal({
                       product!.companyId,
                     ];
 
+                    console.log(new Set(companyId).size);
                     if (new Set(companyId).size > 1) {
                       toast({
                         title:
@@ -226,6 +227,10 @@ export default function AddCartModal({
                       });
                       return;
                     }
+
+                    toast({
+                      title: 'Produto adicionado ao carrinho',
+                    });
 
                     const addToCartData: CartProduct = {
                       id: new Date().getMilliseconds().toString(),

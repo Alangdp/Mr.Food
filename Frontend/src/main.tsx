@@ -11,10 +11,13 @@ import AuthProvider from './context/AuthContext';
 import CartProvider from './context/CartContext';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <AuthProvider>
-    <CartProvider>
-      <Toaster />
-      <RouterProvider router={router} />
-    </CartProvider>
-  </AuthProvider>,
+  <>
+    <Toaster />
+    <AuthProvider>
+      <CartProvider>
+        <RouterProvider router={router} />
+      </CartProvider>
+    </AuthProvider>
+    ,
+  </>,
 );
