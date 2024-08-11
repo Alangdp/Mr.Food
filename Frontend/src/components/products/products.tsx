@@ -7,7 +7,7 @@ import {
   MagnifyingGlassIcon,
   PlusIcon,
 } from '@radix-ui/react-icons';
-import NavBar from '../navigators/navbar';
+import NavBar from '../navigators/navbar.company';
 import SideBar from '../navigators/sidebar';
 import MotionWrapper from '../router/MotionWrapper';
 import { Button } from '../ui/button';
@@ -136,6 +136,24 @@ function ProductsAdmin({
                       <Switch
                         checked={category.active}
                         className="data-[state=checked]:bg-red-500 mr-4"
+                        onCheckedChange={async status => {
+                          await makePut<null, unknown>(
+                            `categories/category/${category.id}`,
+                            null,
+                            {
+                              authToken: companyToken,
+                              toast,
+                              autoToast: true,
+                            },
+                          );
+                          setCategories(
+                            categories.map(item =>
+                              item.id === category.id
+                                ? { ...item, active: status }
+                                : item,
+                            ),
+                          );
+                        }}
                       />
                     </div>
                     <table className="w-full border rounded-t-none rounded-lg shadow-lg rounded-b-none">

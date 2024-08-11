@@ -12,9 +12,9 @@ import CartProvider from './context/CartContext';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <>
-    <Toaster />
     <AuthProvider>
       <CartProvider>
+        <Toaster />
         <RouterProvider router={router} />
       </CartProvider>
     </AuthProvider>

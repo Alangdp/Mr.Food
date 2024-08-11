@@ -1,12 +1,12 @@
-import { useState } from 'react'
-import OrderItem from './itens/orderItem'
-import NavBar from '../navigators/navbar';
+import { useState } from 'react';
+import OrderItem from './itens/orderItem';
+import NavBar from '../navigators/navbar.company';
 import SideBar from '../navigators/sidebar';
 import MotionWrapper from '../router/MotionWrapper';
 import PrivateCompany from '../router/PrivateCompany';
 
 export default function DashboardHome() {
-  const [selected, setSelected] = useState()
+  const [selected, setSelected] = useState();
 
   return (
     <div className="w-4/5 h-[94vh] border-x drop-shadow mx-auto">
@@ -169,7 +169,10 @@ export default function DashboardHome() {
                         <p className="text-2xl font-bold">10%</p>
                       </div>
                       <div className="text-sm font-light">
-                        As melhores lojas ficam <strong className='font-medium text-black'>acima de 75%</strong>
+                        As melhores lojas ficam{' '}
+                        <strong className="font-medium text-black">
+                          acima de 75%
+                        </strong>
                       </div>
                     </div>
 
@@ -179,7 +182,10 @@ export default function DashboardHome() {
                         <p className="text-2xl font-medium">12%</p>
                       </div>
                       <div className="text-sm font-light">
-                        As melhores lojas ficam <strong className='font-medium text-black'>abaixo de 1.8%</strong>
+                        As melhores lojas ficam{' '}
+                        <strong className="font-medium text-black">
+                          abaixo de 1.8%
+                        </strong>
                       </div>
                     </div>
 
@@ -189,7 +195,10 @@ export default function DashboardHome() {
                         <p className="text-2xl font-medium">12%</p>
                       </div>
                       <div className="text-sm font-light">
-                        As melhores lojas ficam <strong className='font-medium text-black'>abaixo de 10%</strong>
+                        As melhores lojas ficam{' '}
+                        <strong className="font-medium text-black">
+                          abaixo de 10%
+                        </strong>
                       </div>
                     </div>
                   </div>
@@ -204,7 +213,7 @@ export default function DashboardHome() {
         </div> */}
       </div>
     </div>
-  )
+  );
 }
 
 export function DashboardHomeRouter() {

@@ -2,7 +2,6 @@ import express from 'express';
 import {
   destroy,
   index,
-  store,
   update,
   indexActives,
   indexById,

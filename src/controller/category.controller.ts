@@ -58,4 +58,32 @@ const deleteCategory: RequestHandler = async (req, res) => {
   }
 };
 
-export { store, index, deleteCategory };
+const changeActive: RequestHandler = async (req, res) => {
+  try {
+    const { id: companyId } = req.body;
+    const { categoryId } = req.params;
+    if (!companyId || !categoryId) {
+      return response(res, {
+        errors: [{ message: 'companyId and categoryId are required' }],
+        status: 400,
+      });
+    }
+    const category = await Category.findByPk(categoryId);
+    if (!category) {
+      return response(res, {
+        errors: [{ message: 'Caterory not found' }],
+        status: 404,
+      });
+    }
+    const updatedCategory = await category.update({
+      active: !category.active,
+    });
+    await updatedCategory.save();
+    return response(res, { data: updatedCategory, status: 200 });
+  } catch (error) {
+    console.log(error);
+    return errorResponse(res, error);
+  }
+};
+
+export { store, index, deleteCategory, changeActive };

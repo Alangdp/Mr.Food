@@ -23,7 +23,7 @@ import {
 } from '@/types/CompanyDataProducts';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Modal } from '../utilities/Modal';
-import NavBar from '../navigators/navbar';
+import NavBar from '../navigators/navbar.company';
 import AddCartModal from './addToChartModal';
 import { ProductResponse } from '@/types/Product.type';
 
@@ -65,8 +65,14 @@ export default function CompanyProductPage() {
   }, []);
 
   const categoryItems: categoryItem = {};
+  const offCategories: string[] = [];
+  for (const category of companyData ? companyData?.categories : []) {
+    if (!category.active) offCategories.push(category.id.toString());
+  }
+
   companyData?.products.map(product => {
     if (!product.active) return;
+    if (offCategories.includes(product.categoryId.toString())) return;
     if (categoryItems[product.categoryId]) {
       categoryItems[product.categoryId].push(product);
     } else {
@@ -279,79 +285,87 @@ export default function CompanyProductPage() {
           transition={{ duration: 0.2 }}
           className="w-3/4 drop-shadow mx-auto p-4 flex flex-col gap-4 h-[18.7vh]"
         >
-          <div className="flex flex-col w-full p-4 mt-10 gap-6 divide">
-            {Object.keys(categoryItems).map((categoryId, index) => {
-              const products = categoryItems[categoryId];
-              return (
-                <div
-                  className="Category flex flex-col gap-4"
-                  key={`Category-Loop-${index}`}
-                >
-                  <h3 className="text-2xl font-medium ">
-                    {
-                      companyData?.categories?.find(
-                        item => item.id.toString() === categoryId,
-                      )?.name
-                    }
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    {products
-                      .filter(item =>
-                        item.name
-                          .toLowerCase()
-                          .includes(search.toLowerCase().trim()),
-                      )
-                      .map((product, itemIndex) => {
-                        return (
-                          <div
-                            onClick={() => {
-                              navigate(
-                                `/products/${companyData?.company.id}?productCart=${product.id}`,
-                              );
-                              toggleModal();
-                            }}
-                            className="flex border hover:border-gray-400 duration-300 rounded-md cursor-pointer shadow-df"
-                            key={`Category-Loop-${index}-Product-Loop-${itemIndex}`}
-                          >
-                            <div className="flex-[0.7] h-40 border-gray-200 p-4">
-                              <h3 className="text-lg Pp">{product.name}</h3>
-                              <p className="text-ellipsis h-12 text-sm line-clamp-2 overflow-hidden pt-2 break-all">
-                                {product.description}
-                              </p>
-                              <div className="flex items-center gap-2 pt-10">
-                                <p className="text-green-600 font-li">
-                                  R${' '}
-                                  {(
-                                    Number(product.price) -
-                                    Number(product.price) *
-                                      product.discountPercent
-                                  ).toLocaleString('pt-BR', {
-                                    minimumFractionDigits: 2,
-                                  })}
+          {Object.keys(categoryItems).length > 0 ? (
+            <div className="flex flex-col w-full p-4 mt-10 gap-6 divide">
+              {Object.keys(categoryItems).map((categoryId, index) => {
+                const products = categoryItems[categoryId];
+                return (
+                  <div
+                    className="Category flex flex-col gap-4"
+                    key={`Category-Loop-${index}`}
+                  >
+                    <h3 className="text-2xl font-medium ">
+                      {
+                        companyData?.categories?.find(
+                          item => item.id.toString() === categoryId,
+                        )?.name
+                      }
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {products
+                        .filter(item =>
+                          item.name
+                            .toLowerCase()
+                            .includes(search.toLowerCase().trim()),
+                        )
+                        .map((product, itemIndex) => {
+                          return (
+                            <div
+                              onClick={() => {
+                                navigate(
+                                  `/products/${companyData?.company.id}?productCart=${product.id}`,
+                                );
+                                toggleModal();
+                              }}
+                              className="flex border hover:border-gray-400 duration-300 rounded-md cursor-pointer shadow-df"
+                              key={`Category-Loop-${index}-Product-Loop-${itemIndex}`}
+                            >
+                              <div className="flex-[0.7] h-40 border-gray-200 p-4">
+                                <h3 className="text-lg Pp">{product.name}</h3>
+                                <p className="text-ellipsis h-12 text-sm line-clamp-2 overflow-hidden pt-2 break-all">
+                                  {product.description}
                                 </p>
-                                {product.discountPercent > 0 && (
-                                  <p className="text-secondary opacity-70 line-through">
-                                    R$ {product.price}
+                                <div className="flex items-center gap-2 pt-10">
+                                  <p className="text-green-600 font-li">
+                                    R${' '}
+                                    {(
+                                      Number(product.price) -
+                                      Number(product.price) *
+                                        product.discountPercent
+                                    ).toLocaleString('pt-BR', {
+                                      minimumFractionDigits: 2,
+                                    })}
                                   </p>
-                                )}
+                                  {product.discountPercent > 0 && (
+                                    <p className="text-secondary opacity-70 line-through">
+                                      R$ {product.price}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex-[0.3] h-full bg-transparent rounded-r-md flex items-center justify-center">
+                                <img
+                                  src={`${API_URL}/${product.images[0]}`}
+                                  alt=""
+                                  className="w-28 h-28 rounded-lg hover:scale-110 duration-300"
+                                />
                               </div>
                             </div>
-                            <div className="flex-[0.3] h-full bg-transparent rounded-r-md flex items-center justify-center">
-                              <img
-                                src={`${API_URL}/${product.images[0]}`}
-                                alt=""
-                                className="w-28 h-28 rounded-lg hover:scale-110 duration-300"
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                    </div>
+                    {/* <Separator className="bg-gray-500 opacity-70" /> */}
                   </div>
-                  {/* <Separator className="bg-gray-500 opacity-70" /> */}
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-full mt-4">
+              <p className="text-secondary opacity-60 text-2xl">
+                Nenhum produto encontrado
+              </p>
+            </div>
+          )}
           <Footer />
         </motion.div>
       </div>

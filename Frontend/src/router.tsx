@@ -2,18 +2,35 @@ import { createBrowserRouter } from 'react-router-dom';
 import Home from './components/home/home';
 import CompanyRegister from './components/company/register/register';
 import CompanyLogin from './components/company/login/login';
-import NavBar from './components/navigators/navbar';
 import PrivateCompany from './components/router/PrivateCompany';
 import MotionWrapper from './components/router/MotionWrapper';
 import { DashboardHomeRouter } from './components/companyDashboard/home';
 import { OrderPageRoute } from './components/companyDashboard/orders/orderPage';
 import { ProductsAdminPageRoute } from './components/products/products';
 import Product from './components/product/companyProductPage';
+import NotFound from './components/utilities/Error404';
+import NavBarCompany from './components/navigators/navbar.company';
+import NavBarClient from './components/navigators/navbar.client';
 
 const router = createBrowserRouter([
   {
     path: '/company/',
     children: [
+      {
+        path: '',
+        element: (
+          <>
+            <NavBarCompany />
+            <MotionWrapper>
+              <div className="w-full flex items-center justify-center h-20">
+                <h2 className="text-2xl font-medium text-secondary">
+                  EM DESENVOLVIMENTO
+                </h2>
+              </div>
+            </MotionWrapper>
+          </>
+        ),
+      },
       {
         path: 'dashboard',
         element: (
@@ -50,7 +67,7 @@ const router = createBrowserRouter([
         path: 'register',
         element: (
           <>
-            <NavBar />
+            <NavBarCompany />
             <MotionWrapper>
               <CompanyRegister />
             </MotionWrapper>
@@ -61,7 +78,7 @@ const router = createBrowserRouter([
         path: '/company/login',
         element: (
           <>
-            <NavBar />
+            <NavBarCompany />
             <MotionWrapper>
               <CompanyLogin />
             </MotionWrapper>
@@ -77,7 +94,7 @@ const router = createBrowserRouter([
     path: '/',
     element: (
       <>
-        <NavBar />
+        <NavBarClient />
         <MotionWrapper>
           <Home />
         </MotionWrapper>
@@ -96,7 +113,7 @@ const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: <div>404</div>,
+    element: <NotFound />,
   },
 ]);
 

@@ -1,4 +1,4 @@
-import NavBar from '@/components/navigators/navbar';
+import NavBar from '@/components/navigators/navbar.company';
 import SideBar from '@/components/navigators/sidebar';
 import MotionWrapper from '@/components/router/MotionWrapper';
 import PrivateCompany from '@/components/router/PrivateCompany';
