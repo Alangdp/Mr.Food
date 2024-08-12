@@ -11,6 +11,8 @@ import Product from './components/product/companyProductPage';
 import NotFound from './components/utilities/Error404';
 import NavBarCompany from './components/navigators/navbar.company';
 import NavBarClient from './components/navigators/navbar.client';
+import ClientLogin from './components/client/login/login';
+import ClientRegister from './components/client/register/register';
 
 const router = createBrowserRouter([
   {
@@ -81,6 +83,35 @@ const router = createBrowserRouter([
             <NavBarCompany />
             <MotionWrapper>
               <CompanyLogin />
+            </MotionWrapper>
+          </>
+        ),
+      },
+    ],
+  },
+
+  {
+    path: 'client',
+    children: [
+      {
+        path: 'login',
+        element: (
+          <>
+            <NavBarClient />
+            <MotionWrapper>
+              <ClientLogin />
+            </MotionWrapper>
+          </>
+        ),
+      },
+
+      {
+        path: 'register',
+        element: (
+          <>
+            <NavBarClient />
+            <MotionWrapper>
+              <ClientRegister />
             </MotionWrapper>
           </>
         ),

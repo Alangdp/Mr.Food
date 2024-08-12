@@ -4,7 +4,7 @@ export default function NotFound() {
       <div className="h-screen flex flex-col justify-center items-center">
         <h1 className="text-8xl font-bold text-secondary">404</h1>
         <p className="text-4xl font-medium text-secondary">
-          Página não encontrado
+          Página não encontrada
         </p>
         <a
           href="/"

@@ -4,6 +4,7 @@ export const AuthContext = createContext<{
   companyToken: string | null;
   setCompanyToken: (token: string) => void;
   updateCompanyToken: (token: string) => void;
+  updateClientToken: (token: string) => void;
   logoutCompany: () => void;
 
   clientToken: string | null;
@@ -14,6 +15,7 @@ export const AuthContext = createContext<{
   setCompanyToken: () => {},
   logoutCompany: () => {},
   updateCompanyToken: () => {},
+  updateClientToken: () => {},
 
   clientToken: null,
   setClientToken: () => {},
@@ -43,6 +45,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const updateClientToken = (token: string) => {
     localStorage.setItem('clientToken', token);
+    setClientToken(token);
   };
 
   const logoutClient = () => {
@@ -60,6 +63,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setClientToken,
         setCompanyToken,
         updateCompanyToken,
+        updateClientToken,
       }}
     >
       {children}

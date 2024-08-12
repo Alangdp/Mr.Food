@@ -8,9 +8,9 @@ configDotenv();
 
 const store: RequestHandler = async (req, res) => {
   try {
-    const requiredFields = ['phone', 'name', 'password'];
+    const requiredFields = ['phoneNumber', 'name', 'password'];
     const missingFields = requiredFields.filter(field => !req.body[field]);
-    if (missingFields.length) {
+    if (missingFields.length > 0) {
       return response(res, {
         errors: missingFields.map(field => ({
           message: `${field} is required`,
@@ -18,19 +18,16 @@ const store: RequestHandler = async (req, res) => {
         status: 400,
       });
     }
-    const clientDB = await Client.findByPhone(req.body.phone);
-    if (clientDB)
-      return response(res, {
-        errors: [{ message: 'Phone number already exists' }],
-        status: 400,
-      });
+    const clientDB = await Client.findByPhone(req.body.phoneNumber);
+    if (clientDB) throw new Error('Phone already registered');
     const client = await Client.create({
       name: req.body.name,
       password: req.body.password,
-      phoneNumber: req.body.phone,
+      phoneNumber: req.body.phoneNumber,
     });
     return response(res, { data: client, status: 201 });
   } catch (error) {
+    console.log(error);
     return errorResponse(res, error);
   }
 };
@@ -55,7 +52,10 @@ const update: RequestHandler = async (req, res) => {
 
 const login: RequestHandler = async (req, res) => {
   try {
-    const { phone } = req.body;
+    const { phoneNumber: phone } = req.body;
+    if (!phone) {
+      throw new Error('Phone is required');
+    }
     const client = await Client.findByPhone(phone);
     if (!client)
       return response(res, {

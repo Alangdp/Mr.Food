@@ -8,7 +8,7 @@ export default function NavBarClient() {
   const { navigate, auth, cart } = useDefaultImports();
 
   return (
-    <nav className="top-0 h-[6vh] bg-white shadow-sm border-b drop-shadow dark:bg-gray-950/90 z-10">
+    <nav className="top-0 h-[6vh] bg-white shadow-sm border-b drop-shadow dark:bg-gray-950/90 z-50">
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-14 items-center">
           <a href="/" className="flex items-center gap-2">
@@ -85,6 +85,17 @@ export default function NavBarClient() {
                   </div>
                   <IoCartOutline className="h-5 w-5" />
                 </span>
+              </Button>
+            )}
+
+            {auth.clientToken && (
+              <Button
+                variant={'destructive'}
+                className="bg-red-600"
+                size="sm"
+                onClick={() => auth.logoutClient()}
+              >
+                Sair
               </Button>
             )}
           </div>
