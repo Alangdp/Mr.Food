@@ -6,6 +6,16 @@ import { configDotenv } from 'dotenv';
 
 configDotenv();
 
+const index: RequestHandler = async (req, res) => {
+  try {
+    const clientId = req.body.clientId;
+    const client = await Client.findByPk(clientId);
+    return response(res, { data: client, status: 200 });
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
 const store: RequestHandler = async (req, res) => {
   try {
     const requiredFields = ['phoneNumber', 'name', 'password'];
@@ -77,4 +87,4 @@ const login: RequestHandler = async (req, res) => {
   }
 };
 
-export { store, login, update };
+export { store, login, update, index };

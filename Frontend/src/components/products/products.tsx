@@ -31,7 +31,7 @@ interface ProductsAdminProps {
   AddItemModalToggle: () => ReactNode;
   CategoryModalToggleAdd: () => ReactNode;
   ItemModalToggleEdit: () => void;
-  setToEdit: (product: ProductResponse) => void;
+  setToEdit: (product: ProductResponse & { type?: string }) => void;
 }
 
 function ProductsAdmin({
@@ -279,12 +279,13 @@ function ProductsAdmin({
                       className="gap-2 text-red-600 bg-white hover:bg-gray-100 w-full rounded-t-none border-t-0"
                       onClick={() => {
                         setToEdit({
+                          type: 'register',
                           id: 0,
                           companyId: 0,
                           categoryId: category.id,
                           name: '',
                           description: '',
-                          price: '',
+                          price: 0,
                           discountPercent: 0,
                           active: false,
                           extras: [],
@@ -326,7 +327,9 @@ export function ProductsAdminPageRoute() {
     ModalTogle: ModalTogleEdit,
     toggleModal,
   } = Modal();
-  const [productToEdit, setProductToEdit] = useState<ProductResponse | null>();
+  const [productToEdit, setProductToEdit] = useState<
+    (ProductResponse & { type?: string }) | null
+  >();
 
   useEffect(() => {
     if (!ModalState) navigate('/company/products');

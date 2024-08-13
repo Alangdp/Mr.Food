@@ -23,9 +23,9 @@ import {
 } from '@/types/CompanyDataProducts';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Modal } from '../utilities/Modal';
-import NavBar from '../navigators/navbar.company';
-import AddCartModal from './addToChartModal';
+import AddCartModal from './addToCartModal';
 import { ProductResponse } from '@/types/Product.type';
+import NavBarClient from '../navigators/navbar.client';
 
 const API_URL = import.meta.env.VITE_BACKEND_URL as string;
 
@@ -82,7 +82,7 @@ export default function CompanyProductPage() {
 
   return (
     <div className="overflow-hidden">
-      <NavBar />
+      <NavBarClient />
       <div className="overflow-x-hidden h-[94vh]">
         <ModalLink
           modalElement={

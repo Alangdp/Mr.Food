@@ -18,6 +18,8 @@ export function isValidExtrasStructure(extras: any): ValidationResult {
     return { isValid: false };
   }
 
+  console.log('extras', extras);
+
   // Função para validar cada extraItem recursivamente
   const validateExtraItem = (extraItem: any): Category | null => {
     if (

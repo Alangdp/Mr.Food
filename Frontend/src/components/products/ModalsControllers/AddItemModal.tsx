@@ -66,6 +66,7 @@ export default function AddItemModal({
     }
 
     if (parsed.success && !parsed.error) {
+      console.log(type);
       if (type === 'edit') {
         const { id } = startProduct || { id: 0 };
 

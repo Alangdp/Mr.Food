@@ -66,7 +66,7 @@ export default function NavBarClient() {
                 variant={'destructive'}
                 className="bg-red-600"
                 size="sm"
-                onClick={() => navigate('/client/dashboard')}
+                onClick={() => navigate('/client/account')}
               >
                 Conta
               </Button>

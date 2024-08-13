@@ -27,6 +27,17 @@ export async function validateToken(token: string) {
   }
 }
 
+export async function validateTokenClient(token: string) {
+  try {
+    const response = await makeGet<CompanyProps>('clients', {
+      authToken: token,
+    });
+    return response ? true : false;
+  } catch (error) {
+    return false;
+  }
+}
+
 // Reutilizable function to changeStatus
 export async function setStatus(
   token: string,

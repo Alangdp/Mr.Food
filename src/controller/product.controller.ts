@@ -156,6 +156,7 @@ const storePhoto: RequestHandler = async (req, res) => {
     const isValidExtrasStructureData = isValidExtrasStructure(
       parsedData.extras,
     );
+    console.log(isValidExtrasStructureData);
     if (!isValidExtrasStructureData.isValid) {
       throw new Error('Invalid extras structure');
     }

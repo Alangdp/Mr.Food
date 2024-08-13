@@ -14,7 +14,7 @@ export interface ProductResponse {
   categoryId: number;
   name: string;
   description: string;
-  price: string;
+  price: number;
   discountPercent: number;
   active: boolean;
   extras: Category[];

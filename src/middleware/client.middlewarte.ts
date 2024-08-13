@@ -1,7 +1,7 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { errorResponse } from "../utils/responses.js";
-import { configDotenv } from "dotenv";
+import { errorResponse } from '../utils/responses.js';
+import { configDotenv } from 'dotenv';
 
 configDotenv();
 const SECRET = process.env.SECRET_CLIENT as string;

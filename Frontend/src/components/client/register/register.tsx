@@ -25,7 +25,6 @@ export default function ClientRegister() {
   });
 
   const onSubmit = async (data: ClientProps) => {
-    console.log(data);
     const token = await makePost<ClientProps, string>('clients', data, {
       autoToast: true,
       toast,

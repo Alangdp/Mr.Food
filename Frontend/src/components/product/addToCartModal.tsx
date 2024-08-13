@@ -87,7 +87,7 @@ export default function AddCartModal({
                 currentTarget.style.width = '80%';
                 currentTarget.style.border = '1px dashed black';
               }}
-              className="w-full rounded-lg"
+              className="w-full rounded-lg max-h-96"
             />
           </div>
           <div className="h-[40vh] flex flex-col gap-2 overflow-y-scroll">
@@ -100,14 +100,23 @@ export default function AddCartModal({
               </p>
               <div className="flex w-full justify-start items-end gap-1">
                 <h2 className="text font-medium text-green-600">
-                  R$ {product?.price}
+                  {product && product?.discountPercent > 0 && (
+                    <p>
+                      R${' '}
+                      {(
+                        Number(product.price) -
+                        Number(product.price) * (product.discountPercent / 100)
+                      ).toLocaleString('pt-br', {
+                        minimumFractionDigits: 2,
+                      })}
+                    </p>
+                  )}
                 </h2>
-                {product?.discountPercent ||
-                  (0 > 0 && (
-                    <h2 className="text-sm font-light text-secondary opacity-50 line-through">
-                      R$ {product?.price}
-                    </h2>
-                  ))}
+                {product && product?.discountPercent > 0 && (
+                  <h2 className="text-sm font-light text-secondary opacity-50 line-through">
+                    R$ {product?.price}
+                  </h2>
+                )}
               </div>
             </div>
             <div className="h-18 w-full">

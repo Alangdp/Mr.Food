@@ -1,13 +1,9 @@
-import { useState } from 'react';
-import OrderItem from './itens/orderItem';
 import NavBar from '../navigators/navbar.company';
 import SideBar from '../navigators/sidebar';
 import MotionWrapper from '../router/MotionWrapper';
 import PrivateCompany from '../router/PrivateCompany';
 
 export default function DashboardHome() {
-  const [selected, setSelected] = useState();
-
   return (
     <div className="w-4/5 h-[94vh] border-x drop-shadow mx-auto">
       <div className="p-4 flex flex-col gap-4">

@@ -13,6 +13,8 @@ import NavBarCompany from './components/navigators/navbar.company';
 import NavBarClient from './components/navigators/navbar.client';
 import ClientLogin from './components/client/login/login';
 import ClientRegister from './components/client/register/register';
+import AccountClient from './components/client/account/account';
+import CartClient from './components/client/cart/cart';
 
 const router = createBrowserRouter([
   {
@@ -77,7 +79,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: '/company/login',
+        path: 'login',
         element: (
           <>
             <NavBarCompany />
@@ -112,6 +114,28 @@ const router = createBrowserRouter([
             <NavBarClient />
             <MotionWrapper>
               <ClientRegister />
+            </MotionWrapper>
+          </>
+        ),
+      },
+
+      {
+        path: 'account',
+        element: (
+          <>
+            <MotionWrapper>
+              <AccountClient />
+            </MotionWrapper>
+          </>
+        ),
+      },
+
+      {
+        path: 'cart',
+        element: (
+          <>
+            <MotionWrapper classname="overflow-hidden">
+              <CartClient />
             </MotionWrapper>
           </>
         ),
