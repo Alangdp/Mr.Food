@@ -14,7 +14,6 @@ import { toast } from '@/components/ui/use-toast';
 import DetailInput from '@/components/utilities/DetailInput';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { fi } from '@faker-js/faker';
 
 export default function RegisterProductTab({
   hasSuplements,

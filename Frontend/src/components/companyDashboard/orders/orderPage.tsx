@@ -4,7 +4,6 @@ import MotionWrapper from '@/components/router/MotionWrapper';
 import PrivateCompany from '@/components/router/PrivateCompany';
 import { OrderProps } from '@/types/Order.type';
 import { DataTable } from './data-table';
-import { faker } from '@faker-js/faker';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
