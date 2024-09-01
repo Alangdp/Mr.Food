@@ -8,4 +8,5 @@ export type GetterOptions = {
   };
   autoToast?: boolean;
   authToken?: string | null;
+  returnTypes?: 'data' | 'status';
 };

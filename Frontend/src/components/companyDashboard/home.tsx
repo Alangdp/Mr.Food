@@ -1,5 +1,5 @@
 import NavBar from '../navigators/navbar.company';
-import SideBar from '../navigators/sidebar';
+import SideBar from '../navigators/sidebar.company';
 import MotionWrapper from '../router/MotionWrapper';
 import PrivateCompany from '../router/PrivateCompany';
 

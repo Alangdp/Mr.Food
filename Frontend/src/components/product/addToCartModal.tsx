@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { Toast, ToasterToast } from '../ui/use-toast';
 import { Cart, CartProduct, ExtraOptionsSelected } from './Cart.type';
 import { ToastAction } from '../ui/toast';
+import { useDefaultImports } from '../utilities/DefaultImports';
 
 interface AddCartModalProps {
   products?: ProductResponse[];
@@ -37,6 +38,7 @@ export default function AddCartModal({
   toast,
   cart,
 }: BasicModalProps & AddCartModalProps) {
+  const { navigate } = useDefaultImports();
   const [validators, setValidators] = useState<ValidateExtraOptions[]>([]);
   const product = products?.find(
     item => item.id.toString() === productSelectedId,
@@ -239,6 +241,18 @@ export default function AddCartModal({
 
                     toast({
                       title: 'Produto adicionado ao carrinho',
+                      action: (
+                        <ToastAction
+                          title="Ok"
+                          altText="Cart"
+                          className="bg-red-600 shadow-df border border-gray-200 text-white hover:bg-red-500 duration-300"
+                          onClick={() => {
+                            navigate('/client/cart');
+                          }}
+                        >
+                          Ver Carinho
+                        </ToastAction>
+                      ),
                     });
 
                     const addToCartData: CartProduct = {

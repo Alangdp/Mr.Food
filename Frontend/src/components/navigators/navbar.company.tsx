@@ -41,7 +41,7 @@ export default function NavBarCompany() {
           />
 
           <div className="flex items-center gap-4">
-            {auth.companyToken || auth.clientToken ? null : (
+            {auth.companyToken ? null : (
               <>
                 <Button
                   variant="outline"

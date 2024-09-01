@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { useDefaultImports } from '@/components/utilities/DefaultImports';
+import { makePost } from '@/utils/Getter';
 import { MinusIcon, PlusIcon } from '@radix-ui/react-icons';
 import { ToastAction } from '@radix-ui/react-toast';
 
@@ -255,7 +256,8 @@ export default function CartClient() {
               <Button
                 variant="destructive"
                 className="w-full h-10 mt-4"
-                onClick={() => {
+                onClick={async () => {
+                  // const data = await makePost<>('/orders', )
                   cart.clearCart();
                   toast({
                     title: 'Carrinho limpo',

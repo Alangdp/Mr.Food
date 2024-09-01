@@ -330,8 +330,9 @@ export default function CompanyProductPage() {
                                     R${' '}
                                     {(
                                       Number(product.price) -
-                                      Number(product.price) *
-                                        product.discountPercent
+                                      (Number(product.price) *
+                                        product.discountPercent) /
+                                        100
                                     ).toLocaleString('pt-BR', {
                                       minimumFractionDigits: 2,
                                     })}

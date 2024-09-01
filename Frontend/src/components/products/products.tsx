@@ -8,7 +8,7 @@ import {
   PlusIcon,
 } from '@radix-ui/react-icons';
 import NavBar from '../navigators/navbar.company';
-import SideBar from '../navigators/sidebar';
+import SideBar from '../navigators/sidebar.company';
 import MotionWrapper from '../router/MotionWrapper';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { RequestHandler } from 'express';
 import { errorResponse, response } from '../utils/responses.js';
 import { configDotenv } from 'dotenv';
@@ -5,6 +6,7 @@ import Product from '../models/Product.js';
 import Order from '../models/Order.js';
 import { validRequiredFields } from '../utils/validBody.js';
 import { randomUUID } from 'crypto';
+import { ItemOption } from '../../types/ExtraOptions.type.js';
 
 configDotenv();
 
@@ -18,21 +20,39 @@ const index: RequestHandler = async (req, res) => {
   }
 };
 
+const validateOrder = (items: any): string | ItemOption[] => {
+  if (!Array.isArray(items)) return 'Items must be an array';
+  for (const item of items) {
+    if (!item.productId || typeof item.productId !== 'number')
+      return 'ProdcutId must be a number';
+    if (!item.quantity || typeof item.quantity !== 'number')
+      return 'Quantity must be a number';
+    if (!item.extras || typeof item.extras !== 'object')
+      return 'Extras must be array';
+
+    for (const extraKey of Object.keys(item.extras)) {
+      const extrasOptions = item.extras[extraKey];
+      if (typeof extrasOptions !== 'object')
+        return 'Extra Option must be a array';
+      for (const extraOption of extrasOptions) {
+        if (!extraOption.extraName || typeof extraOption.extraName !== 'string')
+          return 'Extra name must be a text';
+        if (!extraOption.quantity || typeof extraOption.quantity !== 'number')
+          return 'Extra quantity must be a number';
+        if (!extraOption.price || typeof extraOption.price !== 'number')
+          return 'Extra price must be a number';
+      }
+    }
+  }
+
+  return items as ItemOption[];
+};
+
 const store: RequestHandler = async (req, res) => {
   try {
     const { clientId } = req.body;
-    if (!Array.isArray(req.body.items))
-      throw new Error('Items it must be number Array');
-    const items: number[] = req.body.items;
-    // TODO - Add Address
-    const openOrder = (await Order.findAll({ where: { clientId } })).filter(
-      order => order.status !== 'CANCELED' && order.status !== 'DELIVERED',
-    );
-    if (openOrder.length)
-      return response(res, {
-        errors: [{ message: 'You already have an open order' }],
-        status: 400,
-      });
+
+    // Validate required fields
     const missingFields = validRequiredFields(['clientId', 'items'], req.body);
     if (missingFields.length)
       return response(res, {
@@ -41,12 +61,37 @@ const store: RequestHandler = async (req, res) => {
         })),
         status: 400,
       });
-    const products = await Product.findAll({ where: { id: items } });
-    if (items.length === 0 || products.length !== items.length)
+
+    // Validate if user has order
+    // if (await Order.hasActiveOrder(clientId))
+    //   return response(res, {
+    //     errors: [{ message: 'You already have an open order' }],
+    //     status: 400,
+    //   });
+
+    // Validate valid order structure
+    const orderItem = validateOrder(req.body.items);
+    if (!Array.isArray(orderItem))
+      return response(res, {
+        errors: [{ message: orderItem }],
+        status: 400,
+      });
+
+    // Variable about selected products
+    const selectedProductsIds = orderItem.map(item => item.productId);
+    const products = await Product.findAll({
+      where: { id: selectedProductsIds },
+    });
+
+    if (
+      selectedProductsIds.length === 0 ||
+      products.length !== selectedProductsIds.length
+    )
       return response(res, {
         errors: [{ message: 'Some product was not found' }],
         status: 400,
       });
+
     products.forEach(product => {
       if (
         product.active === false ||
@@ -57,15 +102,71 @@ const store: RequestHandler = async (req, res) => {
           status: 400,
         });
     });
-    const total = products.reduce(
-      (acc, product) =>
-        acc +
-        (Number(product.price) -
-          (Number(product.price) * Number(product.discountPercent)) / 100) *
-          (product.quantity || 1),
-      0,
-    );
-    console.log(products[0].companyId);
+
+    // [
+    //   {
+    //     max: 1,
+    //     min: 1,
+    //     name: 'Maionese ?',
+    //     itens: [ [Object], [Object] ],
+    //     obrigatory: true
+    //   }
+    // ]
+
+    type PossibleOptionsStructure = {
+      [key: string]: Possibilities;
+    };
+
+    type Possibilities = {
+      [key: string]: number;
+    };
+
+    const allPossibilities: PossibleOptionsStructure = {};
+    for (const product of products) {
+      for (const extra of product.extras) {
+        const possiblities = extra.itens.reduce((acc, val) => {
+          acc[val.name.replace(/[^a-zA-Z0-9 ]/g, '').trim()] = val.price;
+          return acc;
+        }, {} as Possibilities);
+        allPossibilities[extra.name.replace(/[^a-zA-Z0-9 ]/g, '').trim()] =
+          possiblities;
+      }
+    }
+
+    let extrasTotal = 0;
+    for (const item of orderItem) {
+      for (const extraKey of Object.keys(item.extras)) {
+        // WSC - WithoutSpecialCharacters
+        const keyWSC = extraKey.replace(/[^a-zA-Z0-9 ]/g, '');
+        for (const extraKey of Object.keys(item.extras)) {
+          if (!Object.keys(allPossibilities).includes(keyWSC))
+            throw new Error('Product not contains extra:' + extraKey);
+
+          for (const extraOptions of item.extras[extraKey]) {
+            const extraOptionWSC = extraOptions.extraName.replace(
+              /[^a-zA-Z0-9 ]/g,
+              '',
+            );
+            if (!Object.keys(allPossibilities[keyWSC]).includes(extraOptionWSC))
+              throw new Error(
+                'Extra Options: ' +
+                  extraKey +
+                  ' not contains: ' +
+                  extraOptions.extraName,
+              );
+            extrasTotal +=
+              allPossibilities[keyWSC][extraOptionWSC] * extraOptions.quantity;
+          }
+        }
+      }
+    }
+
+    const subTotal = orderItem.reduce((acc, item) => {
+      const product = products.find(product => product.id === item.productId);
+      if (!product) return acc;
+      return acc + Number(product.price);
+    }, 0);
+
     const order = await Order.create({
       id: randomUUID(),
       clientId,
@@ -82,7 +183,7 @@ const store: RequestHandler = async (req, res) => {
         return formatedProduct;
       }),
       status: 'PENDING',
-      total,
+      total: subTotal + extrasTotal,
       observation: req.body.observation || '',
     });
     return response(res, { data: order, status: 201 });

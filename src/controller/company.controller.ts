@@ -3,7 +3,16 @@ import { errorResponse, response } from '../utils/responses.js';
 import Company from '../models/Company.js';
 import { createToken } from '../utils/token.js';
 
-const index: RequestHandler = async (req, res) => {
+const indexAll: RequestHandler = async (req, res) => {
+  try {
+    const companies = await Company.findAll();
+    return response(res, { data: companies, status: 200 });
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+const indexById: RequestHandler = async (req, res) => {
   try {
     const { id: companyId } = req.body;
     if (!companyId)
@@ -109,4 +118,4 @@ const update: RequestHandler = async (req, res) => {
   }
 };
 
-export { store, login, update, index };
+export { store, login, update, indexById, indexAll };

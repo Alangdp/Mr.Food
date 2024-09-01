@@ -1,4 +1,4 @@
-import { Extra } from "../types/product.type.js";
+import { Extra } from '../types/product.type.js';
 
 type ProductProps = {
   name: string;
@@ -8,8 +8,8 @@ type ProductProps = {
   price: number;
   discountPercent: number;
   active: boolean;
-  extras: Extra;
+  extras: Extra[];
   quantity?: number;
-}
+};
 
 export { ProductProps };

@@ -7,7 +7,7 @@ import CompanyLogin from '../company/login/login';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '../ui/use-toast';
 
-export default function SideBar() {
+export default function SideBarCompany() {
   const navigate = useNavigate();
   const { logoutCompany } = useAuth();
   const { toast } = useToast();
@@ -112,7 +112,9 @@ export default function SideBar() {
                   ></path>
                 </svg>
               </span>
-              <span className="ml-2 text-sm tracking-wide truncate">Inbox</span>
+              <span className="ml-2 text-sm tracking-wide truncate">
+                Pedidos
+              </span>
             </a>
           </li>
           <li>
@@ -135,7 +137,7 @@ export default function SideBar() {
                 </svg>
               </span>
               <span className="ml-2 text-sm tracking-wide truncate">
-                Messages
+                Produtos
               </span>
             </a>
           </li>

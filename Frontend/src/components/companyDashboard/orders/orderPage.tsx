@@ -1,5 +1,5 @@
 import NavBar from '@/components/navigators/navbar.company';
-import SideBar from '@/components/navigators/sidebar';
+import SideBar from '@/components/navigators/sidebar.company';
 import MotionWrapper from '@/components/router/MotionWrapper';
 import PrivateCompany from '@/components/router/PrivateCompany';
 import { OrderProps } from '@/types/Order.type';

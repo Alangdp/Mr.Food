@@ -8,6 +8,7 @@ import {
   changeActive,
   indexAllWithCompany,
   storePhoto,
+  indexAll,
 } from '../controller/product.controller.js';
 import { CompanyLoginMiddleware } from '../middleware/company.middleware.js';
 import multer from 'multer';
@@ -25,6 +26,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+router.get('/index', indexAll);
 router.get('/', CompanyLoginMiddleware, index);
 router.get('/actives', CompanyLoginMiddleware, indexActives);
 router.get('/product/:productId', CompanyLoginMiddleware, indexById);

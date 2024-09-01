@@ -10,6 +10,31 @@ import Product from '../models/Product.js';
 import Company from '../models/Company.js';
 import Image from '../models/Image.js';
 
+const indexAll: RequestHandler = async (req, res) => {
+  try {
+    const products = await Product.findAll();
+    const productWithImages = [];
+
+    for (const product of products) {
+      const images = await Image.findAll({
+        where: { referenceId: `PRODUCT_${product.id}` },
+      });
+
+      productWithImages.push({
+        ...product.dataValues,
+        images: images.map(image => image.path),
+      });
+    }
+
+    return response(res, {
+      data: productWithImages,
+      status: 200,
+    });
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
 const index: RequestHandler = async (req, res) => {
   try {
     const { id: companyId } = req.body;
@@ -395,4 +420,5 @@ export {
   changeActive,
   indexAllWithCompany,
   storePhoto,
+  indexAll,
 };
