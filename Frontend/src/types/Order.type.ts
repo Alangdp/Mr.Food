@@ -1,10 +1,23 @@
-import { Options } from 'sequelize';
+import { ItemOption } from './OrderResponse.type';
+import { Option } from './Product.type';
+
+// export interface OrderProps {
+//   id: string;
+//   clientId: number;
+//   companyId?: number;
+//   items: ProductProps[];
+//   status: string;
+//   total: number;
+//   observation: string;
+//   createdAt: Date;
+//   updatedAt: Date;
+// }
 
 export interface OrderProps {
   id: string;
   clientId: number;
-  companyId?: number;
-  items: ProductProps[];
+  companyId: number;
+  items: ItemOption[];
   status: string;
   total: number;
   observation: string;
@@ -26,7 +39,7 @@ type ProductProps = {
 
 type Extra = {
   [extraName: string]: {
-    options: Options[];
+    options: Option[];
     maxQuantity: number;
     minQuantity: number;
   };

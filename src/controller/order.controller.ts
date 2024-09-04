@@ -14,7 +14,10 @@ const index: RequestHandler = async (req, res) => {
   try {
     const { id } = req.body;
     const orders = await Order.findAll({ where: { companyId: id } });
-    return response(res, { status: 200, data: orders });
+    return response(res, {
+      status: 200,
+      data: orders,
+    });
   } catch (error) {
     return errorResponse(res, error);
   }
@@ -62,7 +65,7 @@ const store: RequestHandler = async (req, res) => {
         status: 400,
       });
 
-    // Validate if user has order
+    // ? Validate if user has active order
     // if (await Order.hasActiveOrder(clientId))
     //   return response(res, {
     //     errors: [{ message: 'You already have an open order' }],
@@ -102,16 +105,6 @@ const store: RequestHandler = async (req, res) => {
           status: 400,
         });
     });
-
-    // [
-    //   {
-    //     max: 1,
-    //     min: 1,
-    //     name: 'Maionese ?',
-    //     itens: [ [Object], [Object] ],
-    //     obrigatory: true
-    //   }
-    // ]
 
     type PossibleOptionsStructure = {
       [key: string]: Possibilities;
@@ -161,6 +154,17 @@ const store: RequestHandler = async (req, res) => {
       }
     }
 
+    for (const [index, item] of orderItem.entries()) {
+      const product = products.find(val => val.id === item.productId);
+      if (!product) throw new Error('Some product is not available');
+
+      orderItem[index] = {
+        ...item,
+        productName: product.name,
+        productTotalPrice: product.price,
+      };
+    }
+
     const subTotal = orderItem.reduce((acc, item) => {
       const product = products.find(product => product.id === item.productId);
       if (!product) return acc;
@@ -171,17 +175,7 @@ const store: RequestHandler = async (req, res) => {
       id: randomUUID(),
       clientId,
       companyId: 1,
-      items: products.map(product => {
-        const {
-          id,
-          createdAt,
-          companyId,
-          updatedAt,
-          categoryId,
-          ...formatedProduct
-        } = product.dataValues;
-        return formatedProduct;
-      }),
+      items: orderItem,
       status: 'PENDING',
       total: subTotal + extrasTotal,
       observation: req.body.observation || '',

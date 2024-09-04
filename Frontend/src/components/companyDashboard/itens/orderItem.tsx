@@ -1,16 +1,14 @@
-
-interface OrderItemProps  {
-  id: string
-  price: number
-  date: string
-  customer: string
+interface OrderItemProps {
+  id: string;
+  price: number;
+  date: string;
+  customer: string;
   items: {
-    name: string
-    price: number
-    quantity: number
-  }[]
+    name: string;
+    price: number;
+    quantity: number;
+  }[];
 }
-
 
 export default function OrderItem(props: OrderItemProps) {
   return (
@@ -25,14 +23,18 @@ export default function OrderItem(props: OrderItemProps) {
           </div>
           <div className="flex flex-col px-4">
             <span className="">{props.customer}</span>
-            <span className="text-sm text-green-500 font-medium">R$ {props.price}</span>
+            <span className="text-sm text-green-500 font-medium">
+              R$ {props.price}
+            </span>
           </div>
         </div>
 
         <div className="flex flex-col justify-center w-full px-5 max-h-[50px] overflow-y-scroll no-scrollbar">
-          {props.items.map((item, index) =>
-            <span key={index} className="text-sm">{item.quantity}x {item.name} - R$ {item.price}</span>
-          )}
+          {props.items.map((item, index) => (
+            <span key={index} className="text-sm">
+              {item.quantity}x {item.name} - R$ {item.price}
+            </span>
+          ))}
         </div>
       </div>
 
@@ -48,5 +50,5 @@ export default function OrderItem(props: OrderItemProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

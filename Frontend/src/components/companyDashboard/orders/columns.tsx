@@ -1,4 +1,4 @@
-import { OrderProps } from '@/types/Order.type'
+import { OrderProps } from '@/types/Order.type';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -6,33 +6,33 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
-} from '@/components/ui/dropdown-menu'
-import { HamburgerMenuIcon } from '@radix-ui/react-icons'
-import { ColumnDef, Row } from '@tanstack/react-table'
-import dayjs from 'dayjs'
-import { useAuth } from '@/context/AuthContext'
-import { setStatus } from '@/utils/Getter'
-import { useToast } from '@/components/ui/use-toast'
+} from '@/components/ui/dropdown-menu';
+import { HamburgerMenuIcon } from '@radix-ui/react-icons';
+import { ColumnDef, Row } from '@tanstack/react-table';
+import dayjs from 'dayjs';
+import { useAuth } from '@/context/AuthContext';
+import { setStatus } from '@/utils/Getter';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function OrderColumns() {
-  const { companyToken } = useAuth()
-  const { toast } = useToast()
+  const { companyToken } = useAuth();
+  const { toast } = useToast();
 
   async function changeStatusAndToast(
     row: Row<OrderProps>,
     token: string,
     statusCode: number,
   ) {
-    const status = await setStatus(token, row.getValue('id'), statusCode)
+    const status = await setStatus(token, row.getValue('id'), statusCode);
     if (!status) {
       toast({
         title: 'Erro ao atualizar o status do pedido',
-      })
-      return
+      });
+      return;
     } else {
       toast({
         title: 'Erro ao atualizar o status do pedido',
-      })
+      });
     }
   }
 
@@ -53,14 +53,12 @@ export default function OrderColumns() {
       header: 'Total',
       accessorKey: 'total',
       cell: ({ row }) => {
-        const itens = row.original.items
-        const total = itens.reduce(
-          (acc, item) =>
-            (acc + item.price - item.price * (item.discountPercent / 100)) *
-            (item.quantity || 1),
+        const items = row.original.items;
+        const total = items.reduce(
+          (acc, item) => acc + item.productTotalPrice * item.quantity,
           0,
-        )
-        return <p className="text-green-600 font-bold">${total.toFixed(2)}</p>
+        );
+        return <p className="text-green-600 font-bold">${total.toFixed(2)}</p>;
       },
     },
     {
@@ -68,33 +66,41 @@ export default function OrderColumns() {
       accessorKey: 'itens',
       cell: ({ row }) => {
         return (
-          <div className="space-y-2 max-h-32 overflow-y-auto">
-            {row.original.items.map((item, index) => (
-              <div
-                key={index}
-                className="p-2 bg-transparent shadow-df border rounded "
-              >
-                <p className="text-sm font-semibold">{item.name}</p>
-                <p className="text-xs text-gray-700">{item.description}</p>
-                <p className="text-sm text-green-600 font-bold">
-                  ${item.price}
-                </p>
-                <p className="text-xs text-red-500">
-                  {item.discountPercent}% off
-                </p>
-                <p
-                  className={
-                    item.active
-                      ? 'text-xs text-blue-500'
-                      : 'text-xs text-gray-500'
-                  }
+          <div className="h-24 overflow-hidden grid grid-cols-3 gap-2">
+            {row.original.items.map((item, index) => {
+              return (
+                <div
+                  key={index}
+                  className="p-2 bg-transparent shadow-df border rounded mt-0"
                 >
-                  {item.active ? 'Ativo' : 'Encerrado'}
-                </p>
-              </div>
-            ))}
+                  <span className="flex items-center gap-2">
+                    <p className="text-sm font-semibold">{item.productName}</p>
+                    <p className="text-sm text-green-600 font-bold">
+                      R${item.productTotalPrice}
+                    </p>
+                  </span>
+
+                  {Object.keys(item.extras).map((extraKey, index) => {
+                    const extra = item.extras[extraKey];
+
+                    return (
+                      <span className="flex items-center gap-2">
+                        {extra.map(extraOption => {
+                          return (
+                            <p>
+                              {extraKey} - {extraOption.extraName} -{' '}
+                              {extraOption.price}R$
+                            </p>
+                          );
+                        })}
+                      </span>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
-        )
+        );
       },
     },
     {
@@ -127,22 +133,26 @@ export default function OrderColumns() {
                   <DropdownMenuItem>Alterar Status</DropdownMenuItem>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem className="flex items-center py-2 bg-transparent" onClick={async () => {
-                      await changeStatusAndToast(row, companyToken!, 1)
-                    }}>
+                  <DropdownMenuItem
+                    className="flex items-center py-2 bg-transparent"
+                    onClick={async () => {
+                      await changeStatusAndToast(row, companyToken!, 1);
+                    }}
+                  >
                     Pendente
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="flex items-center py-2 bg-transparent"
+                  <DropdownMenuItem
+                    className="flex items-center py-2 bg-transparent"
                     onClick={async () => {
-                      await changeStatusAndToast(row, companyToken!, 2)
+                      await changeStatusAndToast(row, companyToken!, 2);
                     }}
-                   >
+                  >
                     Em preparo
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="flex items-center py-2 bg-transparent"
                     onClick={async () => {
-                      await changeStatusAndToast(row, companyToken!, 3)
+                      await changeStatusAndToast(row, companyToken!, 3);
                     }}
                   >
                     Finalizado
@@ -152,7 +162,7 @@ export default function OrderColumns() {
               <DropdownMenuItem
                 className="flex items-center py-2 bg-transparent"
                 onClick={async () => {
-                  await changeStatusAndToast(row, companyToken!, 5)
+                  await changeStatusAndToast(row, companyToken!, 5);
                 }}
               >
                 Cancelar
@@ -162,10 +172,10 @@ export default function OrderColumns() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        )
+        );
       },
     },
-  ]
+  ];
 
-  return columns
+  return columns;
 }

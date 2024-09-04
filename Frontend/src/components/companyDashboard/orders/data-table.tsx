@@ -170,12 +170,13 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map(row => {
                 const status = row.getValue('status')
+                console.log(status)
                 const bgColor =
-                  status === 'Pendente'
+                  status === 'PENDING'
                     ? 'bg-yellow-100'
-                    : status === 'Em preparo'
+                    : status === 'PREPARING'
                       ? 'bg-blue-100'
-                      : status === 'Finalizado'
+                      : status === 'READY'
                         ? 'bg-green-100'
                         : 'bg-red-100'
                 if (filterStatus && status !== filterStatus) {

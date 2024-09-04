@@ -1,6 +1,6 @@
 export type ItemOption = {
-  productName?: string;
-  productTotalPrice?: number;
+  productName: string;
+  productTotalPrice: number;
   productId: number;
   quantity: number;
   extras: Extra;
@@ -15,3 +15,15 @@ export type OptionValue = {
   quantity: number;
   price: number;
 };
+
+interface OrderItemProps {
+  id: string;
+  price: number;
+  date: string;
+  customer: string;
+  items: {
+    name: string;
+    price: number;
+    quantity: number;
+  }[];
+}
