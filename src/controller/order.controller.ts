@@ -24,7 +24,6 @@ const index: RequestHandler = async (req, res) => {
 };
 
 const validateOrder = (items: any): string | ItemOption[] => {
-  if (!Array.isArray(items)) return 'Items must be an array';
   for (const item of items) {
     if (!item.productId || typeof item.productId !== 'number')
       return 'ProdcutId must be a number';
@@ -38,11 +37,12 @@ const validateOrder = (items: any): string | ItemOption[] => {
       if (typeof extrasOptions !== 'object')
         return 'Extra Option must be a array';
       for (const extraOption of extrasOptions) {
+        console.log(extraOption);
         if (!extraOption.extraName || typeof extraOption.extraName !== 'string')
           return 'Extra name must be a text';
         if (!extraOption.quantity || typeof extraOption.quantity !== 'number')
           return 'Extra quantity must be a number';
-        if (!extraOption.price || typeof extraOption.price !== 'number')
+        if (typeof extraOption.price !== 'number')
           return 'Extra price must be a number';
       }
     }
@@ -73,7 +73,7 @@ const store: RequestHandler = async (req, res) => {
     //   });
 
     // Validate valid order structure
-    const orderItem = validateOrder(req.body.items);
+    const orderItem = validateOrder(req.body.items[0]);
     if (!Array.isArray(orderItem))
       return response(res, {
         errors: [{ message: orderItem }],
@@ -82,9 +82,12 @@ const store: RequestHandler = async (req, res) => {
 
     // Variable about selected products
     const selectedProductsIds = orderItem.map(item => item.productId);
+    console.log(selectedProductsIds, 'TESTE');
     const products = await Product.findAll({
       where: { id: selectedProductsIds },
     });
+
+    console.log(products);
 
     if (
       selectedProductsIds.length === 0 ||
@@ -121,8 +124,12 @@ const store: RequestHandler = async (req, res) => {
           acc[val.name.replace(/[^a-zA-Z0-9 ]/g, '').trim()] = val.price;
           return acc;
         }, {} as Possibilities);
-        allPossibilities[extra.name.replace(/[^a-zA-Z0-9 ]/g, '').trim()] =
-          possiblities;
+        allPossibilities[
+          extra.name
+            .replace(/[^a-zA-Z0-9 ]/g, '')
+            .trim()
+            .toLowerCase()
+        ] = possiblities;
       }
     }
 
@@ -130,8 +137,16 @@ const store: RequestHandler = async (req, res) => {
     for (const item of orderItem) {
       for (const extraKey of Object.keys(item.extras)) {
         // WSC - WithoutSpecialCharacters
-        const keyWSC = extraKey.replace(/[^a-zA-Z0-9 ]/g, '');
+        const keyWSC = extraKey
+          .replace(/[^a-zA-Z0-9 ]/g, '')
+          .trim()
+          .toLowerCase();
         for (const extraKey of Object.keys(item.extras)) {
+          console.log(
+            Object.keys(allPossibilities),
+            keyWSC,
+            Object.keys(allPossibilities).includes(keyWSC),
+          );
           if (!Object.keys(allPossibilities).includes(keyWSC))
             throw new Error('Product not contains extra:' + extraKey);
 
@@ -180,7 +195,8 @@ const store: RequestHandler = async (req, res) => {
       total: subTotal + extrasTotal,
       observation: req.body.observation || '',
     });
-    return response(res, { data: order, status: 201 });
+
+    return response(res, { data: order.dataValues, status: 201 });
   } catch (error) {
     console.log(error);
     return errorResponse(res, error);

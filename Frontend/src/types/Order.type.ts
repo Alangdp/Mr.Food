@@ -1,5 +1,4 @@
 import { ItemOption } from './OrderResponse.type';
-import { Option } from './Product.type';
 
 // export interface OrderProps {
 //   id: string;
@@ -25,22 +24,22 @@ export interface OrderProps {
   updatedAt: Date;
 }
 
-type ProductProps = {
-  name: string;
-  companyId?: number;
-  categoryId?: number;
-  description: string;
-  price: number;
-  discountPercent: number;
-  quantity?: number;
-  active: boolean;
-  extras: Extra;
-};
+// type ProductProps = {
+//   name: string;
+//   companyId?: number;
+//   categoryId?: number;
+//   description: string;
+//   price: number;
+//   discountPercent: number;
+//   quantity?: number;
+//   active: boolean;
+//   extras: Extra;
+// };
 
-type Extra = {
-  [extraName: string]: {
-    options: Option[];
-    maxQuantity: number;
-    minQuantity: number;
-  };
-};
+// type Extra = {
+//   [extraName: string]: {
+//     options: Option[];
+//     maxQuantity: number;
+//     minQuantity: number;
+//   };
+// };

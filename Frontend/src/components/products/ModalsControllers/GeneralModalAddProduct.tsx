@@ -10,7 +10,7 @@ export default function GeneralModalAdd() {
     <div className="flex flex-col gap-4 items-center">
       <div
         className="w-[90%] border rounded-lg border-gray-200 p-4 flex items-center gap-4 cursor-pointer hover:opacity-70 duration-300"
-        onClick={() => navigate('/company/dashboard/products?type=prepared')}
+        onClick={() => navigate('/company/products?type=prepared')}
       >
         <GiCookingPot className="text-red-600 w-9 h-auto" />
         <div className="flex flex-col justify-center">

@@ -10,7 +10,7 @@ export default function NavBarCompany() {
     <nav className="top-0 h-[6vh] bg-white shadow-sm border-b drop-shadow dark:bg-gray-950/90 z-10">
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-14 items-center">
-          <a href="/company" className="flex items-center gap-2">
+          <a href="/company" className="flex items-center gap-2 min-w-32">
             <IconJarLogoIcon className="h-8 w-8 text-red-600" />
             <p className="hidden md:block">Mr. Food</p>
           </a>
@@ -36,7 +36,7 @@ export default function NavBarCompany() {
           </nav>
           <Input
             Icon={MagnifyingGlassIcon}
-            className="w-1/3 hidden md:flex shadow drop-shadow-lg"
+            className="w-1/3 hidden md:flex shadow drop-shadow-lg mx-4"
             placeholder="Busque por item ou loja"
           />
 

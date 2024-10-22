@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Option } from '../../types/Product.type';
+import { Item } from '../../types/Product.type';
 import { Checkbox } from '../ui/checkbox';
 import ValidateExtraOptions from './Validate';
+import { ExtraOption } from './Cart.type';
 
 interface CheckboxWithValidationProps {
-  option: Option;
+  option: Item;
   validator: ValidateExtraOptions;
 }
 
@@ -12,8 +13,14 @@ export default function CheckboxWithValidation({
   option,
   validator,
 }: CheckboxWithValidationProps) {
+  const extraOption = {
+    name: option.name,
+    value: option.price,
+    quantity: 0,
+  };
+
   const [status, setStatus] = useState(
-    validator.getStatus(option.name) || false,
+    validator.getStatus(extraOption) || false,
   );
 
   return (
@@ -24,7 +31,7 @@ export default function CheckboxWithValidation({
       onCheckedChange={(toggleStatus: boolean) => {
         const status = validator.setStatus(
           toggleStatus ? 'add' : 'remove',
-          option.name,
+          extraOption,
         );
 
         // if (status.message) {

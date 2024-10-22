@@ -10,10 +10,10 @@ export default function NavBarClient() {
   return (
     <nav className="top-0 h-[6vh] bg-white shadow-sm border-b drop-shadow dark:bg-gray-950/90 z-50">
       <div className="w-full max-w-7xl mx-auto px-4">
-        <div className="flex justify-between h-14 items-center">
+        <div className="flex justify-between h-14 items-center gap-4">
           <a href="/" className="flex items-center gap-2">
             <IconJarLogoIcon className="h-8 w-8 text-red-600" />
-            <p className="hidden md:block">Mr. Food</p>
+            <p className="hidden md:block text-nowrap">Mr. Food</p>
           </a>
           <nav className="hidden sm:flex gap-4">
             <a

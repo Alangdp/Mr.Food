@@ -1,28 +1,18 @@
 import { cn } from '@/lib/utils';
 import { HamburgerMenuIcon, IconJarLogoIcon } from '@radix-ui/react-icons';
-import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-import { useToast } from '../ui/use-toast';
 import { useDefaultImports } from '../utilities/DefaultImports';
 
 export default function SideBarClient() {
-  const { navigate, toast, auth } = useDefaultImports();
-  const location = useLocation();
-  const lastPath =
-    location.pathname.split('/')[location.pathname.split('/').length - 1];
+  const { auth } = useDefaultImports();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <motion.div
+    <div
       className={cn(
         'fixed top-0 z-10 flex flex-col left-0 w-64 bg-white h-screen border-r shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]',
         isOpen ? '' : 'w-16',
       )}
-      initial={{ x: '100%' }}
-      animate={{ x: !isOpen ? 0 : '0%' }}
-      transition={{ type: 'spring', stiffness: 300 }}
       style={{
         width: isOpen ? '16rem' : '4rem',
         transition: 'width 0.3s ease',
@@ -276,15 +266,11 @@ export default function SideBarClient() {
           </li>
           <li>
             <a
-              onClick={() => {
-                navigate('/');
-                toast({
-                  title: 'Deslogado com sucesso',
-                });
-                auth.logoutClient();
-              }}
               href="#"
               className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-red-500 pr-6"
+              onClick={() => {
+                auth.logoutClient();
+              }}
             >
               <span className="inline-flex justify-center items-center ml-4">
                 <svg
@@ -307,6 +293,6 @@ export default function SideBarClient() {
           </li>
         </ul>
       </div>
-    </motion.div>
+    </div>
   );
 }

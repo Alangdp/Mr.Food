@@ -95,7 +95,7 @@ function ProductsAdmin({
         </p>
       </div>
 
-      <div className="flex flex-col gap-4 p-4 overflow-y-scroll h-[80vh]">
+      <div className="flex flex-col gap-4 p-4 h-[80vh]">
         <div className="flex items-center gap-4">
           <CategoryModalToggleAdd />
           <AddItemModalToggle />
@@ -227,7 +227,7 @@ function ProductsAdmin({
                             <td className="p-4">
                               <div className="flex items-center gap-4 w-full">
                                 {product.discountPercent > 0 && (
-                                  <div className="text-secondary line-through w-14">
+                                  <div className="text-secondary line-through text-nowrap ">
                                     R${' '}
                                     {(
                                       Number(product.price) -

@@ -1,8 +1,14 @@
 import { ProductResponse } from '@/types/Product.type';
 
+export type ExtraOption = {
+  name: string;
+  value: number;
+  quantity: number;
+};
+
 export type ExtraOptionsSelected = {
   [key: string]: {
-    selectedOptions: string[];
+    selectedOptions: ExtraOption[];
     extraValue: number;
   };
 };

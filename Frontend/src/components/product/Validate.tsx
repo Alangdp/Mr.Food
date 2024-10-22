@@ -1,24 +1,37 @@
-import { Option } from '../../types/Product.type';
+import { Item } from '@/types/Product.type';
+import { ExtraOption } from './Cart.type';
 
 export default class ValidateExtraOptions {
-  options: Option[];
+  options: ExtraOption[];
   maxOptions: number;
   minOptions: number;
   obrigatory: boolean;
   selectedOptions: number;
-  selectedOptionsList: string[];
+  selectedOptionsList: ExtraOption[];
   extraValue: number;
   groupName: string;
 
   constructor(
-    options: Option[],
+    options: Item[],
     maxOptions: number,
     minOptions: number,
     obrigatory: boolean,
     groupName: string,
   ) {
+    const extraOptions: ExtraOption[] = [
+      ...options.map(item => {
+        console.log(item);
+        return {
+          name: item.name,
+          value: item.price,
+          // Todo convert to dynamic
+          quantity: 1,
+        };
+      }),
+    ];
+
     this.groupName = groupName;
-    this.options = options;
+    this.options = extraOptions;
     this.maxOptions = maxOptions;
     this.minOptions = minOptions;
     this.obrigatory = obrigatory;
@@ -27,22 +40,31 @@ export default class ValidateExtraOptions {
     this.extraValue = 0;
   }
 
-  public getStatus(option: string): boolean {
-    return this.selectedOptionsList.includes(option);
+  public getStatus(option: ExtraOption): boolean {
+    return this.selectedOptionsList.findIndex(
+      item => item.name === option.name,
+    ) !== -1
+      ? true
+      : false;
   }
 
-  public setStatus(action: 'add' | 'remove', option: string) {
-    const indexOnSelectedOptionsList = this.selectedOptionsList.indexOf(option);
+  public setStatus(action: 'add' | 'remove', option: ExtraOption) {
+    const indexOnSelectedOptionsList = this.selectedOptionsList.findIndex(
+      item => item.name === option.name,
+    );
 
-    const elementToAdd = this.options.find(item => item.name === option);
+    const elementToAdd = this.options.find(item => item.name === option.name);
     if (!elementToAdd)
       return { status: false, message: 'Elemento não encontrado' };
 
     if (action === 'add' && indexOnSelectedOptionsList === -1) {
-      this.selectedOptionsList.push(elementToAdd.name);
+      console.log(option, 'OPTION');
+      // Todo convert to dynamic
+      option.quantity = 1;
+      this.selectedOptionsList.push(elementToAdd);
       this.selectedOptions++;
       this.extraValue +=
-        this.options.find(item => item.name === option)?.price || 0;
+        this.options.find(item => item.name === option.name)?.value || 0;
 
       const valiationStatus = this.validateOptions();
 
@@ -52,7 +74,7 @@ export default class ValidateExtraOptions {
           item => item !== option,
         );
         this.extraValue -=
-          this.options.find(item => item.name === option)?.price || 0;
+          this.options.find(item => item.name === option.name)?.value || 0;
       }
 
       return valiationStatus;
@@ -62,7 +84,7 @@ export default class ValidateExtraOptions {
       );
       this.selectedOptions--;
       this.extraValue -=
-        this.options.find(item => item.name === option)?.price || 0;
+        this.options.find(item => item.name === option.name)?.value || 0;
     }
 
     return this.validateOptions();

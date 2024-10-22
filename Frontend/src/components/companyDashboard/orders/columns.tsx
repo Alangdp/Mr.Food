@@ -24,6 +24,7 @@ export default function OrderColumns() {
     statusCode: number,
   ) {
     const status = await setStatus(token, row.getValue('id'), statusCode);
+    console.log(status);
     if (!status) {
       toast({
         title: 'Erro ao atualizar o status do pedido',
@@ -31,7 +32,7 @@ export default function OrderColumns() {
       return;
     } else {
       toast({
-        title: 'Erro ao atualizar o status do pedido',
+        title: 'Status do pedido atualizado com sucesso',
       });
     }
   }

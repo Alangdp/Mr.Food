@@ -146,10 +146,10 @@ export default function CompanyProductPage() {
               </div>
             </div>
 
-            <div className="flex p-2 items-center justify-between gap-4">
+            <div className="flex items-center justify-between gap-4 mt-4">
               <Input
                 placeholder="Buscar no Cardápio"
-                className="shadow-df flex-[0.8] h-[54px]"
+                className="shadow-df h-12"
                 Icon={MagnifyingGlassIcon}
                 iconClassName="text-red-600"
                 value={search}
@@ -157,8 +157,8 @@ export default function CompanyProductPage() {
               />
 
               <DropdownMenu>
-                <DropdownMenuTrigger className="flex-[0.1]">
-                  <Button className="bg-slate-700 text-white flex gap-2 bg-transparent shadow-df h-[54px] hover:bg-transparent">
+                <DropdownMenuTrigger className="flex-[0.1] h-12">
+                  <Button className="bg-slate-700 text-white flex gap-2 bg-transparent shadow-df h-12 hover:bg-transparent">
                     <FaMotorcycle
                       size={20}
                       className="text-gray-500 opacity-60"
@@ -177,7 +177,7 @@ export default function CompanyProductPage() {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-              <div className="flex flex-col flex-[0.1] shadow-df rounded-lg justify-center p-1">
+              <div className="flex flex-col flex-1 text-nowrap shadow-df rounded-lg justify-center p-4 h-12">
                 <p className="text-secondary">Hoje</p>
                 <div className="flex items-center gap-2">
                   <p className="text-secondary font-medium text-sm opacity-60">

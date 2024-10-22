@@ -10,6 +10,8 @@ import { Toast, ToasterToast } from '../ui/use-toast';
 import { Cart, CartProduct, ExtraOptionsSelected } from './Cart.type';
 import { ToastAction } from '../ui/toast';
 import { useDefaultImports } from '../utilities/DefaultImports';
+import { MinusIcon, PlusIcon } from '@radix-ui/react-icons';
+import { Input } from '../ui/input';
 
 interface AddCartModalProps {
   products?: ProductResponse[];
@@ -40,6 +42,7 @@ export default function AddCartModal({
 }: BasicModalProps & AddCartModalProps) {
   const { navigate } = useDefaultImports();
   const [validators, setValidators] = useState<ValidateExtraOptions[]>([]);
+  const [quantity, setQuantity] = useState<number>(1);
   const product = products?.find(
     item => item.id.toString() === productSelectedId,
   );
@@ -70,6 +73,15 @@ export default function AddCartModal({
     }
   }
 
+  const handleQuantityAdd = () => {
+    setQuantity(quantity + 1);
+  };
+
+  const handleQuantityMinus = () => {
+    if (quantity === 1) return;
+    setQuantity(quantity - 1);
+  };
+
   return (
     <span onKeyUp={onKeyPress}>
       <ModalBody
@@ -92,7 +104,7 @@ export default function AddCartModal({
               className="w-full rounded-lg max-h-96"
             />
           </div>
-          <div className="h-[40vh] flex flex-col gap-2 overflow-y-scroll">
+          <div className="h-[40vh] flex flex-col gap-2 overflow-y-scroll pb-4">
             <div className="">
               <div className="flex w-full justify-center">
                 <h2 className="text font-medium">{product?.name}</h2>
@@ -182,101 +194,129 @@ export default function AddCartModal({
                   })
                 : null}
             </div>
-            <div className="flex justify-end mt-10 ">
-              <Button
-                className="bg-primary text-white bg-red-600 hover:bg-red-500"
-                onClick={() => {
-                  let valid = true;
-                  const selectedOptions: ExtraOptionsSelected = {};
 
-                  for (let i = 0; i < validators.length; i++) {
-                    const status = validators[i].validateOptions();
-                    if (!status.status) {
-                      toast({
-                        title: 'Você precisa selecionar todas as opções',
-                      });
-                      valid = false;
-                      return;
+            <span className="flex h-fit gap-2 ">
+              <div className="flex items-center space-x w-fit flex-[0.8]">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleQuantityMinus}
+                  disabled={quantity === 1 ? true : false}
+                  className="h-9 w-10 rounded-l-md text-red-600 hover:text-red-500 hover:bg-transparent rounded border border-r-0"
+                >
+                  <MinusIcon className="h-5 w-5" />
+                </Button>
+                <input
+                  type="number"
+                  className="bg-transparent w-20 outline-none rounded-0 h-9 border px-2 flex-1 border-x border-input text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  readOnly
+                  placeholder={quantity.toFixed(0)}
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-10 rounded-r-md text-red-600 hover:text-red-500 hover:bg-transparent rounded border border-l-0"
+                  onClick={handleQuantityAdd}
+                >
+                  <PlusIcon className="h-5 w-5" />
+                </Button>
+              </div>
+              <div className="flex justify-end flex-[0.2]">
+                <Button
+                  className="bg-primary text-white bg-red-600 hover:bg-red-500"
+                  onClick={() => {
+                    let valid = true;
+                    const selectedOptions: ExtraOptionsSelected = {};
+
+                    for (let i = 0; i < validators.length; i++) {
+                      const status = validators[i].validateOptions();
+                      if (!status.status) {
+                        toast({
+                          title: 'Você precisa selecionar todas as opções',
+                        });
+                        valid = false;
+                        return;
+                      }
                     }
-                  }
 
-                  if (valid) {
-                    validators.forEach(validator => {
-                      selectedOptions[validator.groupName] = {
-                        selectedOptions: validator.selectedOptionsList,
-                        extraValue: validator.extraValue,
-                      };
-                    });
+                    if (valid) {
+                      validators.forEach(validator => {
+                        selectedOptions[validator.groupName] = {
+                          selectedOptions: validator.selectedOptionsList,
+                          extraValue: validator.extraValue,
+                        };
+                      });
 
-                    const companyId = [
-                      ...cart.cart.products.map(
-                        item => item.selectedProduct.companyId,
-                      ),
-                      product!.companyId,
-                    ];
+                      const companyId = [
+                        ...cart.cart.products.map(
+                          item => item.selectedProduct.companyId,
+                        ),
+                        product!.companyId,
+                      ];
 
-                    console.log(new Set(companyId).size);
-                    if (new Set(companyId).size > 1) {
+                      console.log(new Set(companyId).size);
+                      if (new Set(companyId).size > 1) {
+                        toast({
+                          title:
+                            'Você só pode adicionar produtos de uma empresa por vez',
+                          action: (
+                            <ToastAction
+                              title="Ok"
+                              altText="Teste"
+                              className="bg-red-600 shadow-df border border-gray-200 text-white hover:bg-red-500 duration-300"
+                              onClick={() => {
+                                cart.clearCart();
+                                toast({
+                                  title: 'Carrinho limpo',
+                                });
+                              }}
+                            >
+                              Limpar Carrinho
+                            </ToastAction>
+                          ),
+                        });
+                        return;
+                      }
+
                       toast({
-                        title:
-                          'Você só pode adicionar produtos de uma empresa por vez',
+                        title: 'Produto adicionado ao carrinho',
                         action: (
                           <ToastAction
                             title="Ok"
-                            altText="Teste"
+                            altText="Cart"
                             className="bg-red-600 shadow-df border border-gray-200 text-white hover:bg-red-500 duration-300"
                             onClick={() => {
-                              cart.clearCart();
-                              toast({
-                                title: 'Carrinho limpo',
-                              });
+                              navigate('/client/cart');
                             }}
                           >
-                            Limpar Carrinho
+                            Ver Carinho
                           </ToastAction>
                         ),
                       });
-                      return;
+
+                      const addToCartData: CartProduct = {
+                        id: String(product?.id ?? 0),
+                        name: product!.name,
+                        extras: selectedOptions,
+                        priceWithoutExtras: Number(product!.price),
+                        priceWithExtras:
+                          Number(product!.price) +
+                          Object.values(selectedOptions).reduce(
+                            (acc, item) => acc + item.extraValue,
+                            0,
+                          ),
+                        quantity: quantity,
+                        selectedProduct: product!,
+                      };
+
+                      cart.addProduct(addToCartData);
                     }
-
-                    toast({
-                      title: 'Produto adicionado ao carrinho',
-                      action: (
-                        <ToastAction
-                          title="Ok"
-                          altText="Cart"
-                          className="bg-red-600 shadow-df border border-gray-200 text-white hover:bg-red-500 duration-300"
-                          onClick={() => {
-                            navigate('/client/cart');
-                          }}
-                        >
-                          Ver Carinho
-                        </ToastAction>
-                      ),
-                    });
-
-                    const addToCartData: CartProduct = {
-                      id: new Date().getMilliseconds().toString(),
-                      name: product!.name,
-                      extras: selectedOptions,
-                      priceWithoutExtras: Number(product!.price),
-                      priceWithExtras:
-                        Number(product!.price) +
-                        Object.values(selectedOptions).reduce(
-                          (acc, item) => acc + item.extraValue,
-                          0,
-                        ),
-                      quantity: 1,
-                      selectedProduct: product!,
-                    };
-
-                    cart.addProduct(addToCartData);
-                  }
-                }}
-              >
-                Adicionar
-              </Button>
-            </div>
+                  }}
+                >
+                  Adicionar
+                </Button>
+              </div>
+            </span>
           </div>
         </div>
       </ModalBody>

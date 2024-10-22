@@ -55,9 +55,9 @@ export default function ItemDetails({
   }, []);
 
   useEffect(() => {
-    if (product.image && product.image.length > 0) {
+    if (product.images && product.images.length > 0) {
       const previews: string[] = [];
-      const files = product.image;
+      const files = product.images;
 
       files.forEach((file, index) => {
         const reader = new FileReader();
@@ -134,7 +134,7 @@ export default function ItemDetails({
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="w-full h-full grid grid-cols-5">
+          <div className="w-full h-full grid grid-cols-5 gap-8">
             <div className="col-span-3 h-full flex flex-col gap-2">
               <FormField
                 control={form.control}

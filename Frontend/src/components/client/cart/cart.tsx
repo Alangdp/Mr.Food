@@ -1,14 +1,14 @@
 import NavBarClient from '@/components/navigators/navbar.client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { toast } from '@/components/ui/use-toast';
 import { useDefaultImports } from '@/components/utilities/DefaultImports';
+import { cartDataToOrderItem } from '@/utils/Formater';
 import { makePost } from '@/utils/Getter';
 import { MinusIcon, PlusIcon } from '@radix-ui/react-icons';
 import { ToastAction } from '@radix-ui/react-toast';
 
 export default function CartClient() {
-  const { cart, toast } = useDefaultImports();
+  const { cart, toast, auth } = useDefaultImports();
 
   return (
     <span className="overflow-hidden">
@@ -19,21 +19,23 @@ export default function CartClient() {
         </div>
 
         <div className="flex w-full  h-full">
-          <div className="w-3/4 shadow-df border border-gray-200 p-2 h-full rounded overflow-y-scroll flex flex-col gap-4">
+          <div className="w-3/4 shadow-df border border-gray-200 p-2 h-full rounded-l overflow-y flex flex-col gap-4">
             {cart.cart.products.map((item, index) => {
-              console.log(item);
               return (
                 <div
                   className="card flex items-center p-2 border border-gray-200 rounded gap-4"
                   key={`${item.id}-${index}`}
                 >
-                  {item.selectedProduct.images.length > 0 && (
-                    <img
-                      src={`http://localhost:3000/${item.selectedProduct.images[0]}`}
-                      alt=""
-                      className="w-32 h-28 rounded"
-                    />
-                  )}
+                  <img
+                    src={`http://localhost:3000/${item.selectedProduct.images[0]}`}
+                    alt=""
+                    className="w-32 h-28 rounded"
+                    onError={({ currentTarget }) => {
+                      currentTarget.onerror = null;
+                      currentTarget.src =
+                        'https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg';
+                    }}
+                  />
                   <div className="flex flex-col justify-center items-start gap-2 w-60">
                     <p className="text-secondary text-ellipsis h-7 line-clamp-2 overflow-hidden pt-2 break-all">
                       {item.name}
@@ -186,12 +188,12 @@ export default function CartClient() {
             })}
           </div>
 
-          <div className="w-1/4 shadow-df border border-gray-200 p-4 h-full rounded">
+          <div className="w-1/4 shadow-df border border-gray-200 p-4 h-full rounded-r">
             <h2 className="text-2xl font-medium">Resumo</h2>
 
             <div className="">
               <div className="flex justify-between items-center gap-2 ">
-                <p className="text-lg font-medium">Subtotal</p>
+                <p className="text-lg font-medium">Subtotal - Sem extras</p>
                 <span className="text-lg flex gap-1">
                   <p>R$</p>
                   <p>
@@ -208,22 +210,45 @@ export default function CartClient() {
               </div>
 
               <div className="flex justify-between items-center gap-2 ">
-                <p className="text-lg font-medium">Total</p>
+                <p className="text-lg font-medium">Subtotal - Com extras</p>
                 <span className="text-lg flex gap-1">
                   <p>R$</p>
                   <p>
                     {cart.cart.products
                       .reduce((ac, item) => {
-                        ac +=
-                          (item.selectedProduct.price -
-                            item.selectedProduct.price *
-                              (item.selectedProduct.discountPercent / 100)) *
-                          item.quantity;
+                        ac += item.priceWithExtras * item.quantity;
                         return ac;
                       }, 0)
                       .toLocaleString('pt-br', {
                         minimumFractionDigits: 2,
                       })}
+                  </p>
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center gap-2 ">
+                <p className="text-lg font-medium">Total</p>
+                <span className="text-lg flex gap-1">
+                  <p>R$</p>
+
+                  <p>
+                    {(
+                      cart.cart.products.reduce((ac, item) => {
+                        ac += item.priceWithExtras * item.quantity;
+                        return ac;
+                      }, 0) -
+                      cart.cart.products.reduce((ac, item) => {
+                        const price = item.selectedProduct.price || 0; // Previne undefined
+                        const discountPercent =
+                          item.selectedProduct.discountPercent || 0; // Previne undefined
+                        const quantity = item.quantity || 0; // Previne undefined
+
+                        const discountInPrice = price * (discountPercent / 100);
+                        return ac + discountInPrice * quantity;
+                      }, 0)
+                    ).toLocaleString('pt-br', {
+                      minimumFractionDigits: 2,
+                    })}
                   </p>
                 </span>
               </div>
@@ -246,6 +271,8 @@ export default function CartClient() {
                         >
                           {item.selectedProduct.name} - R${' '}
                           {discountInPrice.toFixed(2)} x {item.quantity}
+                          {' = '}
+                          {(discountInPrice * item.quantity).toFixed(2)}
                         </div>
                       );
                     })}
@@ -254,13 +281,27 @@ export default function CartClient() {
               </div>
 
               <Button
+                disabled={cart.cart.products.length === 0 ? true : false}
                 variant="destructive"
                 className="w-full h-10 mt-4"
                 onClick={async () => {
-                  // const data = await makePost<>('/orders', )
-                  cart.clearCart();
+                  const orderItems = cartDataToOrderItem(cart.cart);
+                  const status = await makePost<any, object>(
+                    'orders',
+                    { items: [orderItems] },
+                    {
+                      authToken: auth.clientToken,
+                      autoToast: true,
+                      toast: toast,
+                    },
+                  );
+
+                  if (!status) {
+                    return;
+                  }
+
                   toast({
-                    title: 'Carrinho limpo',
+                    title: 'Pedido Criado com sucesso.',
                   });
                 }}
               >

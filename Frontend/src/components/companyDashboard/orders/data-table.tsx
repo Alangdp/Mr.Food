@@ -3,7 +3,7 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from '@tanstack/react-table'
+} from '@tanstack/react-table';
 
 import {
   Table,
@@ -12,27 +12,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import {
-  Menubar,
-  MenubarMenu,
-  MenubarContent,
-  MenubarItem,
-} from '@/components/ui/menubar'
-import { HamburgerMenuIcon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
-import { useState } from 'react'
-import { Input } from '@/components/ui/input'
+} from '@/components/ui/table';
+import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import { useState } from 'react';
+import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
 export function DataTable<TData, TValue>({
@@ -43,11 +37,11 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-  })
+  });
 
-  const [filter, setFilter] = useState('')
-  const [filterStatus, setFilterStatus] = useState('')
-  const [filterDate, setFilterDate] = useState('')
+  const [filter, setFilter] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterDate, setFilterDate] = useState('');
 
   return (
     <>
@@ -161,16 +155,20 @@ export function DataTable<TData, TValue>({
                             header.getContext(),
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows?.sort((a, b) => {
+              const aDate = new Date(a.getValue('updatedAt'));
+              const bDate = new Date(b.getValue('updatedAt'));
+
+              return aDate < bDate ? 1 : -1;
+            }).length ? (
               table.getRowModel().rows.map(row => {
-                const status = row.getValue('status')
-                console.log(status)
+                const status = row.getValue('status');
                 const bgColor =
                   status === 'PENDING'
                     ? 'bg-yellow-100'
@@ -178,65 +176,65 @@ export function DataTable<TData, TValue>({
                       ? 'bg-blue-100'
                       : status === 'READY'
                         ? 'bg-green-100'
-                        : 'bg-red-100'
+                        : 'bg-red-100';
                 if (filterStatus && status !== filterStatus) {
-                  return null
+                  return null;
                 }
 
                 if (filter) {
-                  const search = filter.toLowerCase()
+                  const search = filter.toLowerCase();
                   const isMatch = row.getVisibleCells().some(cell => {
-                    const cellValue = cell.getValue()
-                    return String(cellValue).toLowerCase().includes(search)
-                  })
+                    const cellValue = cell.getValue();
+                    return String(cellValue).toLowerCase().includes(search);
+                  });
 
                   if (!isMatch) {
-                    return null
+                    return null;
                   }
                 }
 
                 if (filterDate) {
-                  const date = row.getValue('createdAt') as Date
-                  const today = new Date()
-                  const yesterday = new Date(today)
-                  yesterday.setDate(yesterday.getDate() - 1)
-                  const week = new Date(today)
-                  week.setDate(week.getDate() - 7)
-                  const month = new Date(today)
-                  month.setMonth(month.getMonth() - 1)
-                  const year = new Date(today)
-                  year.setFullYear(year.getFullYear() - 1)
+                  const date = row.getValue('createdAt') as Date;
+                  const today = new Date();
+                  const yesterday = new Date(today);
+                  yesterday.setDate(yesterday.getDate() - 1);
+                  const week = new Date(today);
+                  week.setDate(week.getDate() - 7);
+                  const month = new Date(today);
+                  month.setMonth(month.getMonth() - 1);
+                  const year = new Date(today);
+                  year.setFullYear(year.getFullYear() - 1);
 
-                  const dateFilter = filterDate.toLowerCase()
+                  const dateFilter = filterDate.toLowerCase();
 
-                  const dateClean = new Date(date)
-                  dateClean.setHours(0, 0, 0, 0)
+                  const dateClean = new Date(date);
+                  dateClean.setHours(0, 0, 0, 0);
 
                   const isSameDate = (date1: Date, date2: Date): boolean => {
                     return (
                       date1.getFullYear() === date2.getFullYear() &&
                       date1.getMonth() === date2.getMonth() &&
                       date1.getDate() === date2.getDate()
-                    )
-                  }
+                    );
+                  };
 
                   if (dateFilter === 'hoje' && !isSameDate(dateClean, today)) {
-                    return null
+                    return null;
                   }
                   if (
                     dateFilter === 'ontem' &&
                     !isSameDate(dateClean, yesterday)
                   ) {
-                    return null
+                    return null;
                   }
                   if (dateFilter === 'semana' && dateClean < week) {
-                    return null
+                    return null;
                   }
                   if (dateFilter === 'mês' && dateClean < month) {
-                    return null
+                    return null;
                   }
                   if (dateFilter === 'ano' && dateClean < year) {
-                    return null
+                    return null;
                   }
                 }
 
@@ -254,10 +252,10 @@ export function DataTable<TData, TValue>({
                             cell.getContext(),
                           )}
                         </TableCell>
-                      )
+                      );
                     })}
                   </TableRow>
-                )
+                );
               })
             ) : (
               <TableRow>
@@ -273,5 +271,5 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
     </>
-  )
+  );
 }

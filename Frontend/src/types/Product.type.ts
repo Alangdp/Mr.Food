@@ -1,3 +1,4 @@
+import { ExtraOption } from '@/components/product/Cart.type';
 import { z } from 'zod';
 
 const MAX_FILE_SIZE = 5 * 1000000;
@@ -17,36 +18,39 @@ export interface ProductResponse {
   price: number;
   discountPercent: number;
   active: boolean;
-  extras: Category[];
+  extras: Extra[];
   images: string[];
   createdAt: string;
   updatedAt: string;
 }
 
-export interface Category {
+export interface Extra {
   max: number;
   min: number;
   name: string;
-  itens: Option[];
+  itens: Item[];
   obrigatory: boolean;
 }
 
-export interface Option {
+export interface Item {
   name: string;
   price: number;
 }
 
 export interface Product {
-  id?: number;
+  id: number;
+  companyId: number;
+  categoryId: number;
   name: string;
-  category: string;
-  describe: string;
-  image: File[];
-  price: number;
-  discount?: number;
-  extras: Category[];
+  description: string;
+  price: string;
+  discountPercent: number;
+  active: boolean;
+  extras: Extra[];
+  createdAt: string;
+  updatedAt: string;
+  images: string[];
 }
-
 const optionsSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
   price: z.number().min(0, 'Preço deve ser um valor positivo'),
