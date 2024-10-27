@@ -223,7 +223,7 @@ export default function RegisterProductTab({
                 />
               </span>
 
-              <div className="w-full  h-52 border border-gray-200 shadow-df mt-4 rounded mx-auto flex flex-col gap-2 p-2 overflow-y-scroll">
+              <div className="w-full  h-52 border border-gray-200 shadow-df mt-4 rounded mx-auto flex flex-col gap-2 p-2 overflow-y-scroll no-scrollbar">
                 <div className="flex flex-col gap-2">
                   <h4 className="text-xl font-medium">Opções</h4>
                   <Button

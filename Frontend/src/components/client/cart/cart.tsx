@@ -2,6 +2,7 @@ import NavBarClient from '@/components/navigators/navbar.client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useDefaultImports } from '@/components/utilities/DefaultImports';
+import { ResponseProps } from '@/types/Responses.type';
 import { cartDataToOrderItem } from '@/utils/Formater';
 import { makePost } from '@/utils/Getter';
 import { MinusIcon, PlusIcon } from '@radix-ui/react-icons';
@@ -296,7 +297,12 @@ export default function CartClient() {
                     },
                   );
 
-                  if (!status) {
+                  const statusTyped = status as unknown as ResponseProps<any>;
+
+                  if (
+                    !statusTyped ||
+                    (statusTyped.errors && statusTyped.errors?.length > 1)
+                  ) {
                     return;
                   }
 

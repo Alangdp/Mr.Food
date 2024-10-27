@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { RequestHandler } from 'express';
-import { errorResponse, response } from '../utils/responses.js';
+import { addError, errorResponse, response } from '../utils/responses.js';
 import { configDotenv } from 'dotenv';
 import Product from '../models/Product.js';
 import Order from '../models/Order.js';
 import { validRequiredFields } from '../utils/validBody.js';
 import { randomUUID } from 'crypto';
 import { ItemOption } from '../../types/ExtraOptions.type.js';
+import { CustomError } from '../errors/CustomError.js';
 
 configDotenv();
 
@@ -24,6 +25,14 @@ const index: RequestHandler = async (req, res) => {
 };
 
 const validateOrder = (items: any): string | ItemOption[] => {
+  console.log(items);
+  if (!Array.isArray(items)) {
+    throw new CustomError(
+      'Erro ao criar o pedido tente novamente mais tarde',
+      400,
+    );
+  }
+
   for (const item of items) {
     if (!item.productId || typeof item.productId !== 'number')
       return 'ProdcutId must be a number';
@@ -156,11 +165,12 @@ const store: RequestHandler = async (req, res) => {
               '',
             );
             if (!Object.keys(allPossibilities[keyWSC]).includes(extraOptionWSC))
-              throw new Error(
+              throw new CustomError(
                 'Extra Options: ' +
                   extraKey +
                   ' not contains: ' +
                   extraOptions.extraName,
+                400,
               );
             extrasTotal +=
               allPossibilities[keyWSC][extraOptionWSC] * extraOptions.quantity;
@@ -262,4 +272,33 @@ const changeStatus: RequestHandler = async (req, res) => {
   }
 };
 
-export { store, changeStatus, index };
+const getOrderByIdAndClientId: RequestHandler = async (req, res) => {
+  try {
+    const { clientId } = req.body;
+    const { orderId } = req.params;
+
+    const order = await Order.findOne({
+      where: {
+        clientId,
+        id: orderId,
+      },
+    });
+
+    if (!order) throw new CustomError('Invalid Order Id', 400);
+
+    console.log(order.dataValues);
+
+    return response(res, { status: 200, data: order });
+  } catch (error: any) {
+    if (error.message.includes('invalid input syntax for type uuid')) {
+      return response(res, {
+        status: 400,
+        errors: [addError('Invalid Order Id', error.value)],
+      });
+    }
+
+    return errorResponse(res, error);
+  }
+};
+
+export { store, changeStatus, index, getOrderByIdAndClientId };

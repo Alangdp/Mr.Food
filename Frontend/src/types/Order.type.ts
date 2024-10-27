@@ -14,6 +14,7 @@ import { ItemOption } from './OrderResponse.type';
 
 export interface OrderProps {
   id: string;
+  orderSlug: number;
   clientId: number;
   companyId: number;
   items: ItemOption[];

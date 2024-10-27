@@ -5,6 +5,7 @@ import { ItemOrder } from '../../types/product.type.js';
 
 export default class Order extends Model {
   declare id: string;
+  declare orderSlug: number;
   declare clientId: number;
   declare companyId: number;
   declare items: ItemOrder[];
@@ -31,6 +32,10 @@ Order.init(
       primaryKey: true,
       allowNull: false,
       defaultValue: randomUUID(),
+    },
+    orderSlug: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
     clientId: {
       type: DataTypes.INTEGER,

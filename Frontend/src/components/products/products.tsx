@@ -115,7 +115,6 @@ function ProductsAdmin({
             placeholder="Buscar nas Categorias"
             className="shadow-df py-4 flex items-center flex-[0.7]"
             Icon={MagnifyingGlassIcon}
-            iconAction={() => console.log('TEste')}
           />
         </div>
 
@@ -373,8 +372,8 @@ export function ProductsAdminPageRoute() {
 
   // ModalLink is used to specify the modal layer to ensure it overlays other elements.
   return (
-    <div className="z-50 relative overflow-hidden">
-      <MotionWrapper classname="bg-white z-50 relative">
+    <div className="z-50 relative overflow-y-hidden">
+      <MotionWrapper classname="bg-white z-50 relative overflow-y-hidden">
         <>
           <ModalLinkAdd
             modalElement={<ItemAdminModal toggleModal={itemModalToggleAdd} />}

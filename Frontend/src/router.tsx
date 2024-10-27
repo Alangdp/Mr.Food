@@ -15,6 +15,8 @@ import ClientLogin from './components/client/login/login';
 import ClientRegister from './components/client/register/register';
 import AccountClient from './components/client/account/account';
 import CartClient from './components/client/cart/cart';
+import PrivateClient from './components/router/PrivateClient';
+import { OrderPageClient } from './components/client/order/order';
 
 const router = createBrowserRouter([
   {
@@ -96,6 +98,16 @@ const router = createBrowserRouter([
     path: 'client',
     children: [
       {
+        path: 'order/:orderId',
+        element: (
+          <MotionWrapper>
+            <PrivateClient>
+              <OrderPageClient />
+            </PrivateClient>
+          </MotionWrapper>
+        ),
+      },
+      {
         path: 'login',
         element: (
           <>
@@ -106,7 +118,6 @@ const router = createBrowserRouter([
           </>
         ),
       },
-
       {
         path: 'register',
         element: (

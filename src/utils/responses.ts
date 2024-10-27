@@ -1,10 +1,11 @@
 import { ValidationErrorItem } from 'sequelize';
 import { Response } from 'express';
 import { ErrorResponse, ResponseProps } from '../../types/responses.type.js';
+import { CustomError } from '../errors/CustomError.js';
 
 export function response<T>(
   res: Response,
-  { data, status, errors }: ResponseProps<T>
+  { data, status, errors }: ResponseProps<T>,
 ) {
   return res
     .status(status)
@@ -12,10 +13,18 @@ export function response<T>(
 }
 
 export function errorResponse(res: Response, error: any) {
+  if (error instanceof CustomError) {
+    return response(res, {
+      data: {},
+      status: error.status,
+      errors: [addError(error.message, null)],
+    });
+  }
+
   if (error.errors) {
     const returnErrors: ErrorResponse[] = [];
     const sequelizeErrors: ValidationErrorItem[] = error.errors;
-    sequelizeErrors.map((error) => {
+    sequelizeErrors.map(error => {
       returnErrors.push(addError(error.message, error.value));
     });
 
